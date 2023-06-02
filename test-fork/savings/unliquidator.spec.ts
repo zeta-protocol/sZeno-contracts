@@ -27,7 +27,7 @@ import { keccak256, toUtf8Bytes } from "ethers/lib/utils"
 
 const governorAddress = resolveAddress("Governor")
 const liquidatorAddress = resolveAddress("Liquidator")
-const treasuryAddress = resolveAddress("mStableDAO")
+const treasuryAddress = resolveAddress("xZenoDAO")
 
 const ethWhaleAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 
@@ -41,7 +41,7 @@ context("Unliquidator forked network tests", async () => {
     let compToken: ERC20
     let nexusAddress: string
     let nexus: Nexus
-    let aaveMusdIntegration: PAaveIntegration
+    let aaveZusdIntegration: PAaveIntegration
     let aaveMbtcIntegration: PAaveIntegration
     let aaveGusdIntegration: PAaveIntegration
     let aaveBusdIntegration: PAaveIntegration
@@ -76,7 +76,7 @@ context("Unliquidator forked network tests", async () => {
         stkAaveToken = ERC20__factory.connect(stkAAVE.address, ops.signer)
         compToken = ERC20__factory.connect(COMP.address, ops.signer)
 
-        aaveMusdIntegration = PAaveIntegration__factory.connect(USDT.integrator, governor.signer)
+        aaveZusdIntegration = PAaveIntegration__factory.connect(USDT.integrator, governor.signer)
         aaveMbtcIntegration = PAaveIntegration__factory.connect(WBTC.integrator, governor.signer)
         aaveGusdIntegration = PAaveIntegration__factory.connect(GUSD.integrator, governor.signer)
         aaveBusdIntegration = PAaveIntegration__factory.connect(BUSD.integrator, governor.signer)
@@ -125,7 +125,7 @@ context("Unliquidator forked network tests", async () => {
             expect(await compToken.allowance(USDC.integrator, unliquidator.address)).to.eq(0)
 
             // Approve tx
-            await aaveMusdIntegration.approveRewardToken()
+            await aaveZusdIntegration.approveRewardToken()
             await aaveMbtcIntegration.approveRewardToken()
             await aaveGusdIntegration.approveRewardToken()
             await aaveBusdIntegration.approveRewardToken()

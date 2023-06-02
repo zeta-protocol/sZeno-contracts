@@ -12,7 +12,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title   PLiquidator
- * @author  mStable
+ * @author  xZeno
  * @notice  The Liquidator allows rewards to be swapped for another token and sent
  *          to SavingsManager for distribution
  * @dev     VERSION: 1.0
@@ -23,9 +23,9 @@ contract PLiquidator is IPLiquidator, ImmutableModule {
 
     event LiquidationModified(address indexed integration);
     event LiquidationEnded(address indexed integration);
-    event Liquidated(address indexed sellToken, address mUSD, uint256 mUSDAmount, address buyToken);
+    event Liquidated(address indexed sellToken, address zUSD, uint256 zUSDAmount, address buyToken);
 
-    address public immutable mUSD;
+    address public immutable zUSD;
     IUniswapV2Router02 public immutable quickSwap;
 
     mapping(address => PLiquidation) public liquidations;
@@ -41,12 +41,12 @@ contract PLiquidator is IPLiquidator, ImmutableModule {
     constructor(
         address _nexus,
         address _quickswapRouter,
-        address _mUSD
+        address _zUSD
     ) ImmutableModule(_nexus) {
         require(_quickswapRouter != address(0), "Invalid quickSwap address");
         quickSwap = IUniswapV2Router02(_quickswapRouter);
-        require(_mUSD != address(0), "Invalid mUSD address");
-        mUSD = _mUSD;
+        require(_zUSD != address(0), "Invalid zUSD address");
+        zUSD = _zUSD;
     }
 
     /***************************************
@@ -161,7 +161,7 @@ contract PLiquidator is IPLiquidator, ImmutableModule {
     /**
      * @dev Triggers a liquidation, flow (once per week):
      *    - Sells $COMP for $USDC (or other) on Uniswap (up to trancheAmount)
-     *    - Mint mUSD from USDC
+     *    - Mint zUSD from USDC
      *    - Send to SavingsManager
      * @param _integration Integration for which to trigger liquidation
      */
@@ -211,26 +211,26 @@ contract PLiquidator is IPLiquidator, ImmutableModule {
             block.timestamp + 1800
         );
 
-        // 3.3. Mint via mUSD
-        uint256 minted = _mint(bAsset, mUSD);
+        // 3.3. Mint via zUSD
+        uint256 minted = _mint(bAsset, zUSD);
 
         // 4.0. Send to SavingsManager
         address savings = _savingsManager();
-        IERC20(mUSD).safeApprove(savings, 0);
-        IERC20(mUSD).safeApprove(savings, minted);
-        ISavingsManager(savings).depositLiquidation(mUSD, minted);
+        IERC20(zUSD).safeApprove(savings, 0);
+        IERC20(zUSD).safeApprove(savings, minted);
+        ISavingsManager(savings).depositLiquidation(zUSD, minted);
 
-        emit Liquidated(sellToken, mUSD, minted, bAsset);
+        emit Liquidated(sellToken, zUSD, minted, bAsset);
     }
 
-    function _mint(address _bAsset, address _mUSD) internal returns (uint256 minted) {
+    function _mint(address _bAsset, address _zUSD) internal returns (uint256 minted) {
         uint256 bAssetBal = IERC20(_bAsset).balanceOf(address(this));
-        IERC20(_bAsset).safeApprove(_mUSD, 0);
-        IERC20(_bAsset).safeApprove(_mUSD, bAssetBal);
+        IERC20(_bAsset).safeApprove(_zUSD, 0);
+        IERC20(_bAsset).safeApprove(_zUSD, bAssetBal);
 
         uint256 bAssetDec = IBasicToken(_bAsset).decimals();
         // e.g. 100e6 * 95e16 / 1e6 = 100e18
         uint256 minOut = (bAssetBal * 90e16) / (10**bAssetDec);
-        minted = IMasset(_mUSD).mint(_bAsset, bAssetBal, minOut, address(this));
+        minted = IMasset(_zUSD).mint(_bAsset, bAssetBal, minOut, address(this));
     }
 }

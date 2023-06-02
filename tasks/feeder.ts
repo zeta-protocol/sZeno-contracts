@@ -30,7 +30,7 @@ import {
     outputFees,
     getCollectedInterest,
 } from "./utils/snap-utils"
-import { Chain, PFRAX, PmUSD, Token, tokens } from "./utils/tokens"
+import { Chain, PFRAX, PzUSD, Token, tokens } from "./utils/tokens"
 import { btcFormatter, QuantityFormatter, usdFormatter } from "./utils/quantity-formatters"
 import { getSwapRates } from "./utils/rates-utils"
 import { getSigner } from "./utils/signerFactory"
@@ -197,7 +197,7 @@ task("feeder-rates", "Feeder rate comparison to Curve")
         const mAsset = tokens.find((t) => t.symbol === fAsset.parent)
         const fpAssets = [mAsset, fAsset]
 
-        // Get the bAssets for the main pool. eg bAssets in mUSD or mBTC
+        // Get the bAssets for the main pool. eg bAssets in zUSD or mBTC
         // These are the assets that are not feeder pools and parent matches the fAsset's parent
         const mpAssets = tokens.filter((t) => t.parent === fAsset.parent && !t.feederPool)
 
@@ -217,7 +217,7 @@ task("frax-post-deploy", "Mint FRAX Feeder Pool")
 
         const frax = ERC20__factory.connect(PFRAX.address, signer)
         const fraxFp = FeederPool__factory.connect(PFRAX.feederPool, signer)
-        const musd = await IERC20__factory.connect(PmUSD.address, signer)
+        const zusd = await IERC20__factory.connect(PzUSD.address, signer)
 
         const approveAmount = simpleToExactAmount(100)
         const bAssetAmount = simpleToExactAmount(10)
@@ -226,10 +226,10 @@ task("frax-post-deploy", "Mint FRAX Feeder Pool")
         let tx = await frax.approve(PFRAX.feederPool, approveAmount)
         await logTxDetails(tx, "approve FRAX")
 
-        tx = await musd.approve(PFRAX.feederPool, approveAmount)
-        await logTxDetails(tx, "approve mUSD")
+        tx = await zusd.approve(PFRAX.feederPool, approveAmount)
+        await logTxDetails(tx, "approve zUSD")
 
-        tx = await fraxFp.mintMulti([PFRAX.address, PmUSD.address], [bAssetAmount, bAssetAmount], minAmount, await signer.getAddress())
+        tx = await fraxFp.mintMulti([PFRAX.address, PzUSD.address], [bAssetAmount, bAssetAmount], minAmount, await signer.getAddress())
         await logTxDetails(tx, "mint FRAX FP")
     })
 
@@ -347,8 +347,8 @@ task("feeder-redeem", "Redeem some Feeder Pool tokens")
     })
 
 task("feeder-swap", "Swap some Feeder Pool tokens")
-    .addParam("input", "Token symbol of the input token to the swap. eg mUSD, mBTC, HBTC, GUSD, FRAX or alUSD", undefined, types.string)
-    .addParam("output", "Token symbol of the output token from the swap. eg mUSD, mBTC, HBTC, GUSD, FRAX or alUSD", undefined, types.string)
+    .addParam("input", "Token symbol of the input token to the swap. eg zUSD, mBTC, HBTC, GUSD, FRAX or alUSD", undefined, types.string)
+    .addParam("output", "Token symbol of the output token from the swap. eg zUSD, mBTC, HBTC, GUSD, FRAX or alUSD", undefined, types.string)
     .addParam("amount", "Amount of input tokens to swap", undefined, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {

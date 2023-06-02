@@ -5,7 +5,7 @@ import { ethers } from "hardhat"
 import { assertBasketIsHealthy, assertBNClosePercent, assertBNSlightlyGTPercent } from "@utils/assertions"
 import { applyRatio, BN, simpleToExactAmount } from "@utils/math"
 import { MassetDetails, MassetMachine, StandardAccounts } from "@utils/machines"
-import { BassetStatus } from "@utils/mstable-objects"
+import { BassetStatus } from "@utils/xzeno-objects"
 import { ZERO_ADDRESS } from "@utils/constants"
 import { Masset, MockERC20 } from "types/generated"
 import { Account } from "types"
@@ -223,12 +223,12 @@ describe("Masset - Mint", () => {
                 before("reset", async () => {
                     await runSetup()
                 })
-                it("should send mUSD when recipient is a contract", async () => {
+                it("should send zUSD when recipient is a contract", async () => {
                     const { bAssets, managerLib } = details
                     const recipient = managerLib.address
                     await assertBasicMint(details, bAssets[0], 1, 0, recipient)
                 })
-                it("should send mUSD when the recipient is an EOA", async () => {
+                it("should send zUSD when the recipient is an EOA", async () => {
                     const { bAssets } = details
                     const recipient = sa.dummy1.address
                     await assertBasicMint(details, bAssets[1], 1, 0, recipient)
@@ -496,12 +496,12 @@ describe("Masset - Mint", () => {
                     expect(compBefore.bAssets[1].vaultBalance).eq(compAfter.bAssets[1].vaultBalance)
                     expect(compBefore.bAssets[3].vaultBalance).eq(compAfter.bAssets[3].vaultBalance)
                 })
-                it("should send mUSD when recipient is a contract", async () => {
+                it("should send zUSD when recipient is a contract", async () => {
                     const { bAssets, managerLib } = details
                     const recipient = managerLib.address
                     await assertMintMulti(details, [1], [bAssets[0]], recipient)
                 })
-                it("should send mUSD when the recipient is an EOA", async () => {
+                it("should send zUSD when the recipient is an EOA", async () => {
                     const { bAssets } = details
                     const recipient = sa.dummy1
                     await assertMintMulti(details, [1], [bAssets[0]], recipient.address)
@@ -800,19 +800,19 @@ describe("Masset - Mint", () => {
                         1,
                         sa.default.signer,
                     )
-                    const mUsdBalBefore = await mAsset.balanceOf(sa.default.address)
+                    const ZusdBalBefore = await mAsset.balanceOf(sa.default.address)
                     await mAsset.mintMulti(
                         [bAssets[0].address, bAssets[1].address, bAssets[2].address, bAssets[3].address],
                         approvals2,
                         0,
                         sa.default.address,
                     )
-                    const mUsdBalAfter = await mAsset.balanceOf(sa.default.address)
+                    const ZusdBalAfter = await mAsset.balanceOf(sa.default.address)
                     assertBNClosePercent(
-                        mUsdBalAfter,
-                        mUsdBalBefore.add(simpleToExactAmount(4, 18)),
+                        ZusdBalAfter,
+                        ZusdBalBefore.add(simpleToExactAmount(4, 18)),
                         "0.0001",
-                        "Must mint 4 full units of mUSD",
+                        "Must mint 4 full units of zUSD",
                     )
                 })
                 it("should mint using 2 bAssets", async () => {

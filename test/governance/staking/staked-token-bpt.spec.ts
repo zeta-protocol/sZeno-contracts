@@ -59,24 +59,24 @@ describe("Staked Token BPT", () => {
 
     console.log(`Staked contract size ${StakedTokenBPT__factory.bytecode.length / 2} bytes`)
 
-    const deployBPT = async (mockMTA: MockERC20): Promise<BPTDeployment> => {
+    const deployBPT = async (mockZENO: MockERC20): Promise<BPTDeployment> => {
         const token2 = await new MockERC20__factory(sa.default.signer).deploy("Test Token 2", "TST2", 18, sa.default.address, 10000000)
         const mockBal = await new MockERC20__factory(sa.default.signer).deploy("Mock BAL", "mkBAL", 18, sa.default.address, 10000000)
         const bptLocal = await new MockBPT__factory(sa.default.signer).deploy("Balance Pool Token", "mBPT")
         const mockBptGauge = await new MockBPTGauge__factory(sa.default.signer).deploy(bptLocal.address)
         const vault = await new MockBVault__factory(sa.default.signer).deploy()
-        await mockMTA.approve(vault.address, simpleToExactAmount(100000))
+        await mockZENO.approve(vault.address, simpleToExactAmount(100000))
         await token2.approve(vault.address, simpleToExactAmount(100000))
         await vault.addPool(
             bptLocal.address,
-            [mockMTA.address, token2.address],
+            [mockZENO.address, token2.address],
             [simpleToExactAmount(3.28), simpleToExactAmount(0.0002693)],
         )
         return {
             vault,
             bpt: bptLocal,
             bal: mockBal,
-            underlying: [mockMTA, token2],
+            underlying: [mockZENO, token2],
             gauge: mockBptGauge,
         }
     }
@@ -330,7 +330,7 @@ describe("Staked Token BPT", () => {
         const stakeAmount = simpleToExactAmount(100)
         const expectedFees = stakeAmount.sub(stakeAmount.mul(1000).div(1075))
         let data: UserStakingData
-        let expectedMTA: BN
+        let expectedZENO: BN
         before(async () => {
             ;({ stakedToken, questManager, bpt } = await redeployStakedToken())
             await bpt.bpt.approve(stakedToken.address, stakeAmount)
@@ -339,17 +339,17 @@ describe("Staked Token BPT", () => {
             await increaseTime(ONE_WEEK.add(1))
             await stakedToken.withdraw(stakeAmount, sa.default.address, true, true)
             data = await snapshotUserStakingData()
-            expectedMTA = expectedFees.mul(data.balData.priceCoefficient).div(12000)
+            expectedZENO = expectedFees.mul(data.balData.priceCoefficient).div(12000)
         })
         it("should collect 7.5% as fees", async () => {
-            expect(await stakedToken.pendingAdditionalReward(), "MTA rewards").eq(0)
+            expect(await stakedToken.pendingAdditionalReward(), "ZENO rewards").eq(0)
             expect(data.balData.pendingBPTFees, "mBPT fees").eq(expectedFees)
             expect(await bpt.bpt.balanceOf(bpt.gauge.address), "gauge's mBPT bal").to.eq(expectedFees)
             expect(await bpt.gauge.balanceOf(stakedToken.address), "stkBPT's gauge bal").to.eq(expectedFees)
         })
-        it("should convert fees back into $MTA", async () => {
+        it("should convert fees back into $ZENO", async () => {
             const bptBalBefore = await bpt.bpt.balanceOf(bpt.gauge.address)
-            const mtaBalBefore = await rewardToken.balanceOf(stakedToken.address)
+            const zenoBalBefore = await rewardToken.balanceOf(stakedToken.address)
             const tx = stakedToken.convertFees()
             // it should emit the event
             await expect(tx).to.emit(stakedToken, "FeesConverted")
@@ -357,13 +357,13 @@ describe("Staked Token BPT", () => {
             // should reset the pendingFeesBPT var to 1
             expect(dataAfter.balData.pendingBPTFees).eq(1)
             // should add the new fees to headlessstakingrewards
-            expect(await stakedToken.pendingAdditionalReward()).gt(expectedMTA)
+            expect(await stakedToken.pendingAdditionalReward()).gt(expectedZENO)
 
-            // should burn bpt and receive mta
+            // should burn bpt and receive zeno
             const bptBalAfter = await bpt.bpt.balanceOf(bpt.gauge.address)
-            const mtaBalAfter = await rewardToken.balanceOf(stakedToken.address)
-            expect(mtaBalAfter.sub(mtaBalBefore)).gt(expectedMTA)
-            expect(mtaBalAfter).eq(await stakedToken.pendingAdditionalReward())
+            const zenoBalAfter = await rewardToken.balanceOf(stakedToken.address)
+            expect(zenoBalAfter.sub(zenoBalBefore)).gt(expectedZENO)
+            expect(zenoBalAfter).eq(await stakedToken.pendingAdditionalReward())
             expect(bptBalBefore.sub(bptBalAfter)).eq(expectedFees.sub(1))
         })
         it("should add the correct amount of fees, and deposit to the vendor when notifying", async () => {

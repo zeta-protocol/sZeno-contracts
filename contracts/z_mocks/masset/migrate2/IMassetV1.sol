@@ -2,7 +2,7 @@
 pragma solidity 0.8.6;
 
 /**
- * @title mUSD interface before upgrade to V3
+ * @title zUSD interface before upgrade to V3
  */
 interface IMassetV1 {
     /** @dev Calc interest */

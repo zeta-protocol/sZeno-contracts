@@ -5,7 +5,7 @@ import { ZERO_ADDRESS } from "./constants"
 
 /**
  * @notice Relevant object interfaces and helper methods to initialise mock instances of those interfaces
- * This will also qualify for mStable-Js lib at some stage
+ * This will also qualify for xZeno-Js lib at some stage
  */
 
 export interface Basket {

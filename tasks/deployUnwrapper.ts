@@ -13,14 +13,14 @@ import { verifyEtherscan } from "./utils/etherscan"
 const approveUnwrapperTokens = async (chain: Chain, unwrapper: Contract, governor: Signer) => {
     // Mainnet and Polygon
     const fraxFeederPool = resolveAddress("FRAX", chain, "feederPool")
-    const musdAddress = resolveAddress("mUSD", chain)
+    const zusdAddress = resolveAddress("zUSD", chain)
 
     let routers = []
     let tokens = []
 
     if (chain === Chain.polygon) {
         routers = [fraxFeederPool]
-        tokens = [musdAddress]
+        tokens = [zusdAddress]
     } else {
         const alusdFeederPool = resolveAddress("alUSD", chain, "feederPool")
         const gusdFeederPool = resolveAddress("GUSD", chain, "feederPool")
@@ -33,7 +33,7 @@ const approveUnwrapperTokens = async (chain: Chain, unwrapper: Contract, governo
         const mbtcAddress = resolveAddress("mBTC", chain)
 
         routers = [
-            musdAddress,
+            zusdAddress,
             alusdFeederPool,
             gusdFeederPool,
             busdFeederPool,
@@ -43,7 +43,7 @@ const approveUnwrapperTokens = async (chain: Chain, unwrapper: Contract, governo
             hbtcFeederPool,
             tbtcv2FeederPool,
         ]
-        tokens = [musdAddress, musdAddress, musdAddress, musdAddress, musdAddress, musdAddress, mbtcAddress, mbtcAddress, mbtcAddress]
+        tokens = [zusdAddress, zusdAddress, zusdAddress, zusdAddress, zusdAddress, zusdAddress, mbtcAddress, mbtcAddress, mbtcAddress]
     }
     // approve tokens for router
     await unwrapper.connect(governor).approve(routers, tokens)

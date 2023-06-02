@@ -21,7 +21,7 @@ describe("BasicRewardsForwarder", () => {
 
     /*
         Test Data
-        mAssets: mUSD and mBTC with 18 decimals
+        mAssets: zUSD and mBTC with 18 decimals
      */
     const setup = async (): Promise<void> => {
         // Deploy mock Nexus

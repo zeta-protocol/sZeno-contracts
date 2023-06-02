@@ -257,7 +257,7 @@ describe("Feeder Validator - One basket one test", () => {
                 beforeEach(async () => {
                     feederPool = (await feederFactory.deploy(DEAD_ADDRESS, bAssets[0].address)) as FeederPool
                     await feederPool.initialize(
-                        "mStable mBTC/bBTC Feeder",
+                        "xZeno mBTC/bBTC Feeder",
                         "bBTC fPool",
                         {
                             addr: bAssets[0].address,

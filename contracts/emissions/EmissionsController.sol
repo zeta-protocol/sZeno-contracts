@@ -68,8 +68,8 @@ struct EpochHistory {
 
 /**
  * @title  EmissionsController
- * @author mStable
- * @notice Allows governors to vote on the weekly distribution of $MTA. Rewards are distributed between
+ * @author xZeno
+ * @notice Allows governors to vote on the weekly distribution of $ZENO. Rewards are distributed between
  *         `n` "Dials" proportionately to the % of votes the dial receives. Vote weight derives from multiple
  *         whitelisted "Staking contracts". Voters can distribute their vote across (0 <= n <= 16 dials), at 0.5%
  *         increments in voting weight. Once their preferences are cast, each time their voting weight changes
@@ -91,7 +91,7 @@ contract EmissionsController is IGovernanceHook, Initializable, ImmutableModule 
     int256 immutable D;
     uint128 immutable EPOCHS;
 
-    /// @notice Address of rewards token. ie MTA token
+    /// @notice Address of rewards token. ie ZENO token
     IERC20 public immutable REWARD_TOKEN;
 
     /// @notice Epoch history in storage
@@ -135,9 +135,9 @@ contract EmissionsController is IGovernanceHook, Initializable, ImmutableModule 
     ****************************************/
 
     /**
-     * @notice Recipient is a module, governed by mStable governance.
+     * @notice Recipient is a module, governed by xZeno governance.
      * @param _nexus        System Nexus that resolves module addresses.
-     * @param _rewardToken  Token that rewards are distributed in. eg MTA.
+     * @param _rewardToken  Token that rewards are distributed in. eg ZENO.
      * @param _config       Arguments for polynomial top level emission function (raw, not scaled).
      */
     constructor(
@@ -209,7 +209,7 @@ contract EmissionsController is IGovernanceHook, Initializable, ImmutableModule 
      *          (f(x)=A*(x/div)^3+B*(x/div)^2+C*(x/div)+D)
      * @dev    Values are effectively scaled to 1e12 to avoid integer overflow on pow.
      * @param epoch              The number of weeks since 1 Jan 1970.
-     * @return emissionForEpoch  Units of MTA to be distributed at this epoch.
+     * @return emissionForEpoch  Units of ZENO to be distributed at this epoch.
      */
     function topLineEmission(uint32 epoch) public view returns (uint256 emissionForEpoch) {
         require(

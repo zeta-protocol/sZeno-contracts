@@ -18,10 +18,10 @@ import { Root } from "../shared/Root.sol";
  *             -> https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/VotingEscrow.vy
  *         osolmaz - Research & Reward distributions
  *         alsco77 - Solidity implementation
- * @notice Lockup MTA, receive vMTA (voting weight that decays over time), and earn
+ * @notice Lockup ZENO, receive vZENO (voting weight that decays over time), and earn
  *         rewards based on staticWeight
  * @dev    Supports:
- *            1) Tracking MTA Locked up (LockedBalance)
+ *            1) Tracking ZENO Locked up (LockedBalance)
  *            2) Pull Based Reward allocations based on Lockup (Static Balance)
  *            3) Decaying voting weight lookup through CheckpointedERC20 (balanceOf)
  *            4) Ejecting fully decayed participants from reward allocation (eject)

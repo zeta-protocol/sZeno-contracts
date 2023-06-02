@@ -1,6 +1,6 @@
 import axios from "axios"
 import { BN, simpleToExactAmount } from "@utils/math"
-import { PMTA } from "./tokens"
+import { PZENO } from "./tokens"
 import { logger } from "./deploy-utils"
 
 const log = logger("emission", "disperse-bal")
@@ -35,7 +35,7 @@ interface BalancerPolygonReport {
  * @return {Promise}  -  {Promise<Array<{ address: string, amount: string }>>}
  */
 export const fetchBalancerReport = async (report: number): Promise<Array<{ address: string; amount: string }>> => {
-    const url = `${REPORT_URL}/${report}/__polygon_${PMTA.address}.json`
+    const url = `${REPORT_URL}/${report}/__polygon_${PZENO.address}.json`
 
     log(`fetches balancer-labs report ${report}`)
     log(`downloads report from url :${url}`)
@@ -47,18 +47,18 @@ export const fetchBalancerReport = async (report: number): Promise<Array<{ addre
 }
 
 /**
- * Gets the rewards values to be disperse via DisperserForwarder of a given report, the values are scaled to match the total MTA balance.
- * @dev The Polygon MTA rewards for  will be in the __polygon_0xF501dd45a1198C2E1b5aEF5314A68B9006D842E0.json file under the report folder with a week number.
+ * Gets the rewards values to be disperse via DisperserForwarder of a given report, the values are scaled to match the total ZENO balance.
+ * @dev The Polygon ZENO rewards for  will be in the __polygon_0xF501dd45a1198C2E1b5aEF5314A68B9006D842E0.json file under the report folder with a week number.
  * eg https://github.com/balancer-labs/bal-mining-scripts/blob/master/reports/79/__polygon_0xF501dd45a1198C2E1b5aEF5314A68B9006D842E0.json
- *  The amounts in this file assumes 15k MTA is being distributed but this will not be the case with the emissions controller.
- *  Need to proportion the MTA balance in the DisperseForwarder contract to the recipients based off the bal-mining-script report.
+ *  The amounts in this file assumes 15k ZENO is being distributed but this will not be the case with the emissions controller.
+ *  Need to proportion the ZENO balance in the DisperseForwarder contract to the recipients based off the bal-mining-script report.
  *
  * @param {number} report - Report number from the bal-mining-script repo. eg 79
  *  https://github.com/balancer-labs/bal-mining-scripts/blob/master/reports/WEEK
- * @param {BN} mtaBalance - The total amount of mta to disperse, values on the report are scaled to match the total amount of MTA available
+ * @param {BN} zenoBalance - The total amount of zeno to disperse, values on the report are scaled to match the total amount of ZENO available
  * @return {Promise}  {Promise<BalancerPolygonReport>}
  */
-export const getBalancerPolygonReport = async (report: number, mtaBalance: BN): Promise<BalancerPolygonReport> => {
+export const getBalancerPolygonReport = async (report: number, zenoBalance: BN): Promise<BalancerPolygonReport> => {
     const disperseRecipients = []
     const disperseValues = []
     const balancerRewards = await fetchBalancerReport(report)
@@ -67,12 +67,12 @@ export const getBalancerPolygonReport = async (report: number, mtaBalance: BN): 
     const balancerTotal = balancerRewards.reduce((sum, reward) => sum.add(simpleToExactAmount(reward.amount, 18)), BN.from(0))
     balancerRewards.forEach((reward) => {
         // calculate the equivalent to disperse keeping same ratio of the total reward amount
-        const disperseRewardAmount = simpleToExactAmount(reward.amount, 18).mul(mtaBalance).div(balancerTotal)
+        const disperseRewardAmount = simpleToExactAmount(reward.amount, 18).mul(zenoBalance).div(balancerTotal)
         disperseRecipients.push(reward.address)
         disperseValues.push(disperseRewardAmount)
         disperseTotal = disperseTotal.add(disperseRewardAmount)
     })
-    log(`total mta token amount to disperser[${disperseTotal.toString()}], total recipients count [${disperseRecipients.length}]`)
+    log(`total zeno token amount to disperser[${disperseTotal.toString()}], total recipients count [${disperseRecipients.length}]`)
     return {
         disperser: { total: disperseTotal, recipients: disperseRecipients, values: disperseValues },
         balancer: { total: balancerTotal, rewards: balancerRewards },

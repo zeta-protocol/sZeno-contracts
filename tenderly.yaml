@@ -13,8 +13,8 @@ exports:
             istanbul_block: 0
             petersburg_block: 0
         forked_network: ""
-        project_slug: alsco77/mstable
+        project_slug: alsco77/xzeno
         protocol: ""
         rpc_address: 127.0.0.1:8545
-project_slug: mstable
+project_slug: xzeno
 provider: Hardhat

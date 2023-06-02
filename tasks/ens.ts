@@ -7,7 +7,7 @@ import { logTxDetails } from "./utils/deploy-utils"
 import { getChain, getChainAddress } from "./utils/networkAddressFactory"
 
 subtask("ens-commit", "Registers a commitment to claiming an ENS domain")
-    .addParam("domain", "Domain name without the .eth extension.", "mstable", types.string)
+    .addParam("domain", "Domain name without the .eth extension.", "xzeno", types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
         const chain = getChain(hre)
@@ -33,7 +33,7 @@ task("ens-commit").setAction(async (_, __, runSuper) => {
 })
 
 subtask("ens-register", "Registers an ENS domain")
-    .addParam("domain", "Domain name without the .eth extension.", "mstable", types.string)
+    .addParam("domain", "Domain name without the .eth extension.", "xzeno", types.string)
     .addParam("secret", "Secret from the previous commit transaction", undefined, types.string)
     .addOptionalParam("years", "Number of years to register the domain.", 1, types.int)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)

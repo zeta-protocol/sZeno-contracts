@@ -7,7 +7,7 @@ import { logTxDetails } from "./utils/deploy-utils"
 import { getChain, resolveAddress, resolveToken } from "./utils/networkAddressFactory"
 
 subtask("masset-redeem", "Redeems a number of Save credits from a savings contract")
-    .addParam("masset", "Symbol of the mAsset. eg mUSD or mBTC", undefined, types.string)
+    .addParam("masset", "Symbol of the mAsset. eg zUSD or mBTC", undefined, types.string)
     .addParam("basset", "Symbol of the bAsset. eg USDC, DAI, USDT or DAI", undefined, types.string)
     .addParam("amount", "Amount of mAssets to be redeemed", undefined, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
@@ -38,7 +38,7 @@ task("masset-redeem").setAction(async (_, __, runSuper) => {
 })
 
 subtask("masset-swap", "Redeems a number of Save credits from a savings contract")
-    .addParam("masset", "Symbol of the mAsset. eg mUSD or mBTC", undefined, types.string)
+    .addParam("masset", "Symbol of the mAsset. eg zUSD or mBTC", undefined, types.string)
     .addParam("from", "Symbol of the bAsset. eg USDC, DAI, USDT or DAI", undefined, types.string)
     .addParam("to", "Symbol of the bAsset. eg USDC, DAI, USDT or DAI", undefined, types.string)
     .addParam("amount", "Amount of mAssets to be redeemed", undefined, types.float)

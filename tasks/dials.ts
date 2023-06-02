@@ -2,8 +2,8 @@ import { BN, sum, percentToWeight, simpleToExactAmount } from "@utils/math"
 import { task, types } from "hardhat/config"
 import "ts-node/register"
 import "tsconfig-paths/register"
-import { EmissionsController__factory, IERC20__factory, StakedTokenMTA__factory } from "types/generated"
-import { MTA, usdFormatter } from "./utils"
+import { EmissionsController__factory, IERC20__factory, StakedTokenZENO__factory } from "types/generated"
+import { ZENO, usdFormatter } from "./utils"
 import { getChain, getChainAddress, resolveAddress } from "./utils/networkAddressFactory"
 import { getSigner } from "./utils/signerFactory"
 import { getBlock } from "./utils/snap-utils"
@@ -91,9 +91,9 @@ const calculateRewards = (latestDialVotes: Array<BN>, dialsData: Array<DialData>
 }
 
 const dialNames = [
-    "MTA Staking Contract",
+    "ZENO Staking Contract",
     "BPT Staking Contract",
-    "mUSD Vault",
+    "zUSD Vault",
     "mBTC Vault",
     "GUSD FP Vault",
     "BUSD FP Vault",
@@ -102,7 +102,7 @@ const dialNames = [
     "FEI FP Vault",
     "HBTC FP Vault",
     "tBTCv2 FP Vault",
-    "Polygon mUSD Vault",
+    "Polygon zUSD Vault",
     "Polygon FRAX Farm",
     "Polygon Balancer Pool",
     "Treasury DAO",
@@ -146,7 +146,7 @@ const outputDialsSnap = (dialsSnap: DialsSnap) => {
                 dialsSnap.totalRewards,
             )}`,
         )
-        console.log("MTA in Emissions Controller", usdFormatter(dialsSnap.emissionsControllerBalance))
+        console.log("ZENO in Emissions Controller", usdFormatter(dialsSnap.emissionsControllerBalance))
     } else {
         console.log(`ID, Name, Percent, Distributed, Donated, Total`)
         console.log(dialsDetailsToCsv(dialsSnap.dialsDetails))
@@ -157,13 +157,13 @@ const outputDialsSnap = (dialsSnap: DialsSnap) => {
  *
  *  1.- For each dial in the Emissions Controller
  *      1.1- Get the weighted votes as a percentage of the total weighted votes across all dials -  from voteHistory
- *      1.2- Calculate distributed MTA rewards for the next run factoring in disabled dials and reward caps for the staking contracts - topLineEmission
- *      1.3- Get the current donated MTA rewards - balance  from DialData
+ *      1.2- Calculate distributed ZENO rewards for the next run factoring in disabled dials and reward caps for the staking contracts - topLineEmission
+ *      1.3- Get the current donated ZENO rewards - balance  from DialData
  *      1.4- Total rewards = distributed + donated rewards
- *   2.- Total MTA rewards to be distributed across all dials - basically the sum
- *   3.- Total MTA rewards currently donated across all dials - the sum of balance of each dial
- *   4.- Total MTA rewards across all dials = distributed + donated
- *   5.- Get MTA balance in the Emissions Controller  - // (REWARD_TOKEN.balanceOf(emissionsController))
+ *   2.- Total ZENO rewards to be distributed across all dials - basically the sum
+ *   3.- Total ZENO rewards currently donated across all dials - the sum of balance of each dial
+ *   4.- Total ZENO rewards across all dials = distributed + donated
+ *   5.- Get ZENO balance in the Emissions Controller  - // (REWARD_TOKEN.balanceOf(emissionsController))
  */
 task("dials-snap", "Snaps Emissions Controller's dials")
     .addOptionalParam("csv", "Output in comma separated values", false, types.boolean)
@@ -176,7 +176,7 @@ task("dials-snap", "Snaps Emissions Controller's dials")
 
         const emissionsControllerAddress = getChainAddress("EmissionsController", chain)
         const emissionsController = EmissionsController__factory.connect(emissionsControllerAddress, signer)
-        const mtaToken = IERC20__factory.connect(MTA.address, signer)
+        const zenoToken = IERC20__factory.connect(ZENO.address, signer)
 
         // Get current epoch  and simulate next epoch by adding one week
         const [, lastEpoch] = await emissionsController.epochs({
@@ -186,16 +186,16 @@ task("dials-snap", "Snaps Emissions Controller's dials")
 
         // 1.- For each dial in the Emissions Controller store its details
         const dialsDetails: Array<DialDetails> = []
-        // 2.- Total MTA rewards to be distributed across all dials - basically the sum
+        // 2.- Total ZENO rewards to be distributed across all dials - basically the sum
         const totalDistributed = await emissionsController.topLineEmission(nextEpoch, {
             blockTag: block.blockNumber,
         })
-        // 3.- Total MTA rewards currently donated across all dials - the sum of balance of each dial
+        // 3.- Total ZENO rewards currently donated across all dials - the sum of balance of each dial
         let totalDonated = BN.from(0)
-        // 4.- Total MTA rewards across all dials = distributed + donated
+        // 4.- Total ZENO rewards across all dials = distributed + donated
         let totalRewards = BN.from(0)
-        // 5.- Get MTA balance in the Emissions Controller
-        const emissionsControllerBalance = await mtaToken.balanceOf(emissionsController.address, {
+        // 5.- Get ZENO balance in the Emissions Controller
+        const emissionsControllerBalance = await zenoToken.balanceOf(emissionsController.address, {
             blockTag: block.blockNumber,
         })
 
@@ -218,7 +218,7 @@ task("dials-snap", "Snaps Emissions Controller's dials")
             .map((_dial, i) => latestDialVotes[i])
             .reduce(sum)
 
-        // Calculate distributed MTA rewards for the next run factoring in disabled dials and reward caps for the staking contracts
+        // Calculate distributed ZENO rewards for the next run factoring in disabled dials and reward caps for the staking contracts
         const calculatedRewards = calculateRewards(latestDialVotes, dialsData, totalDistributed)
 
         latestDialVotes.forEach(async (vote, dialId) => {
@@ -227,9 +227,9 @@ task("dials-snap", "Snaps Emissions Controller's dials")
             const adjustedVote = BN.from(dialData.disabled ? 0 : vote)
             // 1.1- Get the weighted votes as a percentage of the total weighted votes across all dials (adjust if they are disabled)
             const voteWeight = percentToWeight(totalDialVotes.eq(0) ? BN.from(0) : adjustedVote.mul(10000).div(totalDialVotes))
-            // 1.2- Calculate distributed MTA rewards for the next run factoring in disabled dials and reward caps
+            // 1.2- Calculate distributed ZENO rewards for the next run factoring in disabled dials and reward caps
             const distributed = calculatedRewards.distributionAmounts[dialId]
-            // 1.3- Get the current donated MTA rewards:  from DialData.balance
+            // 1.3- Get the current donated ZENO rewards:  from DialData.balance
             const donated = dialData.balance
             // 1.4- Total rewards = distributed + donated rewards
             const rewards = donated.add(distributed)
@@ -259,13 +259,13 @@ task("dials-dust-votes", "Gives a tiny amount of voting power to each dial")
         const signer = await getSigner(hre)
         const chain = getChain(hre)
 
-        const stakedMTA = StakedTokenMTA__factory.connect(resolveAddress("StakedTokenMTA", chain), signer)
-        const mta = IERC20__factory.connect(MTA.address, signer)
+        const stakedZENO = StakedTokenZENO__factory.connect(resolveAddress("StakedTokenZENO", chain), signer)
+        const zeno = IERC20__factory.connect(ZENO.address, signer)
         const emissionsController = EmissionsController__factory.connect(resolveAddress("EmissionsController", chain), signer)
 
         const amount = simpleToExactAmount(1)
-        await mta.approve(stakedMTA.address, amount)
-        await stakedMTA["stake(uint256)"](amount)
+        await zeno.approve(stakedZENO.address, amount)
+        await stakedZENO["stake(uint256)"](amount)
         await emissionsController.setVoterDialWeights([
             {
                 dialId: "3",

@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-*Note: mStable has an active [bug bounty](https://docs.mstable.org/protocol/security/mstable-bug-bounty). If the bug affects running code then you should follow the responsible disclosure guidelines and submit it directly to the team in order to be eligible*
+*Note: xZeno has an active [bug bounty](https://docs.xzeno.org/protocol/security/xzeno-bug-bounty). If the bug affects running code then you should follow the responsible disclosure guidelines and submit it directly to the team in order to be eligible*
 
 **Describe the bug**
 A clear and concise description of what the bug is.

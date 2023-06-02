@@ -15,7 +15,7 @@ import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/I
 
 /**
  * @title  HeadlessStakingRewards
- * @author mStable
+ * @author xZeno
  * @notice Rewards stakers of a given LP token with REWARDS_TOKEN, on a pro-rata basis
  * @dev Forked from `StakingRewards.sol`
  *      Changes:
@@ -30,7 +30,7 @@ abstract contract HeadlessStakingRewards is
     using SafeERC20 for IERC20;
     using StableMath for uint256;
 
-    /// @notice token the rewards are distributed in. eg MTA
+    /// @notice token the rewards are distributed in. eg ZENO
     IERC20 public immutable REWARDS_TOKEN;
 
     /// @notice length of each staking period in seconds. 7 days = 604,800; 3 months = 7,862,400
@@ -63,8 +63,8 @@ abstract contract HeadlessStakingRewards is
     event RewardPaid(address indexed user, address indexed to, uint256 reward);
 
     /**
-     * @param _nexus mStable system Nexus address
-     * @param _rewardsToken first token that is being distributed as a reward. eg MTA
+     * @param _nexus xZeno system Nexus address
+     * @param _rewardsToken first token that is being distributed as a reward. eg ZENO
      */
     constructor(address _nexus, address _rewardsToken)
         InitializableRewardsDistributionRecipient(_nexus)
@@ -76,7 +76,7 @@ abstract contract HeadlessStakingRewards is
      * @dev Initialization function for upgradable proxy contract.
      *      This function should be called via Proxy just after contract deployment.
      *      To avoid variable shadowing appended `Arg` after arguments name.
-     * @param _rewardsDistributorArg mStable Reward Distributor contract address
+     * @param _rewardsDistributorArg xZeno Reward Distributor contract address
      */
     function _initialize(address _rewardsDistributorArg) internal virtual override {
         InitializableRewardsDistributionRecipient._initialize(_rewardsDistributorArg);

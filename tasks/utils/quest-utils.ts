@@ -2,7 +2,7 @@ import axios from "axios"
 import { BigNumberish, Signer } from "ethers"
 import { arrayify, solidityKeccak256 } from "ethers/lib/utils"
 
-const questBookUrl = "https://europe-west1-mstable-questbook.cloudfunctions.net/questbook"
+const questBookUrl = "https://europe-west1-xzeno-questbook.cloudfunctions.net/questbook"
 
 export const signUserQuests = async (user: string, questIds: BigNumberish[], questSigner: Signer): Promise<string> => {
     const messageHash = solidityKeccak256(["address", "uint256[]"], [user, questIds])

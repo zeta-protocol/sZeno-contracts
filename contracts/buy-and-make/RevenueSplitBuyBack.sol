@@ -13,8 +13,8 @@ import { IUniswapV3SwapRouter } from "../peripheral/Uniswap/IUniswapV3SwapRouter
 
 /**
  * @title   RevenueSplitBuyBack
- * @author  mStable
- * @notice  Uses governance fees to buy MTA rewards for stakers. Updated Version sends some governance fees to treasury.
+ * @author  xZeno
+ * @notice  Uses governance fees to buy ZENO rewards for stakers. Updated Version sends some governance fees to treasury.
  * @dev     VERSION: 2.0
  *          DATE:    2022-04-17
  */
@@ -37,9 +37,9 @@ contract RevenueSplitBuyBack is IRevenueRecipient, Initializable, ImmutableModul
     /// @notice scale of the `minMasset2BassetPrice` and `minBasset2RewardsPrice` configuration properties.
     uint256 public constant CONFIG_SCALE = 1e18;
 
-    /// @notice address of the rewards token that is being purchased. eg MTA
+    /// @notice address of the rewards token that is being purchased. eg ZENO
     IERC20 public immutable REWARDS_TOKEN;
-    /// @notice address of the Emissions Controller that does the weekly MTA reward emissions based off on-chain voting power.
+    /// @notice address of the Emissions Controller that does the weekly ZENO reward emissions based off on-chain voting power.
     IEmissionsController public immutable EMISSIONS_CONTROLLER;
     /// @notice Uniswap V3 Router address
     IUniswapV3SwapRouter public immutable UNISWAP_ROUTER;
@@ -56,8 +56,8 @@ contract RevenueSplitBuyBack is IRevenueRecipient, Initializable, ImmutableModul
     address public treasury;
 
     /**
-     * @param _nexus mStable system Nexus address
-     * @param _rewardsToken Rewards token address that are purchased. eg MTA
+     * @param _nexus xZeno system Nexus address
+     * @param _rewardsToken Rewards token address that are purchased. eg ZENO
      * @param _uniswapRouter Uniswap V3 Router address
      * @param _emissionsController Emissions Controller address that rewards tokens are donated to.
      */
@@ -91,7 +91,7 @@ contract RevenueSplitBuyBack is IRevenueRecipient, Initializable, ImmutableModul
             _addStakingContract(_stakingDialIds[i]);
         }
 
-        // RevenueBuyBack approves the Emissions Controller to transfer rewards. eg MTA
+        // RevenueBuyBack approves the Emissions Controller to transfer rewards. eg ZENO
         REWARDS_TOKEN.safeApprove(address(EMISSIONS_CONTROLLER), type(uint256).max);
 
         require(_treasury != address(0), "Treasury is zero");
@@ -119,11 +119,11 @@ contract RevenueSplitBuyBack is IRevenueRecipient, Initializable, ImmutableModul
     }
 
     /**
-     * @notice Buys reward tokens, eg MTA, using mAssets like mUSD or mBTC from protocol governance fees.
-     * @param mAssets Addresses of mAssets that are to be sold for rewards. eg mUSD and mBTC.
+     * @notice Buys reward tokens, eg ZENO, using mAssets like zUSD or mBTC from protocol governance fees.
+     * @param mAssets Addresses of mAssets that are to be sold for rewards. eg zUSD and mBTC.
      * @param minBassetsAmounts Minimum amount of bAsset tokens to receive for each redeem of mAssets.
      * The amount uses the decimal places of the bAsset.
-     * Example 1: Redeeming 10,000 mUSD with a min 2% slippage to USDC which has 6 decimal places
+     * Example 1: Redeeming 10,000 zUSD with a min 2% slippage to USDC which has 6 decimal places
      * minBassetsAmounts = 10,000 mAssets * slippage 0.98 * USDC decimals 1e6 =
      * 1e4 * 0.98 * 1e6 = 1e10 * 0.98 = 98e8
      *
@@ -133,12 +133,12 @@ contract RevenueSplitBuyBack is IRevenueRecipient, Initializable, ImmutableModul
      *
      * @param minRewardsAmounts Minimum amount of reward tokens received from the sale of bAssets.
      * The amount uses the decimal places of the rewards token.
-     * Example 1: Swapping 10,000 USDC with a min 1% slippage to MTA which has 18 decimal places
-     * minRewardsAmounts = 10,000 USDC * slippage 0.99 * MTA decimals 1e18 * MTA/USD rate 1.2
+     * Example 1: Swapping 10,000 USDC with a min 1% slippage to ZENO which has 18 decimal places
+     * minRewardsAmounts = 10,000 USDC * slippage 0.99 * ZENO decimals 1e18 * ZENO/USD rate 1.2
      * = 1e4 * 0.99 * 1e18 * 1.2 = 1e22 * 0.99 = 99e20
      *
-     * Example 1: Swapping 1 WBTC with a min 3% slippage to MTA which has 18 decimal places
-     * minRewardsAmounts = 1 WBTC * slippage 0.97 * MTA decimals 1e18 * MTA/BTC rate 0.00001
+     * Example 1: Swapping 1 WBTC with a min 3% slippage to ZENO which has 18 decimal places
+     * minRewardsAmounts = 1 WBTC * slippage 0.97 * ZENO decimals 1e18 * ZENO/BTC rate 0.00001
      * = 1 * 0.97 * 1e18 * 0.00001 = 0.97 * 1e13 = 97e11
      *
      * @param uniswapPaths The Uniswap V3 bytes encoded paths.
@@ -214,7 +214,7 @@ contract RevenueSplitBuyBack is IRevenueRecipient, Initializable, ImmutableModul
     }
 
     /**
-     * @notice Donates purchased rewards, eg MTA, to staking contracts via the Emissions Controller.
+     * @notice Donates purchased rewards, eg ZENO, to staking contracts via the Emissions Controller.
      */
     function donateRewards() external onlyKeeperOrGovernor {
         // STEP 1 - Get the voting power of the staking contracts
@@ -297,7 +297,7 @@ contract RevenueSplitBuyBack is IRevenueRecipient, Initializable, ImmutableModul
     }
 
     /**
-     * @notice Adds a new staking contract that will receive MTA rewards
+     * @notice Adds a new staking contract that will receive ZENO rewards
      * @param _stakingDialId dial identifier from the Emissions Controller of the staking contract.
      */
     function addStakingContract(uint16 _stakingDialId) external onlyGovernor {

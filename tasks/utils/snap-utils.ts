@@ -19,11 +19,11 @@ import {
     SavingsManager,
     ValidatorWithTVLCap__factory,
 } from "types/generated"
-import { MusdEth } from "types/generated/MusdEth"
+import { ZusdEth } from "types/generated/ZusdEth"
 import { encodeUniswapPath } from "@utils/peripheral/uniswap"
 import { AaveStakedTokenV2__factory } from "types/generated/factories/AaveStakedTokenV2__factory"
 import { Comptroller__factory } from "types/generated/factories/Comptroller__factory"
-import { MusdLegacy } from "types/generated/MusdLegacy"
+import { ZusdLegacy } from "types/generated/ZusdLegacy"
 import { QuantityFormatter, usdFormatter } from "./quantity-formatters"
 import { AAVE, ALCX, alUSD, BUSD, Chain, COMP, DAI, FEI, GUSD, RAI, stkAAVE, sUSD, Token, USDC, USDT, WBTC } from "./tokens"
 import { getChainAddress, resolveAddress } from "./networkAddressFactory"
@@ -65,23 +65,23 @@ export interface SwapQuote {
 }
 
 // Only the FeederPool has the redeemProportionately function
-export function isFeederPool(asset: Masset | MusdEth | MusdLegacy | FeederPool): asset is FeederPool {
+export function isFeederPool(asset: Masset | ZusdEth | ZusdLegacy | FeederPool): asset is FeederPool {
     return (asset as FeederPool).redeemProportionately !== undefined
 }
 
-// Only the mUSD deployed to Ethereum mainnet has the surplus function
-export function isMusdEth(asset: Masset | MusdEth | MusdLegacy | FeederPool): asset is MusdEth {
-    return (asset as MusdEth).surplus !== undefined
+// Only the zUSD deployed to Ethereum mainnet has the surplus function
+export function isZusdEth(asset: Masset | ZusdEth | ZusdLegacy | FeederPool): asset is ZusdEth {
+    return (asset as ZusdEth).surplus !== undefined
 }
 
-// mUSD before upgrade to the MusdV3 contract 0x15B2838Cd28cc353Afbe59385db3F366D8945AEe at block 12094376
-// mUSD implementations are
+// zUSD before upgrade to the ZusdV3 contract 0x15B2838Cd28cc353Afbe59385db3F366D8945AEe at block 12094376
+// zUSD implementations are
 // Initialized at block 10148035 to 0xB83A5a51df21321b365c918832E7E8f5DE686f7E
 // Upgraded at block 10463013 to 0xE4c5b1765BF420016027177289908C5A3Ea7668E
 // Upgraded at block 11516027 to 0xE0d0D052d5B1082E52C6b8422Acd23415c3DF1c4
 // Upgraded at block 12094376 to 0x15B2838Cd28cc353Afbe59385db3F366D8945AEe
-export function isMusdLegacy(asset: Masset | MusdEth | MusdLegacy | FeederPool): asset is MusdLegacy {
-    return (asset as MusdLegacy).getBasketManager !== undefined
+export function isZusdLegacy(asset: Masset | ZusdEth | ZusdLegacy | FeederPool): asset is ZusdLegacy {
+    return (asset as ZusdLegacy).getBasketManager !== undefined
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -111,10 +111,10 @@ export const getBlockRange = async (ethers, fromBlockNumber: number, _toBlockNum
     }
 }
 
-export const snapConfig = async (asset: Masset | MusdEth | MusdLegacy | FeederPool, toBlock: number): Promise<void> => {
+export const snapConfig = async (asset: Masset | ZusdEth | ZusdLegacy | FeederPool, toBlock: number): Promise<void> => {
     let ampData
-    if (isMusdLegacy(asset)) return
-    if (isMusdEth(asset)) {
+    if (isZusdLegacy(asset)) return
+    if (isZusdEth(asset)) {
         ampData = await asset.ampData()
     } else {
         const fpData = await asset.data()
@@ -159,7 +159,7 @@ const getTvlCap = async (signer: Signer, tvlConfig: TvlConfig, toBlock: number):
 }
 
 export const getBasket = async (
-    asset: Masset | MusdEth | MusdLegacy | FeederPool,
+    asset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     bAssetSymbols: string[],
     mAssetName = "mBTC",
     quantityFormatter: QuantityFormatter,
@@ -167,7 +167,7 @@ export const getBasket = async (
     tvlConfig?: TvlConfig,
     exposedLogic?: ExposedMassetLogic,
 ): Promise<void> => {
-    if (isMusdLegacy(asset)) return
+    if (isZusdLegacy(asset)) return
     const bAssets = await asset.getBassets({
         blockTag: toBlock,
     })
@@ -175,7 +175,7 @@ export const getBasket = async (
     let bAssetsTotal = BN.from(0)
     bAssetSymbols.forEach((_, i) => {
         let scaledBassetQuantity: BN
-        if (isMusdEth(asset)) {
+        if (isZusdEth(asset)) {
             scaledBassetQuantity = applyRatio(bAssets[1][i].vaultBalance, bAssets[1][i].ratio)
         } else if (isFeederPool(asset)) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -197,7 +197,7 @@ export const getBasket = async (
     })
 
     let mAssetSurplus = BN.from(0)
-    if (isMusdEth(asset)) {
+    if (isZusdEth(asset)) {
         mAssetSurplus = await asset.surplus({
             blockTag: toBlock,
         })
@@ -244,12 +244,12 @@ export const getBasket = async (
 }
 
 export const getBalances = async (
-    mAsset: Masset | MusdEth | MusdLegacy,
+    mAsset: Masset | ZusdEth | ZusdLegacy,
     accounts: { name: string; address: string }[],
     quantityFormatter: QuantityFormatter,
     toBlock: number,
 ): Promise<Balances> => {
-    if (isMusdLegacy(mAsset)) {
+    if (isZusdLegacy(mAsset)) {
         return {
             total: BN.from(0),
             save: BN.from(0),
@@ -273,7 +273,7 @@ export const getBalances = async (
     const otherBalances = mAssetBalance.sub(balanceSum)
     console.log(`${"Other".padEnd(26)} ${quantityFormatter(otherBalances)} ${otherBalances.mul(100).div(mAssetBalance)}%`)
 
-    const surplus = isMusdEth(mAsset)
+    const surplus = isZusdEth(mAsset)
         ? await mAsset.surplus({
               blockTag: toBlock,
           })
@@ -294,7 +294,7 @@ export const getBalances = async (
 
 export const getMints = async (
     bAssets: Token[],
-    mAsset: Masset | MusdEth | MusdLegacy | FeederPool,
+    mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     fromBlock: number,
     toBlock: number,
     quantityFormatter: QuantityFormatter,
@@ -327,7 +327,7 @@ export const getMints = async (
 
 export const getMultiMints = async (
     bAssets: Token[],
-    mAsset: Masset | MusdEth | MusdLegacy | FeederPool,
+    mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     fromBlock: number,
     toBlock: number,
     quantityFormatter: QuantityFormatter,
@@ -362,7 +362,7 @@ export const getMultiMints = async (
 
 export const getSwaps = async (
     bAssets: Token[],
-    mAsset: Masset | MusdEth | MusdLegacy | FeederPool,
+    mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     fromBlock: number,
     toBlock: number,
     quantityFormatter: QuantityFormatter,
@@ -400,7 +400,7 @@ export const getSwaps = async (
 
 export const getRedemptions = async (
     bAssets: Token[],
-    mAsset: Masset | MusdEth | MusdLegacy | FeederPool,
+    mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     fromBlock: number,
     toBlock: number,
     quantityFormatter: QuantityFormatter,
@@ -435,12 +435,12 @@ export const getRedemptions = async (
 
 export const getMultiRedemptions = async (
     bAssets: Token[],
-    mAsset: Masset | MusdEth | MusdLegacy | FeederPool,
+    mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     fromBlock: number,
     toBlock: number,
     quantityFormatter: QuantityFormatter,
 ): Promise<TxSummary> => {
-    if (isMusdLegacy(mAsset)) {
+    if (isZusdLegacy(mAsset)) {
         return {
             count: 0,
             total: BN.from(0),
@@ -555,7 +555,7 @@ export const outputFees = (
 }
 
 export const getLiquidatorInterest = async (
-    mAsset: Masset | MusdEth | MusdLegacy | FeederPool,
+    mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     savingsManager: SavingsManager,
     fromBlock: BlockInfo,
     toBlock: BlockInfo,
@@ -577,7 +577,7 @@ export const getLiquidatorInterest = async (
 
 export const getCollectedInterest = async (
     bAssets: Token[],
-    mAsset: Masset | MusdEth | MusdLegacy | FeederPool,
+    mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool,
     savingsManager: SavingsManager,
     fromBlock: BlockInfo,
     toBlock: BlockInfo,
@@ -743,12 +743,12 @@ export const getCompTokens = async (
     totalComp = totalComp.add(compAccrued)
     console.log(`USDC        ${quantityFormatter(compAccrued)}`)
 
-    // Get COMP in mUSD integration
+    // Get COMP in zUSD integration
     const compIntegrationBal = await compToken.balanceOf(USDC.integrator, { blockTag: toBlock.blockNumber })
     totalComp = totalComp.add(compIntegrationBal)
     console.log(`Integration ${quantityFormatter(compIntegrationBal)}`)
 
-    // Get COMP in mUSD liquidator
+    // Get COMP in zUSD liquidator
     const liquidatorAddress = getChainAddress("Liquidator", chain)
     const compLiquidatorBal = await compToken.balanceOf(liquidatorAddress, { blockTag: toBlock.blockNumber })
     totalComp = totalComp.add(compLiquidatorBal)
@@ -840,8 +840,8 @@ export const getAaveTokens = async (
     console.log(`AAVE/USDC exchange rate: ${aaveUsdc.exchangeRate}`)
 
     // Get AAVE/USDC exchange rate
-    const musdLiqData = await liquidator.liquidations(USDT.integrator, { blockTag: toBlock.blockNumber })
-    console.log(`Min AAVE/USDC rate ${formatUnits(musdLiqData.minReturn, USDC.decimals)}`)
+    const zusdLiqData = await liquidator.liquidations(USDT.integrator, { blockTag: toBlock.blockNumber })
+    console.log(`Min AAVE/USDC rate ${formatUnits(zusdLiqData.minReturn, USDC.decimals)}`)
 
     // Get AAVE/GUSD exchange rate
     const gusdLiqData = await liquidator.liquidations(GUSD.integrator, { blockTag: toBlock.blockNumber })

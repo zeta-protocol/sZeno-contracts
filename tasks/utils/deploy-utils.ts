@@ -27,7 +27,7 @@ export const deployContract = async <T extends Contract>(
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const logger = (...args: string[]) => debug(`mstable:${args.join(":")}`)
+export const logger = (...args: string[]) => debug(`xzeno:${args.join(":")}`)
 
 export const logTxDetails = async (tx: ContractTransaction, method: string): Promise<ContractReceipt> => {
     console.log(`Sent ${method} transaction with hash ${tx.hash} from ${tx.from} with gas price ${tx.gasPrice?.toNumber() / 1e9} Gwei`)

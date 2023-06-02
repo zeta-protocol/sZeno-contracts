@@ -15,7 +15,7 @@ import { StableMath } from "../../shared/StableMath.sol";
 
 /**
  * @title  BoostedVault
- * @author mStable
+ * @author xZeno
  * @notice Accrues rewards second by second, based on a users boosted balance
  * @dev    Forked from rewards/staking/StakingRewards.sol
  *         Changes:
@@ -40,7 +40,7 @@ contract BoostedVault is
     event Poked(address indexed user);
     event RewardPaid(address indexed user, uint256 reward);
 
-    /// @notice token the rewards are distributed in. eg MTA
+    /// @notice token the rewards are distributed in. eg ZENO
     IERC20 public immutable rewardsToken;
 
     /// @notice length of each staking period in seconds. 7 days = 604,800; 3 months = 7,862,400
@@ -78,12 +78,12 @@ contract BoostedVault is
     }
 
     /**
-     * @param _nexus mStable system Nexus address
-     * @param _stakingToken token that is beinf rewarded for being staked. eg MTA, imUSD or fPmUSD/GUSD
-     * @param _boostDirector vMTA boost director
+     * @param _nexus xZeno system Nexus address
+     * @param _stakingToken token that is beinf rewarded for being staked. eg ZENO, izUSD or fPzUSD/GUSD
+     * @param _boostDirector vZENO boost director
      * @param _priceCoeff Rough price of a given LP token, to be used in boost calculations, where $1 = 1e18
      * @param _boostCoeff  Boost coefficent using the the boost formula
-     * @param _rewardsToken first token that is being distributed as a reward. eg MTA
+     * @param _rewardsToken first token that is being distributed as a reward. eg ZENO
      */
     constructor(
         address _nexus,
@@ -103,9 +103,9 @@ contract BoostedVault is
      * @dev Initialization function for upgradable proxy contract.
      *      This function should be called via Proxy just after contract deployment.
      *      To avoid variable shadowing appended `Arg` after arguments name.
-     * @param _rewardsDistributorArg mStable Reward Distributor contract address
-     * @param _nameArg token name. eg imUSD Vault or GUSD Feeder Pool Vault
-     * @param _symbolArg token symbol. eg v-imUSD or v-fPmUSD/GUSD
+     * @param _rewardsDistributorArg xZeno Reward Distributor contract address
+     * @param _nameArg token name. eg izUSD Vault or GUSD Feeder Pool Vault
+     * @param _symbolArg token symbol. eg v-izUSD or v-fPzUSD/GUSD
      */
     function initialize(
         address _rewardsDistributorArg,
@@ -256,11 +256,11 @@ contract BoostedVault is
      * redeems the interest-bearing asset for the underlying mAsset and either
      * 1. Redeems the underlying mAsset tokens for bAsset tokens.
      * 2. Swaps the underlying mAsset tokens for fAsset tokens in a Feeder Pool.
-     * @param _amount         Units of the staked interest-bearing asset tokens to withdraw. eg imUSD or imBTC.
+     * @param _amount         Units of the staked interest-bearing asset tokens to withdraw. eg izUSD or imBTC.
      * @param _minAmountOut   Minimum units of `output` tokens to be received by the beneficiary. This is to the same decimal places as the `output` token.
      * @param _output         Asset to receive in exchange for the redeemed mAssets. This can be a bAsset or a fAsset. For example:
-        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for mainnet imUSD Vault.
-        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon imUSD Vault.
+        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for mainnet izUSD Vault.
+        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon izUSD Vault.
         - bAssets (WBTC, sBTC or renBTC) or fAssets (HBTC or TBTCV2) for mainnet imBTC Vault.
      * @param _beneficiary    Address to send `output` tokens to.
      * @param _router         mAsset address if the `output` is a bAsset. Feeder Pool address if the `output` is a fAsset.

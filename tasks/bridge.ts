@@ -9,7 +9,7 @@ import { getSigner } from "./utils/signerFactory"
 import { getChain, resolveAddress } from "./utils/networkAddressFactory"
 
 subtask("bridge-deposit", "Sends mainnet token to Polygon across Polygon's PoS Bridge")
-    .addOptionalParam("token", "Symbol of mainnet token that is to be sent. eg MTA or mBTC", "MTA", types.string)
+    .addOptionalParam("token", "Symbol of mainnet token that is to be sent. eg ZENO or mBTC", "ZENO", types.string)
     .addOptionalParam("user", "Address of the account on Polygon that will receive the bridged tokens", undefined, types.string)
     .addParam("amount", "Amount of tokens to be sent without the token decimals.", undefined, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
@@ -35,7 +35,7 @@ task("bridge-deposit").setAction(async (_, __, runSuper) => {
 })
 
 subtask("bridge-withdraw", "Sends Polygon tokens back to mainnet across Polygon's PoS Bridge")
-    .addOptionalParam("token", "Symbol of mainnet token that is to be sent. eg MTA or mBTC", "MTA", types.string)
+    .addOptionalParam("token", "Symbol of mainnet token that is to be sent. eg ZENO or mBTC", "ZENO", types.string)
     .addParam("amount", "Amount of tokens to be sent without the token decimals.", undefined, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {

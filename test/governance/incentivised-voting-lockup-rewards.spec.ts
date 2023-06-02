@@ -88,8 +88,8 @@ describe("IncentivisedVotingLockupRewards", () => {
         await stakingToken.transfer(rewardsDistributorAddress, simpleToExactAmount(1000, 21))
         return new IncentivisedVotingLockup__factory(deployer).deploy(
             stakingToken.address,
-            "Voting MTA",
-            "vMTA",
+            "Voting ZENO",
+            "vZENO",
             nexusAddress,
             rewardsDistributorAddress,
         )

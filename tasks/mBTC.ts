@@ -3,8 +3,8 @@ import { Signer } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
 import { task, types } from "hardhat/config"
 import { BN } from "@utils/math"
-import { MusdEth__factory } from "types/generated/factories/MusdEth__factory"
-import { MusdEth } from "types/generated/MusdEth"
+import { ZusdEth__factory } from "types/generated/factories/ZusdEth__factory"
+import { ZusdEth } from "types/generated/ZusdEth"
 import { SavingsManager__factory } from "types/generated"
 import { dumpBassetStorage, dumpConfigStorage, dumpTokenStorage } from "./utils/storage-utils"
 import {
@@ -34,7 +34,7 @@ const btcFormatter = (amount, decimals = 18, pad = 7, displayDecimals = 3): stri
     return string2decimals.replace(/\B(?=(\d{3})+(?!\d))/g, ",").padStart(pad)
 }
 
-const getMasset = (signer: Signer, contractAddress = mBTC.address): MusdEth => MusdEth__factory.connect(contractAddress, signer)
+const getMasset = (signer: Signer, contractAddress = mBTC.address): ZusdEth => ZusdEth__factory.connect(contractAddress, signer)
 
 task("mBTC-storage", "Dumps mBTC's storage data")
     .addOptionalParam("block", "Block number to get storage from. (default: current block)", 0, types.int)

@@ -2,14 +2,14 @@
 /* eslint-disable no-restricted-syntax */
 import { FeederPool, Masset, MV1, MV2 } from "types/generated"
 import { BasketManager__factory } from "types/generated/factories/BasketManager__factory"
-import { MusdEth } from "types/generated/MusdEth"
-import { MusdLegacy } from "types/generated/MusdLegacy"
+import { ZusdEth } from "types/generated/ZusdEth"
+import { ZusdLegacy } from "types/generated/ZusdLegacy"
 import { getChainAddress } from "./networkAddressFactory"
-import { isFeederPool, isMusdEth, isMusdLegacy } from "./snap-utils"
+import { isFeederPool, isZusdEth, isZusdLegacy } from "./snap-utils"
 import { Chain } from "./tokens"
 
 // Get mAsset token storage variables
-export const dumpTokenStorage = async (token: Masset | MusdEth | MusdLegacy | FeederPool, toBlock: number): Promise<void> => {
+export const dumpTokenStorage = async (token: Masset | ZusdEth | ZusdLegacy | FeederPool, toBlock: number): Promise<void> => {
     const override = {
         blockTag: toBlock,
     }
@@ -21,7 +21,7 @@ export const dumpTokenStorage = async (token: Masset | MusdEth | MusdLegacy | Fe
 
 // Get bAsset storage variables
 export const dumpBassetStorage = async (
-    mAsset: Masset | MusdEth | MusdLegacy | MV1 | MV2,
+    mAsset: Masset | ZusdEth | ZusdLegacy | MV1 | MV2,
     block: number,
     chain = Chain.mainnet,
 ): Promise<void> => {
@@ -30,8 +30,8 @@ export const dumpBassetStorage = async (
     }
 
     console.log("\nbAssets")
-    // After the mUSD upgrade to MusdV3
-    if (!isMusdLegacy(mAsset)) {
+    // After the zUSD upgrade to ZusdV3
+    if (!isZusdLegacy(mAsset)) {
         const bAssets = await mAsset.getBassets(override)
         bAssets.personal.forEach(async (personal, i) => {
             console.log(`bAsset with index ${i}`)
@@ -44,7 +44,7 @@ export const dumpBassetStorage = async (
             console.log("\n")
         })
     } else {
-        // Before the mUSD upgrade to MusdV3 where the bAssets were in a separate Basket Manager contract
+        // Before the zUSD upgrade to ZusdV3 where the bAssets were in a separate Basket Manager contract
         const basketManagerAddress = getChainAddress("BasketManager", chain)
         const basketManager = BasketManager__factory.connect(basketManagerAddress, mAsset.signer)
         const basket = await basketManager.getBassets(override)
@@ -86,19 +86,19 @@ export const dumpFassetStorage = async (pool: FeederPool, bock: number): Promise
 }
 
 // Get Masset storage variables
-export const dumpConfigStorage = async (mAsset: Masset | MusdEth | MusdLegacy | FeederPool, block: number): Promise<void> => {
+export const dumpConfigStorage = async (mAsset: Masset | ZusdEth | ZusdLegacy | FeederPool, block: number): Promise<void> => {
     const override = {
         blockTag: block,
     }
 
-    if (!isMusdLegacy(mAsset)) {
+    if (!isZusdLegacy(mAsset)) {
         const invariantConfig = await mAsset.getConfig(override)
         console.log("A              : ", invariantConfig.a.toString())
         console.log("Min            : ", invariantConfig.limits.min.toString())
         console.log("Max            : ", invariantConfig.limits.max.toString())
     }
 
-    if (!isMusdEth(mAsset) && !isMusdLegacy(mAsset)) {
+    if (!isZusdEth(mAsset) && !isZusdLegacy(mAsset)) {
         // Masset and FeederPool
         const data = await (mAsset as FeederPool).data(override)
 
@@ -112,7 +112,7 @@ export const dumpConfigStorage = async (mAsset: Masset | MusdEth | MusdLegacy | 
             console.log("pendingFees    : ", data.pendingFees.toString())
         }
     } else {
-        // mUSD or mBTC
+        // zUSD or mBTC
         console.log(
             "\nSwapFee        : ",
             (

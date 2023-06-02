@@ -68,7 +68,7 @@ describe("Invariant Validator - One basket many tests @skip-on-coverage", () => 
         ).connect(sa.default.signer)
         mAsset = (await MassetFactory.deploy(DEAD_ADDRESS, simpleToExactAmount(5, 13))) as ExposedMasset
         await mAsset.initialize(
-            "mStable Asset",
+            "xZeno Asset",
             "mAsset",
             bAssets.map((b) => ({
                 addr: b.address,

@@ -6,7 +6,7 @@ import { logTxDetails } from "./utils/deploy-utils"
 import { getChain, resolveAddress } from "./utils/networkAddressFactory"
 
 subtask("save-deposit", "Deposit to savings contract")
-    .addParam("masset", "Symbol of the mAsset. eg mUSD or mBTC", undefined, types.string)
+    .addParam("masset", "Symbol of the mAsset. eg zUSD or mBTC", undefined, types.string)
     .addParam("amount", "Amount to be staked", undefined, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
@@ -26,7 +26,7 @@ task("save-deposit").setAction(async (_, __, runSuper) => {
 })
 
 subtask("save-redeem", "Redeems a number of Save credits from a savings contract")
-    .addParam("masset", "Symbol of the mAsset. eg mUSD or mBTC", undefined, types.string)
+    .addParam("masset", "Symbol of the mAsset. eg zUSD or mBTC", undefined, types.string)
     .addParam("amount", "Amount of Save credits to be redeemed", undefined, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {

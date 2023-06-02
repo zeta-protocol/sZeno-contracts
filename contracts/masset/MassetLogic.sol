@@ -17,9 +17,9 @@ import { StableMath } from "../shared/StableMath.sol";
 
 /**
  * @title   MassetLogic
- * @author  mStable
+ * @author  xZeno
  * @notice  Builds on and enforces the StableSwap invariant conceived by Michael Egorov. (https://www.curve.fi/stableswap-paper.pdf)
- *          Derived by mStable and adapted for the needs of an mAsset, as described in MIP-7 (http://mips.mstable.org/MIPS/mip-7)
+ *          Derived by xZeno and adapted for the needs of an mAsset, as described in MIP-7 (http://mips.xzeno.org/MIPS/mip-7)
  *          Calculates and validates the result of Masset operations with respect to the invariant.
  *          This supports low slippage swaps and applies penalties towards min and max regions.
  * @dev     VERSION: 1.0

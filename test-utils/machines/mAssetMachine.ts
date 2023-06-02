@@ -25,7 +25,7 @@ import {
 } from "types/generated"
 import { BN, minimum, simpleToExactAmount } from "@utils/math"
 import { fullScale, ratioScale, ZERO_ADDRESS, DEAD_ADDRESS } from "@utils/constants"
-import { Basset } from "@utils/mstable-objects"
+import { Basset } from "@utils/xzeno-objects"
 import { EthAddress } from "types/common"
 import { StandardAccounts } from "./standardAccounts"
 import { ActionDetails, ATokenDetails, BasketComposition, BassetIntegrationDetails } from "../../types/machines"
@@ -138,7 +138,7 @@ export class MassetMachine {
         const impl = (await MassetFactory.deploy(nexus.address, simpleToExactAmount(5, 13))) as Masset
 
         const data = impl.interface.encodeFunctionData("initialize", [
-            "mStable BTC",
+            "xZeno BTC",
             "mBTC",
             bAssets.bAssets.map((b, i) => ({
                 addr: b.address,
@@ -194,7 +194,7 @@ export class MassetMachine {
     }
 
     // /**
-    //  * @dev Deploys an mAsset with default parameters, modelled on original mUSD
+    //  * @dev Deploys an mAsset with default parameters, modelled on original zUSD
     //  * @return Interface will all deployed information
     //  */
     // public async deployMasset(enableUSDTFee = false, useOldAave = false): Promise<MassetDetails> {
@@ -208,7 +208,7 @@ export class MassetMachine {
     //     md.bAssets = bassetDetails.bAssets;
 
     //     /** *************************************
-    //     2. mUSD
+    //     2. zUSD
     //         Dependencies: [
     //             BasketManager [
     //                 ProxyAdmin,
@@ -266,40 +266,40 @@ export class MassetMachine {
     //     md.aaveIntegration = await c_AaveIntegration.at(d_AaveIntegrationProxy.address);
     //     md.compoundIntegration = await c_CompoundIntegration.at(d_CompoundIntegrationProxy.address);
 
-    //     // 2.4. Deploy mUSD (w/ BasketManager addr)
+    //     // 2.4. Deploy zUSD (w/ BasketManager addr)
     //     // 2.4.1. Deploy ForgeValidator
     //     const d_ForgeValidator = await c_ForgeValidator.new({
     //         from: this.sa.default,
     //     });
     //     md.forgeValidator = d_ForgeValidator;
-    //     // 2.4.2. Deploy mUSD
+    //     // 2.4.2. Deploy zUSD
     //     // Deploy implementation
-    //     const d_mUSD = await c_Masset.new();
-    //     await d_mUSD.initialize("", "", DEAD_ADDRESS, DEAD_ADDRESS, DEAD_ADDRESS);
+    //     const d_zUSD = await c_Masset.new();
+    //     await d_zUSD.initialize("", "", DEAD_ADDRESS, DEAD_ADDRESS, DEAD_ADDRESS);
     //     // Deploy proxy
-    //     const d_mUSDProxy = await c_AssetProxy.new();
+    //     const d_zUSDProxy = await c_AssetProxy.new();
     //     // Initialize proxy
-    //     const initializationData_mUSD: string = d_mUSD.contract.methods
+    //     const initializationData_zUSD: string = d_zUSD.contract.methods
     //         .initialize(
-    //             "mStable Mock",
+    //             "xZeno Mock",
     //             "mMOCK",
     //             this.system.nexus.address,
     //             d_ForgeValidator.address,
     //             d_BasketManagerProxy.address,
     //         )
     //         .encodeABI();
-    //     await d_mUSDProxy.methods["initialize(address,address,bytes)"](
-    //         d_mUSD.address,
+    //     await d_zUSDProxy.methods["initialize(address,address,bytes)"](
+    //         d_zUSD.address,
     //         d_DelayedProxyAdmin.address,
-    //         initializationData_mUSD,
+    //         initializationData_zUSD,
     //     );
-    //     md.mAsset = await c_Masset.at(d_mUSDProxy.address);
+    //     md.mAsset = await c_Masset.at(d_zUSDProxy.address);
 
     //     // 2.5. Init AaveIntegration
     //     const initializationData_AaveIntegration: string = d_AaveIntegration.contract.methods
     //         .initialize(
     //             this.system.nexus.address,
-    //             [d_mUSDProxy.address, d_BasketManagerProxy.address],
+    //             [d_zUSDProxy.address, d_BasketManagerProxy.address],
     //             bassetDetails.aavePlatformAddress,
     //             bassetDetails.aTokens.map((a) => a.bAsset),
     //             bassetDetails.aTokens.map((a) => a.aToken),
@@ -315,7 +315,7 @@ export class MassetMachine {
     //     const initializationData_CompoundIntegration: string = d_CompoundIntegration.contract.methods
     //         .initialize(
     //             this.system.nexus.address,
-    //             [d_mUSDProxy.address, d_BasketManagerProxy.address],
+    //             [d_zUSDProxy.address, d_BasketManagerProxy.address],
     //             ZERO_ADDRESS, // We don't need Compound sys addr
     //             bassetDetails.cTokens.map((c) => c.bAsset),
     //             bassetDetails.cTokens.map((c) => c.cToken),
@@ -332,7 +332,7 @@ export class MassetMachine {
     //     const initializationData_BasketManager: string = d_BasketManager.contract.methods
     //         .initialize(
     //             this.system.nexus.address,
-    //             d_mUSDProxy.address,
+    //             d_zUSDProxy.address,
     //             bassetDetails.bAssets.map((b) => b.address),
     //             bassetDetails.platforms.map((p) =>
     //                 p === Platform.aave

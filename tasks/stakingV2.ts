@@ -1,5 +1,5 @@
 import { subtask, task, types } from "hardhat/config"
-import { StakedTokenBPT__factory, StakedTokenMTA__factory, StakedToken__factory, StakedTokenBatcher__factory } from "types/generated"
+import { StakedTokenBPT__factory, StakedTokenZENO__factory, StakedToken__factory, StakedTokenBatcher__factory } from "types/generated"
 import { BN, simpleToExactAmount } from "@utils/math"
 import { formatUnits } from "@ethersproject/units"
 import { ONE_WEEK } from "@utils/constants"
@@ -23,7 +23,7 @@ const QUERY_SIZE = 1000
 async function fetchAllStakers(): Promise<Array<Account>> {
     // TODO = it has a limit of 1000 accounts, it needs pagination to bring all accounts or find the way to pass "limit -1" to the query.
     // https://dune.com/queries/161334/315606
-    const gqlClient = new GraphQLClient("https://api.thegraph.com/subgraphs/name/mstable/mstable-staking")
+    const gqlClient = new GraphQLClient("https://api.thegraph.com/subgraphs/name/xzeno/xzeno-staking")
     const query = gql`{
         accounts(first: ${QUERY_SIZE}) {
           id
@@ -85,7 +85,7 @@ async function filterAccountsTimeMultiplier(accounts: Array<string>, stakingToke
     return accountsToUpdate
 }
 subtask("staked-snap", "Dumps a user's staking token details.")
-    .addOptionalParam("asset", "Symbol of staking token. MTA or mBPT", "MTA", types.string)
+    .addOptionalParam("asset", "Symbol of staking token. ZENO or mBPT", "ZENO", types.string)
     .addParam("user", "Address or contract name of user", undefined, types.string)
     .addOptionalParam("block", "Block number to compare rates at. (default: current block)", 0, types.int)
     .setAction(async (taskArgs, hre) => {
@@ -108,7 +108,7 @@ subtask("staked-snap", "Dumps a user's staking token details.")
         const delegatedVotes = votes.sub(boostedBalance)
         const effectiveMultiplier = rawBalance.gt(0) ? boostedBalance.mul(10000).div(rawBalance) : BN.from(0)
         const delegatee = await stakingToken.delegates(userAddress, callOverride)
-        const priceCoeff = taskArgs.asset === "MTA" ? BN.from(10000) : await stakingToken.priceCoefficient()
+        const priceCoeff = taskArgs.asset === "ZENO" ? BN.from(10000) : await stakingToken.priceCoefficient()
         const earnedRewards = await stakingToken.earned(userAddress, callOverride)
 
         console.log(`Raw balance          ${usdFormatter(rawBalance)}`)
@@ -124,7 +124,7 @@ subtask("staked-snap", "Dumps a user's staking token details.")
         console.log("\nMultipliers")
         console.log(`Time                  ${formatUnits(balanceData.timeMultiplier + 100, 2)}`)
         console.log(`Quest                 ${formatUnits(balanceData.questMultiplier + 100, 2)}`)
-        console.log(`MTA Price coefficient ${formatUnits(priceCoeff, 4)}`)
+        console.log(`ZENO Price coefficient ${formatUnits(priceCoeff, 4)}`)
         console.log(`Effective multiplier  ${formatUnits(effectiveMultiplier, 4)}`)
 
         if (balanceData.cooldownTimestamp > 0) {
@@ -139,8 +139,8 @@ task("staked-snap").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("staked-stake", "Stake MTA or mBPT in V2 Staking Token")
-    .addOptionalParam("asset", "Symbol of staking token. MTA or mBPT", "MTA", types.string)
+subtask("staked-stake", "Stake ZENO or mBPT in V2 Staking Token")
+    .addOptionalParam("asset", "Symbol of staking token. ZENO or mBPT", "ZENO", types.string)
     .addParam("amount", "Amount of tokens to be staked without the token decimals.", undefined, types.float)
     .addParam("delegate", "Address or contract name the voting power will be delegated to.", undefined, types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
@@ -165,7 +165,7 @@ task("staked-stake").setAction(async (_, __, runSuper) => {
 })
 
 subtask("staked-cooldown-start", "Start cooldown of V2 staking token")
-    .addOptionalParam("asset", "Symbol of staking token. MTA or mBPT", "MTA", types.string)
+    .addOptionalParam("asset", "Symbol of staking token. ZENO or mBPT", "ZENO", types.string)
     .addParam("amount", "Amount to of token to be staked without the token decimals.", undefined, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
@@ -184,7 +184,7 @@ task("staked-cooldown-start").setAction(async (_, __, runSuper) => {
 })
 
 subtask("staked-cooldown-end", "End cooldown of V2 staking token")
-    .addOptionalParam("asset", "Symbol of staking token. MTA or mBPT", "MTA", types.string)
+    .addOptionalParam("asset", "Symbol of staking token. ZENO or mBPT", "ZENO", types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
@@ -200,8 +200,8 @@ task("staked-cooldown-end").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("staked-withdraw", "Withdraw MTA or mBPT in V2 Staking Token")
-    .addOptionalParam("asset", "Symbol of staking token. MTA or mBPT", "MTA", types.string)
+subtask("staked-withdraw", "Withdraw ZENO or mBPT in V2 Staking Token")
+    .addOptionalParam("asset", "Symbol of staking token. ZENO or mBPT", "ZENO", types.string)
     .addParam("amount", "Amount to of token to be staked without the token decimals.", undefined, types.float)
     .addOptionalParam("recipient", "Address or contract name that will receive the withdrawn tokens.", undefined, types.string)
     .addOptionalParam(
@@ -232,14 +232,14 @@ task("staked-withdraw").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("staked-claim", "Claim MTA rewards from V2 staking token")
-    .addOptionalParam("recipient", "Address or contract name that will receive the MTA rewards.", undefined, types.string)
+subtask("staked-claim", "Claim ZENO rewards from V2 staking token")
+    .addOptionalParam("recipient", "Address or contract name that will receive the ZENO rewards.", undefined, types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
         const chain = getChain(hre)
 
-        const stakingTokenAddress = resolveAddress("MTA", chain, "vault")
+        const stakingTokenAddress = resolveAddress("ZENO", chain, "vault")
         const stakingToken = StakedToken__factory.connect(stakingTokenAddress, signer)
         let tx
         if (taskArgs.recipient) {
@@ -248,31 +248,31 @@ subtask("staked-claim", "Claim MTA rewards from V2 staking token")
         } else {
             tx = await stakingToken["claimReward()"]()
         }
-        const receipt = await logTxDetails(tx, `Claim earned MTA rewards`)
-        console.log(`Claimed ${formatUnits(receipt.events[0].args[2])} MTA rewards`)
+        const receipt = await logTxDetails(tx, `Claim earned ZENO rewards`)
+        console.log(`Claimed ${formatUnits(receipt.events[0].args[2])} ZENO rewards`)
     })
 task("staked-claim").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("staked-compound", "Stake any earned MTA rewards")
+subtask("staked-compound", "Stake any earned ZENO rewards")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
         const chain = getChain(hre)
 
-        const stakingTokenAddress = resolveAddress("MTA", chain, "vault")
-        const stakingToken = StakedTokenMTA__factory.connect(stakingTokenAddress, signer)
+        const stakingTokenAddress = resolveAddress("ZENO", chain, "vault")
+        const stakingToken = StakedTokenZENO__factory.connect(stakingTokenAddress, signer)
         const tx = await stakingToken.compoundRewards()
-        const receipt = await logTxDetails(tx, "Stake earned MTA rewards")
-        console.log(`Staked ${formatUnits(receipt.events[0].args[2])} MTA rewards`)
+        const receipt = await logTxDetails(tx, "Stake earned ZENO rewards")
+        console.log(`Staked ${formatUnits(receipt.events[0].args[2])} ZENO rewards`)
     })
 task("staked-compound").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
 subtask("staked-delegate", "Delegate V2 Staking Tokens")
-    .addOptionalParam("asset", "Symbol of staking token. MTA or mBPT", "MTA", types.string)
+    .addOptionalParam("asset", "Symbol of staking token. ZENO or mBPT", "ZENO", types.string)
     .addParam("delegate", "Address or contract name the voting power will be delegated to.", undefined, types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
@@ -319,7 +319,7 @@ task("staked-price-coeff").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("staked-fees", "Converts fees accrued in BPT to MTA, before depositing to the rewards contract.")
+subtask("staked-fees", "Converts fees accrued in BPT to ZENO, before depositing to the rewards contract.")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
@@ -330,7 +330,7 @@ subtask("staked-fees", "Converts fees accrued in BPT to MTA, before depositing t
 
         const feesBPT = await stakingToken.pendingBPTFees()
         if (feesBPT.lt(simpleToExactAmount(100))) {
-            console.log(`Only ${feesBPT} mBPT in fees so will not convert to MTA`)
+            console.log(`Only ${feesBPT} mBPT in fees so will not convert to ZENO`)
             return
         }
         const tx = await stakingToken.convertFees()
@@ -342,7 +342,7 @@ task("staked-fees").setAction(async (_, __, runSuper) => {
 
 subtask("staked-time", "Updates a user's time multiplier.")
     .addParam("users", "Address or contract name of users, separated by ',' ", undefined, types.string)
-    .addOptionalParam("asset", "Symbol of staking token. MTA or mBPT", "MTA", types.string)
+    .addOptionalParam("asset", "Symbol of staking token. ZENO or mBPT", "ZENO", types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "safeLow", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
@@ -360,7 +360,7 @@ task("staked-time").setAction(async (_, __, runSuper) => {
 })
 
 subtask("staked-time-all-users", "Updates all user's time multiplier.")
-    .addOptionalParam("assets", "Symbol of staking token. MTA or mBPT", "MTA,mBPT", types.string)
+    .addOptionalParam("assets", "Symbol of staking token. ZENO or mBPT", "ZENO,mBPT", types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "safeLow", types.string)
     .setAction(async (taskArgs, hre) => {
         const chain = getChain(hre)

@@ -10,7 +10,7 @@ import { ImmutableModule } from "../shared/ImmutableModule.sol";
 
 /**
  * @title  BoostDirectorV2
- * @author mStable
+ * @author xZeno
  * @notice Supports the directing of balance from multiple StakedToken contracts up to X accounts
  * @dev    Uses a bitmap to store the id's of a given users chosen vaults in a gas efficient manner.
  */
@@ -24,7 +24,7 @@ contract BoostDirectorV2 is IBoostDirector, ImmutableModule {
 
     event BalanceDivisorChanged(uint256 newDivisor);
 
-    // Read the vMTA balance from here
+    // Read the vZENO balance from here
     IERC20[] public stakedTokenContracts;
 
     // Whitelisted vaults set by governance (only these vaults can read balances)

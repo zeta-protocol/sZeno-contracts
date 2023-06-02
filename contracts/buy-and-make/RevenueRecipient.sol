@@ -9,7 +9,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 /**
  * @title   RevenueRecipient
- * @author  mStable
+ * @author  xZeno
  * @notice  Simply receives mAssets and then deposits to a pre-defined Balancer
  *          Bpool.
  * @dev     VERSION: 2.0
@@ -30,7 +30,7 @@ contract RevenueRecipient is IRevenueRecipient, ImmutableModule {
 
     /**
      * @dev Creates the RevenueRecipient contract
-     * @param _nexus      mStable system Nexus address
+     * @param _nexus      xZeno system Nexus address
      * @param _targetPool Balancer pool to which all revenue should be deposited
      * @param _balToken   Address of $BAL
      * @param _assets     Initial list of supported mAssets

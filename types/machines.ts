@@ -1,6 +1,6 @@
 import { BN } from "../test-utils/math"
 import { EthAddress } from "./common"
-import { Basset } from "../test-utils/mstable-objects"
+import { Basset } from "../test-utils/xzeno-objects"
 import { MockERC20 } from "./generated"
 
 export interface ATokenDetails {

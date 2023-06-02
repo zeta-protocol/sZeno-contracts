@@ -848,7 +848,7 @@ contract ModuleKeys {
     bytes32 internal constant KEY_PROXY_ADMIN =
         0x96ed0203eb7e975a4cbcaa23951943fa35c5d8288117d50c12b3d48b0fab48d1;
 
-    // mStable
+    // xZeno
     // =======
     // keccak256("OracleHub");
     bytes32 internal constant KEY_ORACLE_HUB =
@@ -1093,7 +1093,7 @@ library StableMath {
     uint256 private constant FULL_SCALE = 1e18;
 
     /**
-     * @notice Token Ratios are used when converting between units of bAsset, mAsset and MTA
+     * @notice Token Ratios are used when converting between units of bAsset, mAsset and ZENO
      * Reasoning: Takes into account token decimals, and difference in base unit (i.e. grams to Troy oz for gold)
      * @dev bAsset ratio unit for use in exact calculations,
      * where (1 bAsset unit * bAsset.ratio) / ratioScale == x mAsset unit
@@ -1284,7 +1284,7 @@ library StableMath {
  * @dev     VERSION: 2.1
  *          DATE:    2021-11-25
  */
-contract SavingsContract_imusd_mainnet_22 is
+contract SavingsContract_izusd_mainnet_22 is
     ISavingsContractV1,
     ISavingsContractV4,
     IERC4626Vault,
@@ -1338,7 +1338,7 @@ contract SavingsContract_imusd_mainnet_22 is
     uint256 public lastBalance;
     // Fraction of capital assigned to the connector (100% = 1e18)
     uint256 public fraction;
-    // Address of the current connector (all IConnectors are mStable validated)
+    // Address of the current connector (all IConnectors are xZeno validated)
     IConnector public connector;
     // How often do we allow pokes
     uint256 private constant POKE_CADENCE = 4 hours;
@@ -1387,7 +1387,7 @@ contract SavingsContract_imusd_mainnet_22 is
     /**
      * @dev Converts a given underlying amount into credits
      * @param _underlying  Units of underlying
-     * @return credits     Credit units (a.k.a imUSD)
+     * @return credits     Credit units (a.k.a izUSD)
      */
     function underlyingToCredits(uint256 _underlying) external view returns (uint256 credits) {
         (credits, ) = _underlyingToCredits(_underlying);
@@ -1453,8 +1453,8 @@ contract SavingsContract_imusd_mainnet_22 is
     /**
      * @dev During a migration period, allow savers to deposit underlying here before the interest has been redirected
      * @param _underlying      Units of underlying to deposit into savings vault
-     * @param _beneficiary     Immediately transfer the imUSD token to this beneficiary address
-     * @return creditsIssued   Units of credits (imUSD) issued
+     * @param _beneficiary     Immediately transfer the izUSD token to this beneficiary address
+     * @return creditsIssued   Units of credits (izUSD) issued
      */
     function preDeposit(uint256 _underlying, address _beneficiary)
         external
@@ -1470,7 +1470,7 @@ contract SavingsContract_imusd_mainnet_22 is
      *                    credits = underlying / exchangeRate
      *      We will first update the internal exchange rate by collecting any interest generated on the underlying.
      * @param _underlying      Units of underlying to deposit into savings vault
-     * @return creditsIssued   Units of credits (imUSD) issued
+     * @return creditsIssued   Units of credits (izUSD) issued
      */
     function depositSavings(uint256 _underlying) external returns (uint256 creditsIssued) {
         return _deposit(_underlying, msg.sender, true);
@@ -1482,8 +1482,8 @@ contract SavingsContract_imusd_mainnet_22 is
      *                    credits = underlying / exchangeRate
      *      We will first update the internal exchange rate by collecting any interest generated on the underlying.
      * @param _underlying      Units of underlying to deposit into savings vault
-     * @param _beneficiary     Immediately transfer the imUSD token to this beneficiary address
-     * @return creditsIssued   Units of credits (imUSD) issued
+     * @param _beneficiary     Immediately transfer the izUSD token to this beneficiary address
+     * @return creditsIssued   Units of credits (izUSD) issued
      */
     function depositSavings(uint256 _underlying, address _beneficiary)
         external
@@ -1495,9 +1495,9 @@ contract SavingsContract_imusd_mainnet_22 is
     /**
      * @dev Overloaded `depositSavings` method with an optional referrer address.
      * @param _underlying      Units of underlying to deposit into savings vault
-     * @param _beneficiary     Immediately transfer the imUSD token to this beneficiary address
+     * @param _beneficiary     Immediately transfer the izUSD token to this beneficiary address
      * @param _referrer        Referrer address for this deposit
-     * @return creditsIssued   Units of credits (imUSD) issued
+     * @return creditsIssued   Units of credits (izUSD) issued
      */
     function depositSavings(
         uint256 _underlying,
@@ -1509,7 +1509,7 @@ contract SavingsContract_imusd_mainnet_22 is
     }
 
     /**
-     * @dev Internally deposit the _underlying from the sender and credit the beneficiary with new imUSD
+     * @dev Internally deposit the _underlying from the sender and credit the beneficiary with new izUSD
      */
     function _deposit(
         uint256 _underlying,
@@ -1587,17 +1587,17 @@ contract SavingsContract_imusd_mainnet_22 is
      *      Credits needed to burn is calculated using:
      *                    credits = underlying / exchangeRate
      * @param _amount         Units to redeem (either underlying or credit amount).
-     * @param _isCreditAmt    `true` if `amount` is in credits. eg imUSD. `false` if `amount` is in underlying. eg mUSD.
+     * @param _isCreditAmt    `true` if `amount` is in credits. eg izUSD. `false` if `amount` is in underlying. eg zUSD.
      * @param _minAmountOut   Minimum amount of `output` tokens to unwrap for. This is to the same decimal places as the `output` token.
      * @param _output         Asset to receive in exchange for the redeemed mAssets. This can be a bAsset or a fAsset. For example:
-        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for mainnet imUSD Vault.
-        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon imUSD Vault.
+        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for mainnet izUSD Vault.
+        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon izUSD Vault.
         - bAssets (WBTC, sBTC or renBTC) or fAssets (HBTC or TBTCV2) for mainnet imBTC Vault.
      * @param _beneficiary    Address to send `output` tokens to.
      * @param _router         mAsset address if the output is a bAsset. Feeder Pool address if the output is a fAsset.
      * @param _isBassetOut    `true` if `output` is a bAsset. `false` if `output` is a fAsset.
-     * @return creditsBurned  Units of credits burned from sender. eg imUSD or imBTC.
-     * @return massetReturned Units of the underlying mAssets that were redeemed or swapped for the output tokens. eg mUSD or mBTC.
+     * @return creditsBurned  Units of credits burned from sender. eg izUSD or imBTC.
+     * @return massetReturned Units of the underlying mAssets that were redeemed or swapped for the output tokens. eg zUSD or mBTC.
      * @return outputQuantity Units of `output` tokens sent to the beneficiary.
      */
     function redeemAndUnwrap(
@@ -1999,7 +1999,7 @@ contract SavingsContract_imusd_mainnet_22 is
     /**
      * @notice it must be an ERC-20 token contract. Must not revert.
      *
-     * @return assetTokenAddress the address of the underlying asset token. eg mUSD or mBTC
+     * @return assetTokenAddress the address of the underlying asset token. eg zUSD or mBTC
      */
     function asset() external view returns (address assetTokenAddress) {
         return address(underlying);
@@ -2057,9 +2057,9 @@ contract SavingsContract_imusd_mainnet_22 is
      *                    credits = underlying / exchangeRate
      *      We will first update the internal exchange rate by collecting any interest generated on the underlying.
      * Emits a {Deposit} event.
-     * @param assets      Units of underlying to deposit into savings vault. eg mUSD or mBTC
+     * @param assets      Units of underlying to deposit into savings vault. eg zUSD or mBTC
      * @param receiver    The address to receive the Vault shares.
-     * @return shares     Units of credits issued. eg imUSD or imBTC
+     * @return shares     Units of credits issued. eg izUSD or imBTC
      */
     function deposit(uint256 assets, address receiver) external returns (uint256 shares) {
         shares = _transferAndMint(assets, receiver, true);
@@ -2068,10 +2068,10 @@ contract SavingsContract_imusd_mainnet_22 is
     /**
      *
      * @notice Overloaded `deposit` method with an optional referrer address.
-     * @param assets    Units of underlying to deposit into savings vault. eg mUSD or mBTC
+     * @param assets    Units of underlying to deposit into savings vault. eg zUSD or mBTC
      * @param receiver  Address to the new credits will be issued to.
      * @param referrer  Referrer address for this deposit.
-     * @return shares   Units of credits issued. eg imUSD or imBTC
+     * @return shares   Units of credits issued. eg izUSD or imBTC
      */
     function deposit(
         uint256 assets,

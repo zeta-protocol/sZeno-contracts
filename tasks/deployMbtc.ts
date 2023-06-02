@@ -27,7 +27,7 @@ import {
 import { simpleToExactAmount, BN } from "@utils/math"
 
 interface CommonAddresses {
-    mta: string
+    zeno: string
     staking: string
     nexus: string
     proxyAdmin: string
@@ -193,7 +193,7 @@ const deploySave = async (
     console.log(`Deployed Savings contract to ${sImpl.address}. gas used ${receiptSaving.gasUsed}`)
 
     // Data
-    const sData = sImpl.interface.encodeFunctionData("initialize", [addresses.poker, "Interest bearing mStable BTC", "imBTC"])
+    const sData = sImpl.interface.encodeFunctionData("initialize", [addresses.poker, "Interest bearing xZeno BTC", "imBTC"])
     // Proxy
     console.log(`Deploying Savings Contract proxy, impl: ${sImpl.address}, admin: ${addresses.proxyAdmin}`)
     const sProxy = await new AssetProxy__factory(sender).deploy(sImpl.address, addresses.proxyAdmin, sData)
@@ -209,7 +209,7 @@ const deploySave = async (
             addresses.boostDirector,
             simpleToExactAmount(3000, 18),
             COEFF,
-            addresses.mta,
+            addresses.zeno,
         )
         const receiptVaultImpl = await vImpl.deployTransaction.wait()
         console.log(`Deployed Vault Impl to ${vImpl.address}. gas used ${receiptVaultImpl.gasUsed}`)
@@ -273,7 +273,7 @@ task("deployMBTC", "Deploys the mBTC contracts").setAction(async (_, hre) => {
     const addresses =
         network.name === "ropsten"
             ? {
-                  mta: "0x273bc479E5C21CAA15aA8538DecBF310981d14C0",
+                  zeno: "0x273bc479E5C21CAA15aA8538DecBF310981d14C0",
                   staking: "0x77f9bf80e0947408f64faa07fd150920e6b52015",
                   nexus: "0xeD04Cd19f50F893792357eA53A549E23Baf3F6cB",
                   proxyAdmin: "0x2d369F83E9DC764a759a74e87a9Bc542a2BbfdF0",
@@ -284,7 +284,7 @@ task("deployMBTC", "Deploys the mBTC contracts").setAction(async (_, hre) => {
                   renGatewayRegistry: DEAD_ADDRESS,
               }
             : {
-                  mta: DEAD_ADDRESS,
+                  zeno: DEAD_ADDRESS,
                   staking: (await new MockERC20__factory(deployer).deploy("Stake", "ST8", 18, DEAD_ADDRESS, 1)).address,
                   nexus: DEAD_ADDRESS,
                   proxyAdmin: DEAD_ADDRESS,
@@ -332,7 +332,7 @@ task("deployMBTC", "Deploys the mBTC contracts").setAction(async (_, hre) => {
 
     // Governance funcs to complete setup:
     //  - Add mBTC savingsContract to SavingsManager to enable interest collection
-    //  - Fund the BoostedVault with MTA to enable rewards
+    //  - Fund the BoostedVault with ZENO to enable rewards
 })
 
 task("reDeployMBTC", "Re-deploys the mBTC contracts given bAsset addresses").setAction(async (_, hre) => {
@@ -342,7 +342,7 @@ task("reDeployMBTC", "Re-deploys the mBTC contracts given bAsset addresses").set
     const addresses =
         network.name === "ropsten"
             ? {
-                  mta: "0x273bc479E5C21CAA15aA8538DecBF310981d14C0",
+                  zeno: "0x273bc479E5C21CAA15aA8538DecBF310981d14C0",
                   staking: "0x77f9bf80e0947408f64faa07fd150920e6b52015",
                   nexus: "0xeD04Cd19f50F893792357eA53A549E23Baf3F6cB",
                   proxyAdmin: "0x2d369F83E9DC764a759a74e87a9Bc542a2BbfdF0",
@@ -353,7 +353,7 @@ task("reDeployMBTC", "Re-deploys the mBTC contracts given bAsset addresses").set
                   renGatewayRegistry: DEAD_ADDRESS,
               }
             : {
-                  mta: DEAD_ADDRESS,
+                  zeno: DEAD_ADDRESS,
                   staking: (await new MockERC20__factory(deployer).deploy("Stake", "ST8", 18, DEAD_ADDRESS, 1)).address,
                   nexus: DEAD_ADDRESS,
                   proxyAdmin: DEAD_ADDRESS,
@@ -416,7 +416,7 @@ task("reDeployMBTC", "Re-deploys the mBTC contracts given bAsset addresses").set
 
     // Governance funcs to complete setup:
     //  - Add mBTC savingsContract to SavingsManager to enable interest collection
-    //  - Fund the BoostedVault with MTA to enable rewards
+    //  - Fund the BoostedVault with ZENO to enable rewards
 })
 
 task("deployMBTC-mainnet", "Deploys the mBTC contracts to Mainnet").setAction(async (_, hre) => {
@@ -426,7 +426,7 @@ task("deployMBTC-mainnet", "Deploys the mBTC contracts to Mainnet").setAction(as
     const [deployer] = await ethers.getSigners()
 
     const addresses = {
-        mta: "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
+        zeno: "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
         staking: "0xae8bc96da4f9a9613c323478be181fdb2aa0e1bf",
         nexus: "0xafce80b19a8ce13dec0739a1aab7a028d6845eb3",
         proxyAdmin: "0x5c8eb57b44c1c6391fc7a8a0cf44d26896f92386",

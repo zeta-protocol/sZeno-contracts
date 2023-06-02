@@ -21,7 +21,7 @@ import {
     MockNexus,
 } from "types/generated"
 
-import { BassetStatus } from "@utils/mstable-objects"
+import { BassetStatus } from "@utils/xzeno-objects"
 import { getTimestamp, increaseTime } from "@utils/time"
 import { impersonate } from "@utils/fork"
 
@@ -204,7 +204,7 @@ describe("Feeder Admin", () => {
             expect(config.limits.max, "maxWeight").to.eq(simpleToExactAmount(80, 16))
             expect(config.a, "a value").to.eq(30000)
         })
-        it("should get mStable asset", async () => {
+        it("should get xZeno asset", async () => {
             const { pool, mAsset } = details
             const asset = await pool.getBasset(mAsset.address)
             expect(asset.personal.addr, "personal.addr").to.eq(mAsset.address)

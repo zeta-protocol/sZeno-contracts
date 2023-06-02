@@ -8,7 +8,7 @@ import { IRewardsDistributionRecipient } from "../interfaces/IRewardsDistributio
 /**
  * @title  RewardsDistributionRecipient
  * @author Originally: Synthetix (forked from /Synthetixio/synthetix/contracts/RewardsDistributionRecipient.sol)
- *         Changes by: mStable
+ *         Changes by: xZeno
  * @notice RewardsDistributionRecipient gets notified of additional rewards by the rewardsDistributor
  * @dev    Changes: Addition of ImmutableModule and abstract `getRewardToken` func + cosmetic
  */
@@ -21,7 +21,7 @@ abstract contract RewardsDistributionRecipient is IRewardsDistributionRecipient,
     // This address has the ability to distribute the rewards
     address public rewardsDistributor;
 
-    /** @dev Recipient is a module, governed by mStable governance */
+    /** @dev Recipient is a module, governed by xZeno governance */
     constructor(address _nexus, address _rewardsDistributor) ImmutableModule(_nexus) {
         rewardsDistributor = _rewardsDistributor;
     }
@@ -35,7 +35,7 @@ abstract contract RewardsDistributionRecipient is IRewardsDistributionRecipient,
     }
 
     /**
-     * @dev Change the rewardsDistributor - only called by mStable governor
+     * @dev Change the rewardsDistributor - only called by xZeno governor
      * @param _rewardsDistributor   Address of the new distributor
      */
     function setRewardsDistribution(address _rewardsDistributor) external onlyGovernor {

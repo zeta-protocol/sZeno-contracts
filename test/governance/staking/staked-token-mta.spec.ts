@@ -12,8 +12,8 @@ import {
     PlatformTokenVendorFactory__factory,
     QuestManager__factory,
     SignatureVerifier__factory,
-    StakedTokenMTA,
-    StakedTokenMTA__factory,
+    StakedTokenZENO,
+    StakedTokenZENO__factory,
     UserStakingData,
 } from "types"
 import { DEAD_ADDRESS } from "index"
@@ -34,15 +34,15 @@ export interface SnapData {
     earned: BN
 }
 
-describe("Staked Token MTA rewards", () => {
+describe("Staked Token ZENO rewards", () => {
     let sa: StandardAccounts
     let nexus: MockNexus
     let rewardToken: MockERC20
-    let stakedToken: StakedTokenMTA
+    let stakedToken: StakedTokenZENO
     let rewardsVendorAddress: string
     // const startingMintAmount = simpleToExactAmount(10000000)
 
-    console.log(`Staked Token MTA contract size ${StakedTokenMTA__factory.bytecode.length / 2} bytes`)
+    console.log(`Staked Token ZENO contract size ${StakedTokenZENO__factory.bytecode.length / 2} bytes`)
 
     const redeployStakedToken = async (): Promise<void> => {
         nexus = await new MockNexus__factory(sa.default.signer).deploy(sa.governor.address, DEAD_ADDRESS, DEAD_ADDRESS)
@@ -71,7 +71,7 @@ describe("Staked Token MTA rewards", () => {
         const stakedTokenLibraryAddresses = {
             "contracts/rewards/staking/PlatformTokenVendorFactory.sol:PlatformTokenVendorFactory": platformTokenVendorFactory.address,
         }
-        const stakedTokenFactory = new StakedTokenMTA__factory(stakedTokenLibraryAddresses, sa.default.signer)
+        const stakedTokenFactory = new StakedTokenZENO__factory(stakedTokenLibraryAddresses, sa.default.signer)
         const stakedTokenImpl = await stakedTokenFactory.deploy(
             nexus.address,
             rewardToken.address,
@@ -188,7 +188,7 @@ describe("Staked Token MTA rewards", () => {
     // '''................      REWARD DISTRIBUTION      ...................'''
     // '''..................................................................'''
 
-    context("collecting fees in $MTA", () => {
+    context("collecting fees in $ZENO", () => {
         const stakingAmount = simpleToExactAmount(10000)
         const redemptionFee = stakingAmount.sub(stakingAmount.mul(1000).div(1075))
         before(async () => {

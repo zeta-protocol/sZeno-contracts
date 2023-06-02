@@ -13,19 +13,19 @@ import { DyDxFlashLoan } from "../../../peripheral/dydx/DyDxFlashLoan.sol";
 import { ICurve } from "../../../peripheral/Curve/ICurve.sol";
 
 /**
- * @title   Contract to rebalance mUSD bAssets to new weights for the mUSD V3 upgrade.
- * @author  mStable
- * @notice  Either DAI or USDC is flash loaned from DyDx to swap for TUSD or USDT in mUSD.
+ * @title   Contract to rebalance zUSD bAssets to new weights for the zUSD V3 upgrade.
+ * @author  xZeno
+ * @notice  Either DAI or USDC is flash loaned from DyDx to swap for TUSD or USDT in zUSD.
  *          Curve's TUSD pool (DAI, USDC, USDT and TUSD) or 3pool (DAI, USDC, USDT) is used to
  *          convert TUSD and USDT back to the flash loan currency.
  * @dev     VERSION: 1.0
  *          DATE:    2021-03-22
  */
-contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
+contract ZusdV2Rebalance is DyDxFlashLoan, Ownable {
     using SafeERC20 for IERC20;
 
     // Contracts that are called to execute swaps
-    IMassetV1 constant mUsdV1 = IMassetV1(0xe2f2a5C287993345a840Db3B0845fbC70f5935a5);
+    IMassetV1 constant ZusdV1 = IMassetV1(0xe2f2a5C287993345a840Db3B0845fbC70f5935a5);
     ICurve constant curve3pool = ICurve(0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7);
     ICurve constant curveYpool = ICurve(0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51);
     ICurve constant curveTUSDpool = ICurve(0xEcd5e75AFb02eFa118AF914515D6521aaBd189F1);
@@ -40,7 +40,7 @@ contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
     // Events from dependant contracts so Ethers can parse the topics
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
-    // mUSD
+    // zUSD
     event Swapped(
         address indexed swapper,
         address input,
@@ -69,7 +69,7 @@ contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
     ****************************************/
 
     /**
-     * @notice Convert TUSD in the mUSD basket to USDC or DAI using a DyDx flash loan.
+     * @notice Convert TUSD in the zUSD basket to USDC or DAI using a DyDx flash loan.
      * @param flashToken DAI or USDC token address.
      * @param flashAmount Amount to flash loan. For USDC is 6 decimal places. DAI is 18 decimals places.
      * @param funderAccount Account that will fund the shortfall of the DyDx USDC flash loan.
@@ -86,10 +86,10 @@ contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
     }
 
     /**
-     * @notice Convert TUSD and USDT in the mUSD basket to USDC or DAI using a DyDx flash loan.
+     * @notice Convert TUSD and USDT in the zUSD basket to USDC or DAI using a DyDx flash loan.
      * @param flashToken DAI or USDC token address.
      * @param funderAccount Account that will fund the shortfall of the DyDx USDC flash loan.
-     * @param swapInputs This mUSD swap inputs from the flash token to TUSD (at index 0) and USDT (at index 1).
+     * @param swapInputs This zUSD swap inputs from the flash token to TUSD (at index 0) and USDT (at index 1).
      * @dev Assumes the funder has already approved this contract to transferFrom the shortfall from their account.
      */
     function swapOutTusdAndUsdt(
@@ -109,7 +109,7 @@ contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
      * @notice Requests a flash loan from DyDx.
      * @param flashToken DAI or USDC token address.
      * @param funderAccount Account that will fund the shortfall of the DyDx USDC flash loan.
-     * @param swapInputs This mUSD swap inputs from the flash token to TUSD (at index 0) and USDT (at index 1).
+     * @param swapInputs This zUSD swap inputs from the flash token to TUSD (at index 0) and USDT (at index 1).
      */
     function _getFlashloan(
         address flashToken,
@@ -158,15 +158,15 @@ contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
     ****************************************/
 
     /**
-     * @notice Executes the following swaps to rebalance the mUSD bAssets:
-        Swap flash token for TUSD using mUSD
-        Swap flash token for USDT using mUSD
+     * @notice Executes the following swaps to rebalance the zUSD bAssets:
+        Swap flash token for TUSD using zUSD
+        Swap flash token for USDT using zUSD
         Swap TUSD for flash token using Curve TUSD pool (can be further split across Curve 3pool)
         Swap USDT for flash token using Curve 3pool
         Fund the DyDx flash loan shortfall
      * @param flashToken DAI or USDC token address.
      * @param funderAccount Account that will fund the shortfall of the DyDx USDC flash loan.
-     * @param swapInputs This mUSD swap inputs from the flash token to TUSD (at index 0) and USDT (at index 1).
+     * @param swapInputs This zUSD swap inputs from the flash token to TUSD (at index 0) and USDT (at index 1).
      */
     function _balanceTusdAndUsdt(
         address flashToken,
@@ -174,16 +174,16 @@ contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
         uint256[] memory swapInputs
     ) internal {
         uint256 flashAmount = swapInputs[0] + swapInputs[1];
-        // Approve mUSD contract to transfer flash token from this contract
-        // console.log("About to approve mUSD contract to transfer %s flash tokens >= %s %s", flashAmount, swapInputs[0], swapInputs[1]);
+        // Approve zUSD contract to transfer flash token from this contract
+        // console.log("About to approve zUSD contract to transfer %s flash tokens >= %s %s", flashAmount, swapInputs[0], swapInputs[1]);
         require(flashAmount >= swapInputs[0] + swapInputs[1], "flash loan not >= swap inputs");
-        IERC20(flashToken).safeApprove(address(mUsdV1), flashAmount);
+        IERC20(flashToken).safeApprove(address(ZusdV1), flashAmount);
 
-        // If swapping flash token into mUSD for TUSD
+        // If swapping flash token into zUSD for TUSD
         if (swapInputs[0] > 0) {
-            // Swap flash token for TUSD using mUSD
-            // console.log("About to mUSD swap %s flash tokens for TUSD", swapInputs[0]);
-            uint256 tusdOutput = mUsdV1.swap(flashToken, TUSD, swapInputs[0], address(this));
+            // Swap flash token for TUSD using zUSD
+            // console.log("About to zUSD swap %s flash tokens for TUSD", swapInputs[0]);
+            uint256 tusdOutput = ZusdV1.swap(flashToken, TUSD, swapInputs[0], address(this));
             // console.log("tusdOutput %s", tusdOutput);
 
             uint256 halfTusdOutput = tusdOutput / 2;
@@ -223,11 +223,11 @@ contract MusdV2Rebalance is DyDxFlashLoan, Ownable {
             // console.log("Curve TUSD pool swap");
         }
 
-        // If swapping flash token into mUSD for USDT
+        // If swapping flash token into zUSD for USDT
         if (swapInputs[1] > 0) {
-            // Swap flash token for USDT using mUSD
-            // console.log("About to mUSD swap %s flash tokens for USDT", swapInputs[1]);
-            uint256 usdtOutput = mUsdV1.swap(flashToken, USDT, swapInputs[1], address(this));
+            // Swap flash token for USDT using zUSD
+            // console.log("About to zUSD swap %s flash tokens for USDT", swapInputs[1]);
+            uint256 usdtOutput = ZusdV1.swap(flashToken, USDT, swapInputs[1], address(this));
             // console.log("usdtOutput %s", usdtOutput);
 
             // Convert USDT for flash token using Curve 3pool

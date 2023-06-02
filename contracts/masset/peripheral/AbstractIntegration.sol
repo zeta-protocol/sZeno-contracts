@@ -8,7 +8,7 @@ import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable
 
 /**
  * @title   AbstractIntegration
- * @author  mStable
+ * @author  xZeno
  * @notice  A generalised platform integration contract from which to inherit
  * @dev     Contains functionality for managing access to a specific lending
  *          platform. pTokens are the generic name given to platform tokens e.g. cDai
@@ -31,7 +31,7 @@ abstract contract AbstractIntegration is
         uint256 userAmount
     );
 
-    /// @notice mAsset or Feeder Pool using the integration. eg fPmUSD/alUSD
+    /// @notice mAsset or Feeder Pool using the integration. eg fPzUSD/alUSD
     /// @dev LP has write access
     address public immutable lpAddress;
 

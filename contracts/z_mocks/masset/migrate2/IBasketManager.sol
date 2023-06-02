@@ -4,8 +4,8 @@ pragma solidity 0.8.6;
 import { Basket } from "./MassetStructsV1.sol";
 
 /**
- * @notice  Is the Basket Manager V2.0 interface used in the upgrade of mUSD from V2.0 to V3.0.
- * @author  mStable
+ * @notice  Is the Basket Manager V2.0 interface used in the upgrade of zUSD from V2.0 to V3.0.
+ * @author  xZeno
  * @dev     VERSION: 2.0
  *          DATE:    2021-02-23
  */

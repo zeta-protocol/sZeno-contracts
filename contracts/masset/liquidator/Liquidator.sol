@@ -19,7 +19,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title   Liquidator
- * @author  mStable
+ * @author  xZeno
  * @notice  The Liquidator allows rewards to be swapped for another token
  *          and returned to a calling contract
  * @dev     VERSION: 1.3
@@ -30,13 +30,13 @@ contract Liquidator is ILiquidator, Initializable, ModuleKeysStorage, ImmutableM
 
     event LiquidationModified(address indexed integration);
     event LiquidationEnded(address indexed integration);
-    event Liquidated(address indexed sellToken, address mUSD, uint256 mUSDAmount, address buyToken);
+    event Liquidated(address indexed sellToken, address zUSD, uint256 zUSDAmount, address buyToken);
     event ClaimedStakedAave(uint256 rewardsAmount);
     event RedeemedAave(uint256 redeemedAmount);
 
     // Deprecated stotage variables, but kept around to mirror storage layout
     address private deprecated_nexus;
-    address public deprecated_mUSD;
+    address public deprecated_zUSD;
     address public deprecated_curve;
     address public deprecated_uniswap;
     uint256 private deprecated_interval = 7 days;
@@ -144,7 +144,7 @@ contract Liquidator is ILiquidator, Initializable, ModuleKeysStorage, ImmutableM
      * @param _uniswapPath The Uniswap V3 bytes encoded path.
      * @param _trancheAmount The max amount of bAsset units to buy in each weekly tranche.
      * @param _minReturn Minimum exact amount of bAsset to get for each (whole) sellToken unit
-     * @param _mAsset optional address of the mAsset. eg mUSD or mBTC. Use zero address if from a Feeder Pool.
+     * @param _mAsset optional address of the mAsset. eg zUSD or mBTC. Use zero address if from a Feeder Pool.
      * @param _useAave flag if integration is with Aave
      */
     function createLiquidation(
@@ -190,12 +190,12 @@ contract Liquidator is ILiquidator, Initializable, ModuleKeysStorage, ImmutableM
 
         if (_mAsset != address(0)) {
             // This Liquidator contract approves the mAsset to transfer bAssets for mint.
-            // eg USDC in mUSD or WBTC in mBTC
+            // eg USDC in zUSD or WBTC in mBTC
             IERC20(_bAsset).safeApprove(_mAsset, 0);
             IERC20(_bAsset).safeApprove(_mAsset, type(uint256).max);
 
             // This Liquidator contract approves the Savings Manager to transfer mAssets
-            // for depositLiquidation. eg mUSD
+            // for depositLiquidation. eg zUSD
             // If the Savings Manager address was to change then
             // this liquidation would have to be deleted and a new one created.
             // Alternatively, a new liquidation contract could be deployed and proxy upgraded.
@@ -307,10 +307,10 @@ contract Liquidator is ILiquidator, Initializable, ModuleKeysStorage, ImmutableM
      *    - Swap sell token for bAsset on Uniswap (up to trancheAmount). eg
      *      - COMP for USDC
      *      - ALCX for alUSD
-     *    - If bAsset in mAsset. eg USDC in mUSD
-     *      - Mint mAsset using bAsset. eg mint mUSD using USDC.
-     *      - Deposit mAsset to Savings Manager. eg deposit mUSD
-     *    - else bAsset in Feeder Pool. eg alUSD in fPmUSD/alUSD.
+     *    - If bAsset in mAsset. eg USDC in zUSD
+     *      - Mint mAsset using bAsset. eg mint zUSD using USDC.
+     *      - Deposit mAsset to Savings Manager. eg deposit zUSD
+     *    - else bAsset in Feeder Pool. eg alUSD in fPzUSD/alUSD.
      *      - Transfer bAsset to integration contract. eg transfer alUSD
      * @param _integration Integration for which to trigger liquidation
      */
@@ -366,7 +366,7 @@ contract Liquidator is ILiquidator, Initializable, ModuleKeysStorage, ImmutableM
         uniswapRouter.exactInput(param);
 
         address mAsset = liquidation.mAsset;
-        // If the integration contract is connected to a mAsset like mUSD or mBTC
+        // If the integration contract is connected to a mAsset like zUSD or mBTC
         if (mAsset != address(0)) {
             // 4a. Mint mAsset using purchased bAsset
             uint256 minted = _mint(bAsset, mAsset);
@@ -455,8 +455,8 @@ contract Liquidator is ILiquidator, Initializable, ModuleKeysStorage, ImmutableM
      *      - swaps Aave for bAsset using Uniswap V2. eg Aave for USDC
      *      - for each Aave integration contract
      *        - if from a mAsset
-     *          - mints mAssets using bAssets. eg mUSD for USDC
-     *          - deposits mAssets to Savings Manager. eg mUSD
+     *          - mints mAssets using bAssets. eg zUSD for USDC
+     *          - deposits mAssets to Savings Manager. eg zUSD
      *        - else from a Feeder Pool
      *          - transfer bAssets to integration contract. eg GUSD
      */
@@ -515,12 +515,12 @@ contract Liquidator is ILiquidator, Initializable, ModuleKeysStorage, ImmutableM
             uniswapRouter.exactInput(param);
 
             address mAsset = liquidation.mAsset;
-            // If the integration contract is connected to a mAsset like mUSD or mBTC
+            // If the integration contract is connected to a mAsset like zUSD or mBTC
             if (mAsset != address(0)) {
                 // 5a. Mint mAsset using bAsset from the Uniswap swap
                 uint256 minted = _mint(bAsset, mAsset);
 
-                // 6a. Send to SavingsManager to streamed to the savings vault. eg imUSD or imBTC
+                // 6a. Send to SavingsManager to streamed to the savings vault. eg izUSD or imBTC
                 address savings = _savingsManager();
                 ISavingsManager(savings).depositLiquidation(mAsset, minted);
 

@@ -8,18 +8,18 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /**
- * @title StakedTokenMTA
- * @dev Derives from StakedToken, and simply adds the functionality specific to the $MTA staking token,
+ * @title StakedTokenZENO
+ * @dev Derives from StakedToken, and simply adds the functionality specific to the $ZENO staking token,
  * for example compounding rewards.
  **/
-contract StakedTokenMTA is StakedToken, Initializable {
+contract StakedTokenZENO is StakedToken, Initializable {
     using SafeERC20 for IERC20;
 
     /**
      * @param _nexus System nexus
-     * @param _rewardsToken Token that is being distributed as a reward. eg MTA
+     * @param _rewardsToken Token that is being distributed as a reward. eg ZENO
      * @param _questManager Centralised manager of quests
-     * @param _stakedToken Core token that is staked and tracked (e.g. MTA)
+     * @param _stakedToken Core token that is staked and tracked (e.g. ZENO)
      * @param _cooldownSeconds Seconds a user must wait after she initiates her cooldown before withdrawal is possible
      */
     constructor(
@@ -49,7 +49,7 @@ contract StakedTokenMTA is StakedToken, Initializable {
 
     /**
      * @dev Allows a staker to compound their rewards IF the Staking token and the Rewards token are the same
-     * for example, with $MTA as both staking token and rewards token. Calls 'claimRewards' on the HeadlessStakingRewards
+     * for example, with $ZENO as both staking token and rewards token. Calls 'claimRewards' on the HeadlessStakingRewards
      * before executing a stake here
      */
     function compoundRewards() external nonReentrant {

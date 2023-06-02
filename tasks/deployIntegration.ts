@@ -27,7 +27,7 @@ import { verifyEtherscan } from "./utils/etherscan"
 task("integration-aave-deploy", "Deploys an instance of AaveV2Integration contract")
     .addParam(
         "asset",
-        "Symbol of the mAsset or Feeder Pool providing liquidity to the integration. eg mUSD, GUSD or alUSD",
+        "Symbol of the mAsset or Feeder Pool providing liquidity to the integration. eg zUSD, GUSD or alUSD",
         undefined,
         types.string,
     )
@@ -64,10 +64,10 @@ task("integration-aave-deploy", "Deploys an instance of AaveV2Integration contra
         })
     })
 
-task("integration-paave-deploy", "Deploys mUSD and mBTC instances of PAaveIntegration")
+task("integration-paave-deploy", "Deploys zUSD and mBTC instances of PAaveIntegration")
     .addParam(
         "asset",
-        "Symbol of the mAsset or Feeder Pool providing liquidity to the integration. eg mUSD, GUSD or alUSD",
+        "Symbol of the mAsset or Feeder Pool providing liquidity to the integration. eg zUSD, GUSD or alUSD",
         undefined,
         types.string,
     )
@@ -83,7 +83,7 @@ task("integration-paave-deploy", "Deploys mUSD and mBTC instances of PAaveIntegr
         const aaveIncentivesControllerAddress = getChainAddress("AaveIncentivesController", chain)
 
         // Feeder Pool Asset like GUSD, alUSD or RAI
-        // or can be a mAsset Vault like mUSD and mBTC
+        // or can be a mAsset Vault like zUSD and mBTC
         const liquidityToken = resolveToken(taskArgs.asset, chain)
         const liquidityProviderAddress = resolveAddress(taskArgs.asset, chain, taskArgs.assetType)
         const rewardsTokenAddress = resolveAddress(taskArgs.rewards, chain)
@@ -176,7 +176,7 @@ task("liquidator-deploy").setAction(async (_, __, runSuper) => {
 })
 
 subtask("liquidator-create", "Creates a liquidation of a platform reward")
-    .addParam("asset", "Symbol of the mAsset or Feeder Pool. eg mUSD, mBTC, alUSD, HBTC", undefined, types.string)
+    .addParam("asset", "Symbol of the mAsset or Feeder Pool. eg zUSD, mBTC, alUSD, HBTC", undefined, types.string)
     .addParam("rewardToken", "Symbol of the platform reward token. eg COMP, AAVE, stkAAVE, ALCX", undefined, types.string)
     .addParam("bAsset", "Symbol of the bAsset purchased from the rewards. eg USDC, WBTC, alUSD", undefined, types.string)
     .addOptionalParam("maxAmount", "Max amount of bAssets to liquidate. 20,000 USDC from selling COMP", undefined, types.int)
@@ -230,7 +230,7 @@ subtask("unliquidator-deploy", "Deploys new Unliquidator contract")
         const signer = await getSigner(hre, taskArgs.speed)
 
         const nexusAddress = getChainAddress("Nexus", chain)
-        const treasuryAddress = getChainAddress("mStableDAO", chain)
+        const treasuryAddress = getChainAddress("xZenoDAO", chain)
         const constructorArguments = [nexusAddress, treasuryAddress]
 
         const unliquidator = await deployContract<Unliquidator>(new Unliquidator__factory(signer), "Unliquidator", constructorArguments)

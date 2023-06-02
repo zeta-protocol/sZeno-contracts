@@ -14,7 +14,7 @@ import { BassetPersonal } from "../../masset/MassetStructs.sol";
 
 /**
  * @title  Unwrapper
- * @author mStable
+ * @author xZeno
  * @notice Used to exchange interest-bearing mAssets or mAssets to base assets (bAssets) or Feeder Pool assets (fAssets).
  * @dev    VERSION: 1.0
  *         DATE:    2022-01-31
@@ -25,9 +25,9 @@ contract Unwrapper is IUnwrapper, ImmutableModule {
     constructor(address _nexus) ImmutableModule(_nexus) {}
 
     /**
-     * @notice Query whether output address is a bAsset for given interest-bearing mAsset or mAsset. eg DAI is a bAsset of imUSD.
-     * @param _input          Address of either interest-bearing mAsset or mAsset. eg imUSD or mUSD.
-     * @param _inputIsCredit  `true` if `input` is an interest-bearing mAsset, eg imUSD. `false` if `input` is an mAsset, eg mUSD.
+     * @notice Query whether output address is a bAsset for given interest-bearing mAsset or mAsset. eg DAI is a bAsset of izUSD.
+     * @param _input          Address of either interest-bearing mAsset or mAsset. eg izUSD or zUSD.
+     * @param _inputIsCredit  `true` if `input` is an interest-bearing mAsset, eg izUSD. `false` if `input` is an mAsset, eg zUSD.
      * @param _output         Address to test if a bAsset token of the `input`.
      * @return isBassetOut    `true` if `output` is a bAsset. `false` if `output` is not a bAsset.
      */
@@ -48,11 +48,11 @@ contract Unwrapper is IUnwrapper, ImmutableModule {
      * @notice Estimate units of bAssets or fAssets in exchange for interest-bearing mAssets or mAssets.
      * @param _isBassetOut    `true` if `output` is a bAsset. `false` if `output` is a fAsset.
      * @param _router         mAsset address if the `output` is a bAsset. Feeder Pool address if the `output` is a fAsset.
-     * @param _input          Token address of either mAsset or interest-bearing mAsset. eg mUSD, imUSD, mBTC or imBTC.
-     * @param _inputIsCredit  `true` if interest-beaing mAsset like imUSD or imBTC. `false` if mAsset like mUSD or mBTC.
+     * @param _input          Token address of either mAsset or interest-bearing mAsset. eg zUSD, izUSD, mBTC or imBTC.
+     * @param _inputIsCredit  `true` if interest-beaing mAsset like izUSD or imBTC. `false` if mAsset like zUSD or mBTC.
      * @param _output         Asset to receive in exchange for the `input` token. This can be a bAsset or a fAsset. For example:
-        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for mUSD.
-        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon mUSD.
+        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for zUSD.
+        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon zUSD.
         - bAssets (WBTC, sBTC or renBTC) or fAssets (HBTC or TBTCV2) for mainnet mBTC.
      * @param _amount         Units of `input` token.
      * @return outputQuantity Units of bAssets or fAssets received in exchange for inputs. This is to the same decimal places as the `output` token.
@@ -87,8 +87,8 @@ contract Unwrapper is IUnwrapper, ImmutableModule {
      * @param _router         mAsset address if the `output` is a bAsset. Feeder Pool address if the `output` is a fAsset.
      * @param _input          mAsset address
      * @param _output         Asset to receive in exchange for the redeemed mAssets. This can be a bAsset or a fAsset. For example:
-        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for mUSD.
-        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon mUSD.
+        - bAssets (USDC, DAI, sUSD or USDT) or fAssets (GUSD, BUSD, alUSD, FEI or RAI) for zUSD.
+        - bAssets (USDC, DAI or USDT) or fAsset FRAX for Polygon zUSD.
         - bAssets (WBTC, sBTC or renBTC) or fAssets (HBTC or TBTCV2) for mainnet mBTC.
      * @param _amount         Units of mAssets that have been redeemed.
      * @param _minAmountOut   Minimum units of `output` tokens to be received by the beneficiary. This is to the same decimal places as the `output` token.

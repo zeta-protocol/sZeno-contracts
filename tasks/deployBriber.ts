@@ -14,14 +14,14 @@ task("deploy-GaugeBriber")
         const chain = getChain(hre)
 
         const nexus = resolveAddress("Nexus", chain)
-        const musd = resolveAddress("mUSD", chain, "address")
+        const zusd = resolveAddress("zUSD", chain, "address")
         const keeper = "0xb81473f20818225302b8fffb905b53d58a793d84"
         const briber = "0xd0f0F590585384AF7AB420bE1CFB3A3F8a82D775"
         const childRecipient = resolveAddress("RevenueRecipient", chain)
 
         const gaugeBriber = await deployContract(new GaugeBriber__factory(signer), "GaugeBriber", [
             nexus,
-            musd,
+            zusd,
             keeper,
             briber,
             childRecipient,
@@ -41,26 +41,26 @@ task("briber-forward")
 
         // LOAD
         const savingsManagerAddr = resolveAddress("SavingsManager", chain)
-        const musdAddr = resolveAddress("mUSD", chain, "address")
+        const zusdAddr = resolveAddress("zUSD", chain, "address")
         const recipientAddr = "0x8f2A9Ce873AEBd7a212A942B12b2209Fa00831D2"
         const briber = "0xd0f0F590585384AF7AB420bE1CFB3A3F8a82D775"
 
         const savingsManager = SavingsManager__factory.connect(savingsManagerAddr, signer)
-        const musd = ERC20__factory.connect(musdAddr, signer)
+        const zusd = ERC20__factory.connect(zusdAddr, signer)
         const recipient = GaugeBriber__factory.connect(recipientAddr, signer)
 
         // EXEC
-        const bal0 = await musd.balanceOf(briber)
+        const bal0 = await zusd.balanceOf(briber)
         console.log(bal0.toString())
         // 1. Forward
-        let tx = await savingsManager.distributeUnallocatedInterest(musdAddr)
+        let tx = await savingsManager.distributeUnallocatedInterest(zusdAddr)
         await tx.wait(2)
         // 2. Distribute
         tx = await recipient.forward()
         await tx.wait(2)
 
         // CHECK
-        const bal1 = await musd.balanceOf(briber)
+        const bal1 = await zusd.balanceOf(briber)
         console.log(bal1.toString())
     })
 

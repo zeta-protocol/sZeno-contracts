@@ -27,7 +27,7 @@ task("SaveWrapper.deploy", "Deploy a new SaveWrapper")
     })
 
 task("SaveWrapper.approveMasset", "Sets approvals for a new mAsset")
-    .addParam("masset", "Token symbol of the mAsset. eg mUSD or mBTC", undefined, types.string, false)
+    .addParam("masset", "Token symbol of the mAsset. eg zUSD or mBTC", undefined, types.string, false)
     .addParam("bassets", "Comma separated symbols of the base assets. eg USDC,DAI,USDT,sUSD", undefined, types.string, false)
     .addParam("fassets", "Comma separated symbols of the Feeder Pool assets. eg GUSD,BUSD,alUSD,FEI,HBTC", undefined, types.string, false)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
@@ -71,7 +71,7 @@ task("SaveWrapper.approveMulti", "Sets approvals for multiple tokens/a single sp
     )
     .addParam(
         "spender",
-        "Token symbol of the mAsset or address type. eg mUSD, mBTC, feederPool, savings or vault",
+        "Token symbol of the mAsset or address type. eg zUSD, mBTC, feederPool, savings or vault",
         undefined,
         types.string,
         false,
@@ -88,18 +88,18 @@ task("SaveWrapper.approveMulti", "Sets approvals for multiple tokens/a single sp
         const tokenAddresses = tokenSymbols.map((symbol) => resolveAddress(symbol, chain))
 
         const spenderAddress = ["feederPool", "savings", "vault"].includes(taskArgs.spender)
-            ? resolveAddress(taskArgs.token, chain, taskArgs.spender) // token is mUSD or mBTC
-            : resolveAddress(taskArgs.spender, chain) // spender is mUSD or mBTC
+            ? resolveAddress(taskArgs.token, chain, taskArgs.spender) // token is zUSD or mBTC
+            : resolveAddress(taskArgs.spender, chain) // spender is zUSD or mBTC
 
         const tx = await wrapper["approve(address[],address)"](tokenAddresses, spenderAddress)
         await logTxDetails(tx, "Approve multiple tokens/single spender")
     })
 
 task("SaveWrapper.approve", "Sets approvals for a single token/spender")
-    .addParam("token", "Symbol of the token that is being approved. eg USDC, WBTC, FEI, HBTC, mUSD, imUSD", undefined, types.string, false)
+    .addParam("token", "Symbol of the token that is being approved. eg USDC, WBTC, FEI, HBTC, zUSD, izUSD", undefined, types.string, false)
     .addParam(
         "spender",
-        "Token symbol of the mAsset or address type. eg mUSD, mBTC, feederPool, savings or vault",
+        "Token symbol of the mAsset or address type. eg zUSD, mBTC, feederPool, savings or vault",
         undefined,
         types.string,
         false,
@@ -107,7 +107,7 @@ task("SaveWrapper.approve", "Sets approvals for a single token/spender")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
         if (!taskArgs.spender) {
-            throw Error(`spender must be a mAsset symbol, eg mUSD or mBTC, or an address type of a mAsset, eg feederPool, savings or vault`)
+            throw Error(`spender must be a mAsset symbol, eg zUSD or mBTC, or an address type of a mAsset, eg feederPool, savings or vault`)
         }
         const chain = getChain(hre)
         const signer = await getSigner(hre, taskArgs.speed)
@@ -117,8 +117,8 @@ task("SaveWrapper.approve", "Sets approvals for a single token/spender")
 
         const tokenAddress = resolveAddress(taskArgs.token, chain)
         const spenderAddress = ["feederPool", "savings", "vault"].includes(taskArgs.spender)
-            ? resolveAddress(taskArgs.token, chain, taskArgs.spender) // token is mUSD or mBTC
-            : resolveAddress(taskArgs.spender, chain) // spender is mUSD or mBTC
+            ? resolveAddress(taskArgs.token, chain, taskArgs.spender) // token is zUSD or mBTC
+            : resolveAddress(taskArgs.spender, chain) // spender is zUSD or mBTC
 
         const tx = await wrapper["approve(address,address)"](tokenAddress, spenderAddress)
         await logTxDetails(tx, "Approve single token/spender")

@@ -13,14 +13,14 @@ import {
     FeederWrapper__factory,
 } from "types/generated"
 import { simpleToExactAmount } from "@utils/math"
-import { ALCX, alUSD, BUSD, CREAM, cyMUSD, GUSD, mUSD, tokens } from "./utils/tokens"
+import { ALCX, alUSD, BUSD, CREAM, cyZUSD, GUSD, zUSD, tokens } from "./utils/tokens"
 import { deployContract, logTxDetails } from "./utils/deploy-utils"
 import { getSigner } from "./utils/signerFactory"
 import { deployFeederPool, deployVault, FeederData, VaultData } from "./utils/feederUtils"
 import { getChain, getChainAddress, resolveToken } from "./utils/networkAddressFactory"
 
 task("deployFeederPool", "Deploy Feeder Pool")
-    .addParam("masset", "Token symbol of mAsset. eg mUSD", "mUSD", types.string)
+    .addParam("masset", "Token symbol of mAsset. eg zUSD", "zUSD", types.string)
     .addParam("fasset", "Token symbol of Feeder Pool asset. eg GUSD, WBTC, PFRAX for Polygon", "alUSD", types.string)
     .addOptionalParam("a", "Amplitude coefficient (A)", 100, types.int)
     .addOptionalParam("min", "Minimum asset weight of the basket as a percentage. eg 10 for 10% of the basket.", 10, types.int)
@@ -56,7 +56,7 @@ task("deployFeederPool", "Deploy Feeder Pool")
     })
 
 task("deployNonPeggedFeederPool", "Deploy Non Pegged Feeder Pool")
-    .addParam("masset", "Token symbol of mAsset. eg mUSD or PmUSD for Polygon", "mUSD", types.string)
+    .addParam("masset", "Token symbol of mAsset. eg zUSD or PzUSD for Polygon", "zUSD", types.string)
     .addParam("fasset", "Token symbol of Feeder Pool asset. eg GUSD, WBTC, PFRAX for Polygon", "alUSD", types.string)
     .addOptionalParam("a", "Amplitude coefficient (A)", 100, types.int)
     .addOptionalParam("min", "Minimum asset weight of the basket as a percentage. eg 10 for 10% of the basket.", 10, types.int)
@@ -118,18 +118,18 @@ task("deployAlcxInt", "Deploy Alchemix integration contract for alUSD Feeder Poo
     })
 
 task("deployVault", "Deploy Feeder Pool with boosted dual vault")
-    .addParam("name", "Token name of the vault. eg mUSD/alUSD fPool Vault", undefined, types.string)
-    .addParam("symbol", "Token symbol of the vault. eg v-fPmUSD/alUSD", undefined, types.string)
-    .addParam("boosted", "Rewards are boosted by staked MTA (vMTA)", undefined, types.boolean)
+    .addParam("name", "Token name of the vault. eg zUSD/alUSD fPool Vault", undefined, types.string)
+    .addParam("symbol", "Token symbol of the vault. eg v-fPzUSD/alUSD", undefined, types.string)
+    .addParam("boosted", "Rewards are boosted by staked ZENO (vZENO)", undefined, types.boolean)
     .addParam(
         "stakingToken",
-        "Symbol of token that is being staked. Feeder Pool is just the fAsset. eg mUSD, MTA, GUSD, alUSD",
+        "Symbol of token that is being staked. Feeder Pool is just the fAsset. eg zUSD, ZENO, GUSD, alUSD",
         undefined,
         types.string,
     )
-    .addOptionalParam("rewardToken", "Token symbol of reward. eg MTA", "MTA", types.string)
+    .addOptionalParam("rewardToken", "Token symbol of reward. eg ZENO", "ZENO", types.string)
     .addOptionalParam("dualRewardToken", "Token symbol of second reward. eg WMATIC, ALCX, QI", undefined, types.string)
-    .addOptionalParam("price", "Price coefficient is the value of the mAsset in USD. eg mUSD/USD = 1, mBTC/USD", 1, types.int)
+    .addOptionalParam("price", "Price coefficient is the value of the mAsset in USD. eg zUSD/USD = 1, mBTC/USD", 1, types.int)
     .addOptionalParam("boostCoeff", "Boost coefficient", 9, types.int)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
@@ -143,9 +143,9 @@ task("deployVault", "Deploy Feeder Pool with boosted dual vault")
         if (!stakingToken) throw Error(`Could not find staking token with symbol ${taskArgs.stakingToken}`)
 
         // Staking Token is for Feeder Pool, Savings Vault or the token itself. eg
-        // alUSD will stake feeder pool in a v-fPmUSD/alUSD vault
-        // mUSD will stake savings vault in a v-imUSD vault
-        // MTA will stake MTA in a v-MTA vault
+        // alUSD will stake feeder pool in a v-fPzUSD/alUSD vault
+        // zUSD will stake savings vault in a v-izUSD vault
+        // ZENO will stake ZENO in a v-ZENO vault
         const stakingTokenAddress = stakingToken.feederPool || stakingToken.savings || stakingToken.address
 
         const rewardToken = tokens.find((t) => t.symbol === taskArgs.rewardToken && t.chain === chain)
@@ -176,7 +176,7 @@ task("FeederWrapper-deploy", "Deploy a new FeederWrapper").setAction(async (task
     await deployContract(new FeederWrapper__factory(deployer), "FeederWrapper")
 })
 
-task("deployIronBank", "Deploys mUSD Iron Bank (CREAM) integration contracts for GUSD and BUSD Feeder Pools")
+task("deployIronBank", "Deploys zUSD Iron Bank (CREAM) integration contracts for GUSD and BUSD Feeder Pools")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed)
@@ -189,7 +189,7 @@ task("deployIronBank", "Deploys mUSD Iron Bank (CREAM) integration contracts for
             "CREAM Integration for GUSD FP",
             [nexusAddress, GUSD.feederPool, CREAM.address],
         )
-        let tx = await gusdIntegration.initialize([mUSD.address], [cyMUSD.address])
+        let tx = await gusdIntegration.initialize([zUSD.address], [cyZUSD.address])
         await logTxDetails(tx, "initialize GUSD Iron Bank integration")
 
         const busdIntegration = await deployContract<CompoundIntegration>(
@@ -197,7 +197,7 @@ task("deployIronBank", "Deploys mUSD Iron Bank (CREAM) integration contracts for
             "CREAM Integration for BUSD FP",
             [nexusAddress, BUSD.feederPool, CREAM.address],
         )
-        tx = await busdIntegration.initialize([mUSD.address], [cyMUSD.address])
+        tx = await busdIntegration.initialize([zUSD.address], [cyZUSD.address])
         await logTxDetails(tx, "initialize BUSD Iron Bank integration")
 
         // This will be done via the delayedProxyAdmin on mainnet
@@ -207,14 +207,14 @@ task("deployIronBank", "Deploys mUSD Iron Bank (CREAM) integration contracts for
 
         const gudsFp = FeederPool__factory.connect(GUSD.address, signer)
         const gusdMigrateBassetsData = await gudsFp.interface.encodeFunctionData("migrateBassets", [
-            [mUSD.address],
+            [zUSD.address],
             gusdIntegration.address,
         ])
         console.log(`GUSD Feeder Pool migrateBassets tx data: ${gusdMigrateBassetsData}`)
 
         const budsFp = FeederPool__factory.connect(BUSD.address, signer)
         const busdMigrateBassetsData = await budsFp.interface.encodeFunctionData("migrateBassets", [
-            [mUSD.address],
+            [zUSD.address],
             busdIntegration.address,
         ])
         console.log(`BUSD Feeder Pool migrateBassets tx data: ${busdMigrateBassetsData}`)

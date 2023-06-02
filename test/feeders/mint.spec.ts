@@ -6,7 +6,7 @@ import { BN, simpleToExactAmount } from "@utils/math"
 import { FeederDetails, FeederMachine, MassetMachine, StandardAccounts } from "@utils/machines"
 import { ZERO_ADDRESS } from "@utils/constants"
 import { FeederPool, MockERC20 } from "types/generated"
-import { BassetStatus } from "@utils/mstable-objects"
+import { BassetStatus } from "@utils/xzeno-objects"
 import { Account } from "types"
 
 interface MintOutput {
@@ -319,7 +319,7 @@ describe("Feeder - Mint", () => {
                         sender.address,
                     )
                 })
-                it("should fail to mint mStable asset when sender doesn't give approval", async () => {
+                it("should fail to mint xZeno asset when sender doesn't give approval", async () => {
                     const { mAsset, pool } = details
                     const sender = sa.dummy2
                     await mAsset.transfer(sender.address, 10000)
@@ -383,7 +383,7 @@ describe("Feeder - Mint", () => {
                     it("should fail to mint feeder asset", async () => {
                         await assertFailedMint("Unhealthy", details.pool, details.fAsset, simpleToExactAmount(1), "999991742447046384")
                     })
-                    it("should fail to mint mStable asset", async () => {
+                    it("should fail to mint xZeno asset", async () => {
                         await assertFailedMint("Unhealthy", details.pool, details.mAsset, simpleToExactAmount(1), "999991742447046384")
                     })
                     it("should fail to mint a main pool assets", async () => {
@@ -396,7 +396,7 @@ describe("Feeder - Mint", () => {
                     beforeEach(async () => {
                         await runSetup()
                     })
-                    it("should mint a single mStable asset", async () => {
+                    it("should mint a single xZeno asset", async () => {
                         await assertBasicMint(details, details.mAsset, simpleToExactAmount(1), "999991742447046384")
                     })
                     it("should mint a single feeder asset", async () => {
@@ -451,7 +451,7 @@ describe("Feeder - Mint", () => {
                             "999990257669407574",
                         )
                     })
-                    it("should mint from a single mStable asset", async () => {
+                    it("should mint from a single xZeno asset", async () => {
                         await assertBasicMint(details, details.mAsset, simpleToExactAmount(1), "999991742447046384")
                     })
                     it("should mint from a single feeder asset", async () => {
@@ -552,7 +552,7 @@ describe("Feeder - Mint", () => {
                     // Use lending market
                     await runSetup(true)
                 })
-                it("should mint a single mStable asset", async () => {
+                it("should mint a single xZeno asset", async () => {
                     await assertBasicMint(details, details.mAsset, simpleToExactAmount(500), "498673496146378809664")
                 })
                 it("should mint a single feeder asset", async () => {
@@ -611,7 +611,7 @@ describe("Feeder - Mint", () => {
                     it("should fail to mint feeder asset", async () => {
                         await assertFailedMintMulti("Zero mAsset quantity", details.pool, [details.fAsset], [0], 0)
                     })
-                    it("should fail to mint mStable asset", async () => {
+                    it("should fail to mint xZeno asset", async () => {
                         await assertFailedMintMulti("Zero mAsset quantity", details.pool, [details.mAsset], [0], 0)
                     })
                 })
@@ -648,7 +648,7 @@ describe("Feeder - Mint", () => {
                         false,
                     )
                 })
-                it("should fail to mint mStable asset when sender doesn't give approval", async () => {
+                it("should fail to mint xZeno asset when sender doesn't give approval", async () => {
                     const { bAssets, mAsset, pool } = details
                     const sender = sa.dummy2
                     await mAsset.transfer(sender.address, 10000)
@@ -714,7 +714,7 @@ describe("Feeder - Mint", () => {
                             true,
                         )
                     })
-                    it("should fail to multi mint mStable asset", async () => {
+                    it("should fail to multi mint xZeno asset", async () => {
                         await assertFailedMintMulti(
                             "Unhealthy",
                             details.pool,
@@ -732,7 +732,7 @@ describe("Feeder - Mint", () => {
                     beforeEach(async () => {
                         await runSetup()
                     })
-                    it("should multi mint a single mStable asset", async () => {
+                    it("should multi mint a single xZeno asset", async () => {
                         await assertMintMulti(details, [details.mAsset], [simpleToExactAmount(1)], "999991742447046384", 0)
                     })
                     it("should multi mint a single feeder asset", async () => {
@@ -772,13 +772,13 @@ describe("Feeder - Mint", () => {
                         const newBasset = await mAsset.getBasset(mAssetDetails.bAssets[0].address)
                         expect(newBasset.personal.status).to.eq(BassetStatus.Normal)
                     })
-                    it("should multi mint a single mStable asset", async () => {
+                    it("should multi mint a single xZeno asset", async () => {
                         await assertMintMulti(details, [details.mAsset], [simpleToExactAmount(1)], "999991742447046384", 0)
                     })
                     it("should multi mint a single feeder asset", async () => {
                         await assertMintMulti(details, [details.fAsset], [simpleToExactAmount(1)], "1000008257552953616", 0)
                     })
-                    it("should multi mint mStable and feeder assets", async () => {
+                    it("should multi mint xZeno and feeder assets", async () => {
                         await assertMintMulti(details, details.bAssets, [1, 1], 2, 0, false)
                     })
                 })

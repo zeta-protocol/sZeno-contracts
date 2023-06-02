@@ -76,7 +76,7 @@ describe("StakingRewardsWithPlatformToken", async () => {
             rewardsDistributor.address,
             1000000,
         )
-        const mAsset = await new MockERC20__factory(sa.default.signer).deploy("mUSD", "mUSD", stakingDecimals, sa.default.address, 1000000)
+        const mAsset = await new MockERC20__factory(sa.default.signer).deploy("zUSD", "zUSD", stakingDecimals, sa.default.address, 1000000)
         stakingToken = await new MockSavingsContract__factory(sa.default.signer).deploy(
             "Staking",
             "ST8k",

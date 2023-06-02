@@ -6,7 +6,7 @@ import { PlatformTokenVendor } from "./PlatformTokenVendor.sol";
 
 /**
  * @title  PlatformTokenVendorFactory
- * @author mStable
+ * @author xZeno
  * @notice Library that deploys a PlatformTokenVendor contract which holds rewards tokens
  * @dev    Used to reduce the byte size of the contracts that need to deploy a PlatformTokenVendor contract
  */
@@ -18,7 +18,7 @@ library PlatformTokenVendorFactory {
 
     /**
      * @notice Deploys a new PlatformTokenVendor contract
-     * @param _rewardsToken reward or platform rewards token. eg MTA or WMATIC
+     * @param _rewardsToken reward or platform rewards token. eg ZENO or WMATIC
      * @return address of the deployed PlatformTokenVendor contract
      */
     function create(IERC20 _rewardsToken) public returns (address) {

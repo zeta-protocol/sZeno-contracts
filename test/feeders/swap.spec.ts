@@ -37,8 +37,8 @@ describe("Feeder - Swap", () => {
      * @dev Asserts that both 'swap' and 'getSwapOutput' fail for a given reason
      * @param expectedReason What is the failure response of the contract?
      * @param poolContract FeederPool instance upon which to call swap
-     * @param inputAsset feeder, mStable or main pool asset to swap from sender and into the pool
-     * @param outputAsset feeder, mStable or main pool asset to swap to sender and out of the pool
+     * @param inputAsset feeder, xZeno or main pool asset to swap from sender and into the pool
+     * @param outputAsset feeder, xZeno or main pool asset to swap to sender and out of the pool
      * @param inputQuantity amount of the input asset.
      * @param minOutputQuantity minimum amount of the output asset
      * @param outputExpected expected amount of output assets
@@ -95,8 +95,8 @@ describe("Feeder - Swap", () => {
      * state and affects actors balances in the correct manner
      * @param fd Object containing relevant base level contract info on system
      * @param poolContract FeederPool instance upon which to call swap
-     * @param inputAsset feeder, mStable or main pool asset to swap from sender and into the pool
-     * @param outputAsset feeder, mStable or main pool asset to swap to sender and out of the pool
+     * @param inputAsset feeder, xZeno or main pool asset to swap from sender and into the pool
+     * @param outputAsset feeder, xZeno or main pool asset to swap to sender and out of the pool
      * @param inputQuantity amount of the input asset.
      * @param outputExpected expected amount of output assets
      * @param minOutputQuantity minimum amount of the output asset
@@ -260,11 +260,11 @@ describe("Feeder - Swap", () => {
                 beforeEach(async () => {
                     await runSetup()
                 })
-                it("should swap feeder asset for mStable asset", async () => {
+                it("should swap feeder asset for xZeno asset", async () => {
                     const { fAsset, mAsset } = details
                     await assertSwap(details, fAsset, mAsset, simpleToExactAmount(10), "9996681629683510749")
                 })
-                it("should swap mStable asset for feeder asset", async () => {
+                it("should swap xZeno asset for feeder asset", async () => {
                     const { fAsset, mAsset } = details
                     await assertSwap(details, mAsset, fAsset, simpleToExactAmount(10), "9992683316421789840")
                 })
@@ -307,11 +307,11 @@ describe("Feeder - Swap", () => {
                     const { redemptionPriceSnap } = details
                     await redemptionPriceSnap.setRedemptionPriceSnap("2000000000000000000000000000")
                 })
-                it("should swap feeder asset for mStable asset", async () => {
+                it("should swap feeder asset for xZeno asset", async () => {
                     const { fAsset, mAsset } = details
                     await assertSwap(details, fAsset, mAsset, simpleToExactAmount(10), "19870781263316757727")
                 })
-                it("should swap mStable asset for feeder asset", async () => {
+                it("should swap xZeno asset for feeder asset", async () => {
                     const { fAsset, mAsset } = details
                     await assertSwap(details, mAsset, fAsset, simpleToExactAmount(10), "5023929440671813130")
                 })
@@ -354,11 +354,11 @@ describe("Feeder - Swap", () => {
                     const { redemptionPriceSnap } = details
                     await redemptionPriceSnap.setRedemptionPriceSnap("500000000000000000000000000")
                 })
-                it("should swap feeder asset for mStable asset", async () => {
+                it("should swap feeder asset for xZeno asset", async () => {
                     const { fAsset, mAsset } = details
                     await assertSwap(details, fAsset, mAsset, simpleToExactAmount(10), "5025939724942443350")
                 })
-                it("should swap mStable asset for feeder asset", async () => {
+                it("should swap xZeno asset for feeder asset", async () => {
                     const { fAsset, mAsset } = details
                     await assertSwap(details, mAsset, fAsset, simpleToExactAmount(10), "19862836775669060034")
                 })
@@ -472,10 +472,10 @@ describe("Feeder - Swap", () => {
                         false,
                     )
                 })
-                it("should fail to swap mStable asset for main pool asset", async () => {
+                it("should fail to swap xZeno asset for main pool asset", async () => {
                     await assertFailedSwap("Invalid pair", details.pool, details.mAsset, details.mAssetDetails.bAssets[0], 10)
                 })
-                it("should fail to swap main pool asset for mStable asset", async () => {
+                it("should fail to swap main pool asset for xZeno asset", async () => {
                     await assertFailedSwap("Invalid pair", details.pool, details.mAssetDetails.bAssets[0], details.mAsset, 10)
                 })
                 it("should fail if *either* bAsset does not exist", async () => {

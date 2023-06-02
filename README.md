@@ -1,32 +1,32 @@
 <br/>
-<img src="https://mstable.org/assets/img/email/mstable_logo_horizontal_black.png" width="420" >
+<img src="https://xzeno.org/assets/img/email/xzeno_logo_horizontal_black.png" width="420" >
 
-![CI](https://github.com/mstable/mStable-contracts/workflows/Test/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/mstable/mStable-contracts/badge.svg?branch=master&t=BVkH5s)](https://coveralls.io/github/mstable/mStable-contracts?branch=master)
+![CI](https://github.com/xzeno/xZeno-contracts/workflows/Test/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/xzeno/xZeno-contracts/badge.svg?branch=master&t=BVkH5s)](https://coveralls.io/github/xzeno/xZeno-contracts?branch=master)
 [![Discord](https://img.shields.io/discord/525087739801239552?color=7289DA&label=discord%20)](https://discordapp.com/channels/525087739801239552/)
-[![npm version](https://badge.fury.io/js/%40mstable%2Fprotocol.svg)](https://badge.fury.io/js/%40mstable%2Fprotocol)
+[![npm version](https://badge.zeno.io/js/%40xzeno%2Fprotocol.svg)](https://badge.zeno.io/js/%40xzeno%2Fprotocol)
 
 <br />
 
-This repo contains all contracts and tests relevant to the core mStable protocol. mStable is a protocol built to make stablecoins easy, robust and profitable.
+This repo contains all contracts and tests relevant to the core xZeno protocol. xZeno is a protocol built to make stablecoins easy, robust and profitable.
 
-mStable Assets ([mAssets](./contracts/masset/Masset.sol)) are tokens that allow minting and redemption for underlying Basket Assets (`bAssets`) of the same peg (i.e. USD, BTC, Gold). The InvariantValidator applies both min and max weights to these bAssets, and enforces penalties and bonuses when minting with these assets to provide low slippage swaps. This Invariant applies progressive penalties and bonuses on either end of the weight scale - having the result of having a large area of low slippage. `bAssets` are integrated with lending protocols (initially Aave, Compound) to generate interest which is accrued in `mAsset` terms. mAssets can be deposited to earn native interest through their respective Savings Contract, just like you would with a savings account. `bAssets` within an `mAsset` can also be swapped with low slippage (provided they remain within their [validator](./contracts/masset/InvariantValidator.sol) limits), with a `swapFee` credited additionally to Savers.
+xZeno Assets ([mAssets](./contracts/masset/Masset.sol)) are tokens that allow minting and redemption for underlying Basket Assets (`bAssets`) of the same peg (i.e. USD, BTC, Gold). The InvariantValidator applies both min and max weights to these bAssets, and enforces penalties and bonuses when minting with these assets to provide low slippage swaps. This Invariant applies progressive penalties and bonuses on either end of the weight scale - having the result of having a large area of low slippage. `bAssets` are integrated with lending protocols (initially Aave, Compound) to generate interest which is accrued in `mAsset` terms. mAssets can be deposited to earn native interest through their respective Savings Contract, just like you would with a savings account. `bAssets` within an `mAsset` can also be swapped with low slippage (provided they remain within their [validator](./contracts/masset/InvariantValidator.sol) limits), with a `swapFee` credited additionally to Savers.
 
-Core mAsset contracts utilise OpenZeppelin's [InitializableAdminUpgradeabilityProxy](https://github.com/OpenZeppelin/openzeppelin-sdk/blob/master/packages/lib/contracts/upgradeability/InitializableAdminUpgradeabilityProxy.sol) to facilitate future upgrades, fixes or feature additions. The upgrades are proposed by the mStable Governors (with current governor address stored in the [Nexus](./contracts/nexus/Nexus.sol) - the system kernel) and executed via the [DelayedProxyAdmin](./contracts/upgradability/DelayedProxyAdmin.sol). Both changes to the `governor`, and contract upgrades have a one week delay built in to execution. This allows mStable users a one week opt out window if they do not agree with the given change.
+Core mAsset contracts utilise OpenZeppelin's [InitializableAdminUpgradeabilityProxy](https://github.com/OpenZeppelin/openzeppelin-sdk/blob/master/packages/lib/contracts/upgradeability/InitializableAdminUpgradeabilityProxy.sol) to facilitate future upgrades, fixes or feature additions. The upgrades are proposed by the xZeno Governors (with current governor address stored in the [Nexus](./contracts/nexus/Nexus.sol) - the system kernel) and executed via the [DelayedProxyAdmin](./contracts/upgradability/DelayedProxyAdmin.sol). Both changes to the `governor`, and contract upgrades have a one week delay built in to execution. This allows xZeno users a one week opt out window if they do not agree with the given change.
 
-mStable rewards those who contribute to its utility and growth - for more information see [MTA](https://docs.mstable.org/mstable-assets/functions).
+xZeno rewards those who contribute to its utility and growth - for more information see [ZENO](https://docs.xzeno.org/xzeno-assets/functions).
 
 <br />
 
-🏠 https://mstable.org  
-📀 https://app.mstable.org  
-📄 https://docs.mstable.org
+🏠 https://xzeno.org  
+📀 https://app.xzeno.org  
+📄 https://docs.xzeno.org
 
 <br />
 
 ## Bug bounty
 
-Found a bug? Claim a reward from our open [Bug Bounty](https://docs.mstable.org/protocol/security/mstable-bug-bounty) by reporting it to mStable (following the [responsible disclosure](https://docs.mstable.org/protocol/security/mstable-bug-bounty#responsible-disclosure) policy)
+Found a bug? Claim a reward from our open [Bug Bounty](https://docs.xzeno.org/protocol/security/xzeno-bug-bounty) by reporting it to xZeno (following the [responsible disclosure](https://docs.xzeno.org/protocol/security/xzeno-bug-bounty#responsible-disclosure) policy)
 
 <br />
 
@@ -43,7 +43,7 @@ Found a bug? Claim a reward from our open [Bug Bounty](https://docs.mstable.org/
 
 ## Artifacts
 
-We publish the contract artifacts to an npm package called [@mstable/protocol](https://www.npmjs.com/package/@mstable/protocol). You can browse them via [unpkg.com](https://unpkg.com/browse/@mstable/protocol@latest/).
+We publish the contract artifacts to an npm package called [@xblackzeno/protocol](https://www.npmjs.com/package/@xblackzeno/protocol). You can browse them via [unpkg.com](https://unpkg.com/browse/@xblackzeno/protocol@latest/).
 
 <br />
 
@@ -85,7 +85,7 @@ Key folders:
 
 [Solidity-coverage](https://github.com/sc-forks/solidity-coverage) is used to run coverage analysis on test suite.
 
-This produces reports that are visible in the `/coverage` folder, and navigatable/uploadable. Ultimately they are used as a reference that there is some sort of adequate cover, although they will not be a source of truth for a robust test framework. Reports publically available on [coveralls](https://coveralls.io/github/mstable/mStable-contracts).
+This produces reports that are visible in the `/coverage` folder, and navigatable/uploadable. Ultimately they are used as a reference that there is some sort of adequate cover, although they will not be a source of truth for a robust test framework. Reports publically available on [coveralls](https://coveralls.io/github/xzeno/xZeno-contracts).
 
 _NB: solidity-coverage runs with solc `optimizer=false` (see [discussion](https://github.com/sc-forks/solidity-coverage/issues/417))_
 
@@ -110,9 +110,9 @@ Codebase rules are enforced through a passing [GitHub Actions](https://github.co
 
 ### Command Line Interface
 
-[Hardhat Tasks](https://hardhat.org/guides/create-task.html) are used for command line interactions with the mStable contracts. The tasks can be found in the [tasks](./tasks) folder.
+[Hardhat Tasks](https://hardhat.org/guides/create-task.html) are used for command line interactions with the xZeno contracts. The tasks can be found in the [tasks](./tasks) folder.
 
-A separate Hardhat config file [tasks.config.ts](./tasks.config.ts) is used for task config. This inherits from the main Hardhat config file [hardhat.config.ts](./hardhat.config.ts). This avoids circular dependencies when the repository needs to be compiled before the Typechain artifacts have been generated. This means the `--config tasks.config.ts` Hardhat option needs to be used to run the mStable tasks.
+A separate Hardhat config file [tasks.config.ts](./tasks.config.ts) is used for task config. This inherits from the main Hardhat config file [hardhat.config.ts](./hardhat.config.ts). This avoids circular dependencies when the repository needs to be compiled before the Typechain artifacts have been generated. This means the `--config tasks.config.ts` Hardhat option needs to be used to run the xZeno tasks.
 
 Config your network. If you are just using readonly tasks like `mBTC-snap` you don't need to have a signer with Ether in it so the default Hardhat test account is ok to use. For safety, the mainnet config is not committed to the repository to avoid accidentally running tasks against mainnet.
 

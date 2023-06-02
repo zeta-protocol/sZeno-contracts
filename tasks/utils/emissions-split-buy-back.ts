@@ -29,13 +29,13 @@ export interface BuyBackRewardsParams extends MainParams {
  *
  * @param {Signer} signer
  * @param {MainParams} params
- *  - mAssets: Addresses of mAssets that are to be sold for rewards. eg mUSD and mBTC.
+ *  - mAssets: Addresses of mAssets that are to be sold for rewards. eg zUSD and mBTC.
  *  - revenueSplitBuyBackAddress: The address of the revenue split buy back contract.;
 
  * @return {Promise<BuyBackRewardsParams>} 
  *  - minBassetsAmounts Minimum amount of bAsset tokens to receive for each redeem of mAssets.
  * The amount uses the decimal places of the bAsset.
- * Example 1: Redeeming 10,000 mUSD with a min 2% slippage to USDC which has 6 decimal places
+ * Example 1: Redeeming 10,000 zUSD with a min 2% slippage to USDC which has 6 decimal places
  * minBassetsAmounts = 10,000 mAssets * slippage 0.98 * USDC decimals 1e6 =
  * 1e4 * 0.98 * 1e6 = 1e10 * 0.98 = 98e8
  *
@@ -45,12 +45,12 @@ export interface BuyBackRewardsParams extends MainParams {
  *
  *  - minRewardsAmounts Minimum amount of reward tokens received from the sale of bAssets.
  * The amount uses the decimal places of the rewards token.
- * Example 1: Swapping 10,000 USDC with a min 1% slippage to MTA which has 18 decimal places
- * minRewardsAmounts = 10,000 USDC * slippage 0.99 * MTA decimals 1e18 * MTA/USD rate 1.2
+ * Example 1: Swapping 10,000 USDC with a min 1% slippage to ZENO which has 18 decimal places
+ * minRewardsAmounts = 10,000 USDC * slippage 0.99 * ZENO decimals 1e18 * ZENO/USD rate 1.2
  * = 1e4 * 0.99 * 1e18 * 1.2 = 1e22 * 0.99 = 99e20
  *
- * Example 1: Swapping 1 WBTC with a min 3% slippage to MTA which has 18 decimal places
- * minRewardsAmounts = 1 WBTC * slippage 0.97 * MTA decimals 1e18 * MTA/BTC rate 0.00001
+ * Example 1: Swapping 1 WBTC with a min 3% slippage to ZENO which has 18 decimal places
+ * minRewardsAmounts = 1 WBTC * slippage 0.97 * ZENO decimals 1e18 * ZENO/BTC rate 0.00001
  * = 1 * 0.97 * 1e18 * 0.00001 = 0.97 * 1e13 = 97e11
  *
  *  - uniswapPaths The Uniswap V3 bytes encoded paths.

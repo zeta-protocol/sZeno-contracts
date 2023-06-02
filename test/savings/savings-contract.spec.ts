@@ -245,7 +245,7 @@ describe("SavingsContract", async () => {
 
         savingsFactory = await new SavingsContract__factory(sa.default.signer)
         const impl = await savingsFactory.deploy(nexus.address, masset.address, unwrapperContract.address)
-        const data = impl.interface.encodeFunctionData("initialize", [sa.default.address, "Savings Credit", "imUSD"])
+        const data = impl.interface.encodeFunctionData("initialize", [sa.default.address, "Savings Credit", "izUSD"])
         const proxy = await (await new AssetProxy__factory(sa.default.signer)).deploy(impl.address, sa.dummy4.address, data)
         savingsContract = await savingsFactory.attach(proxy.address)
 
@@ -323,7 +323,7 @@ describe("SavingsContract", async () => {
             )
 
             savingsContract = await savingsFactory.deploy(nexus.address, masset.address, unwrapperContract.address)
-            await expect(savingsContract.initialize(ZERO_ADDRESS, "Savings Credit", "imUSD")).to.be.revertedWith("Invalid poker address")
+            await expect(savingsContract.initialize(ZERO_ADDRESS, "Savings Credit", "izUSD")).to.be.revertedWith("Invalid poker address")
         })
         it("should fail when unwrapper address is zero", async () => {
             await expect(savingsFactory.deploy(nexus.address, masset.address, ZERO_ADDRESS)).to.be.revertedWith("Unwrapper address is zero")
@@ -501,13 +501,13 @@ describe("SavingsContract", async () => {
                         "VM Exception",
                     )
                 })
-                it("should deposit the mUSD and assign credits to the saver", async () => {
+                it("should deposit the zUSD and assign credits to the saver", async () => {
                     const dataBefore = await getData(savingsContract, sa.default)
                     const depositAmount = simpleToExactAmount(1, 18)
 
-                    // 1. Approve the savings contract to spend mUSD
+                    // 1. Approve the savings contract to spend zUSD
                     await masset.approve(savingsContract.address, depositAmount)
-                    // 2. Deposit the mUSD
+                    // 2. Deposit the zUSD
                     const tx = depositToSender(savingsContract)(depositAmount)
                     const expectedCredits = underlyingToCredits(depositAmount, initialExchangeRate)
 
@@ -721,16 +721,16 @@ describe("SavingsContract", async () => {
                 "VM Exception",
             )
         })
-        it("should mint the imUSD and assign credits to the saver", async () => {
+        it("should mint the izUSD and assign credits to the saver", async () => {
             const dataBefore = await getData(savingsContract, sa.default)
             let shares = simpleToExactAmount(10, 18)
             const assets = creditsToUnderlying(shares, initialExchangeRate)
             // emulate decimals in the smart contract
             shares = underlyingToCredits(assets, initialExchangeRate)
 
-            // 1. Approve the savings contract to spend mUSD
+            // 1. Approve the savings contract to spend zUSD
             await masset.approve(savingsContract.address, assets)
-            // 2. Deposit the mUSD
+            // 2. Deposit the zUSD
             const tx = mintToSender(savingsContract)(shares)
             await expectToEmitDepositEvent(tx, sa.default.address, sa.default.address, assets, shares)
             const dataAfter = await getData(savingsContract, sa.default)
@@ -930,17 +930,17 @@ describe("SavingsContract", async () => {
 
                 expect(balancesBefore.balances.user.add(underlying)).to.equal(dataAfter.balances.user)
             })
-            it("should withdraw the mUSD and burn the credits", async () => {
+            it("should withdraw the zUSD and burn the credits", async () => {
                 const redemptionAmount = simpleToExactAmount(1, 18)
                 const creditsBefore = await savingsContract.creditBalances(sa.default.address)
-                const mUSDBefore = await masset.balanceOf(sa.default.address)
+                const zUSDBefore = await masset.balanceOf(sa.default.address)
                 // Redeem all the credits
                 await savingsContract["redeem(uint256)"](creditsBefore)
 
                 const creditsAfter = await savingsContract.creditBalances(sa.default.address)
-                const mUSDAfter = await masset.balanceOf(sa.default.address)
+                const zUSDAfter = await masset.balanceOf(sa.default.address)
                 expect(creditsAfter, "Must burn all the credits").eq(BN.from(0))
-                expect(mUSDAfter, "Must receive back mUSD").eq(mUSDBefore.add(redemptionAmount))
+                expect(zUSDAfter, "Must receive back zUSD").eq(zUSDBefore.add(redemptionAmount))
             })
         })
         describe("redeems", async () => {
@@ -1673,7 +1673,7 @@ const createNewSavingsContract = async (
 
     const savingsFactory = await new SavingsContract__factory(sa.default.signer)
     const impl = await savingsFactory.deploy(nexus.address, masset.address, unwrapperContract.address)
-    const data = impl.interface.encodeFunctionData("initialize", [sa.default.address, "Savings Credit", "imUSD"])
+    const data = impl.interface.encodeFunctionData("initialize", [sa.default.address, "Savings Credit", "izUSD"])
     const proxy = await (await new AssetProxy__factory(sa.default.signer)).deploy(impl.address, sa.dummy4.address, data)
     const savingsContract = await savingsFactory.attach(proxy.address)
 

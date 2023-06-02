@@ -7,7 +7,7 @@ import { MassetDetails, MassetMachine, StandardAccounts } from "@utils/machines"
 import { MockERC20, Masset } from "types/generated"
 import { fullScale, ZERO_ADDRESS } from "@utils/constants"
 import { assertBasketIsHealthy, assertBNClosePercent, assertBNSlightlyGTPercent } from "@utils/assertions"
-import { BassetStatus } from "@utils/mstable-objects"
+import { BassetStatus } from "@utils/xzeno-objects"
 import { Account } from "types"
 
 describe("Masset - Redeem", () => {

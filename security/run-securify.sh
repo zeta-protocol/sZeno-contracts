@@ -3,7 +3,7 @@
 ################################# REQUIREMENTS ################################# 
 # Flattened contract files must be present under `flat` folder.
 # Securify2 must be installed as Docker image 
-	# https://app.gitbook.com/@mstable/s/mstable-protocol/security-tools-1/security-tools 
+	# https://app.gitbook.com/@xblackzeno/s/xzeno-protocol/security-tools-1/security-tools 
 ################################################################################
 
 # To allow `ctrl + c` to exit from the script

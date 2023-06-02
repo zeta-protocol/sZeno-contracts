@@ -23,8 +23,8 @@ import { Basket, Basset } from "../../z_mocks/masset/migrate2/MassetStructsV1.so
 import { InitializableModuleV1 } from "../../z_mocks/masset/migrate2/InitializableModuleV1.sol";
 
 /**
- * @title   Masset used to migrate mUSD from V2.0 to V3.0
- * @author  mStable
+ * @title   Masset used to migrate zUSD from V2.0 to V3.0
+ * @author  xZeno
  * @notice  An incentivised constant sum market maker with hard limits at max region. This supports
  *          low slippage swaps and applies penalties towards min and max regions. AMM produces a
  *          stablecoin (mAsset) and redirects lending market interest and swap fees to the savings
@@ -93,7 +93,7 @@ contract MV1 is
     // Release 1.0 VARS
     address public forgeValidator;
     bool private forgeValidatorLocked;
-    // Deprecated - maintain for storage layout in mUSD
+    // Deprecated - maintain for storage layout in zUSD
     address private deprecated_basketManager;
 
     // Basic redemption fee information

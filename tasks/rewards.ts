@@ -3,8 +3,8 @@ import { BN, simpleToExactAmount } from "@utils/math"
 import { subtask, task, types } from "hardhat/config"
 import { Collector__factory, SavingsManager, SavingsManager__factory, Unliquidator__factory } from "types/generated"
 import { Comptroller__factory } from "types/generated/factories/Comptroller__factory"
-import rewardsFiles from "./balancer-mta-rewards/20210817.json"
-import { btcFormatter, COMP, logTxDetails, mBTC, mUSD, stkAAVE, USDC, usdFormatter, USDT } from "./utils"
+import rewardsFiles from "./balancer-zeno-rewards/20210817.json"
+import { btcFormatter, COMP, logTxDetails, mBTC, zUSD, stkAAVE, USDC, usdFormatter, USDT } from "./utils"
 import { getAaveTokens, getAlcxTokens, getBlock, getCompTokens } from "./utils/snap-utils"
 import { getSigner } from "./utils/signerFactory"
 import { getChain, resolveAddress, resolveToken } from "./utils/networkAddressFactory"
@@ -48,14 +48,14 @@ subtask("collect-interest-dist", "Collects and distributes mAsset interest").set
 
     const collector = Collector__factory.connect(resolveAddress("Collector", chain), signer)
 
-    const tx = await collector.distributeInterest([mUSD.address, mBTC.address], false)
-    const receipt = await logTxDetails(tx, `collect fees from mUSD and mBTC`)
+    const tx = await collector.distributeInterest([zUSD.address, mBTC.address], false)
+    const receipt = await logTxDetails(tx, `collect fees from zUSD and mBTC`)
     const savingsManagerAddress = resolveAddress("SavingsManager", chain)
     const savingsManagerEvents = receipt.events?.filter((e) => e.address === savingsManagerAddress)
     const savingsManager = SavingsManager__factory.connect(savingsManagerAddress, signer)
     const parsedEvents = savingsManagerEvents?.map((e) => savingsManager.interface.parseLog(e))
-    const musdEvent = parsedEvents.find((e) => e.name === "RevenueRedistributed" && e.args.mAsset === mUSD.address)
-    console.log(`mUSD revenue: ${usdFormatter(musdEvent.args.amount)}`)
+    const zusdEvent = parsedEvents.find((e) => e.name === "RevenueRedistributed" && e.args.mAsset === zUSD.address)
+    console.log(`zUSD revenue: ${usdFormatter(zusdEvent.args.amount)}`)
     const mbtcEvent = parsedEvents.find((e) => e.name === "RevenueRedistributed" && e.args.mAsset === mBTC.address)
     console.log(`mBTC revenue: ${btcFormatter(mbtcEvent.args.amount)}`)
 })

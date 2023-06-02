@@ -181,7 +181,7 @@ describe("EmissionsController", async () => {
     const totalRewards = simpleToExactAmount(29400963)
     const configuration = MCCP24_CONFIG
     /**
-     * Deploys the emission controller, staking contracts, dials and transfers MTA to the Emission Controller contract.
+     * Deploys the emission controller, staking contracts, dials and transfers ZENO to the Emission Controller contract.
      *
      * @return {Promise}  {Promise<void>}
      */
@@ -216,7 +216,7 @@ describe("EmissionsController", async () => {
         const proxy = await new AssetProxy__factory(sa.default.signer).deploy(emissionsControllerImpl.address, DEAD_ADDRESS, initializeData)
         emissionsController = new EmissionsController__factory(sa.default.signer).attach(proxy.address)
 
-        // Transfer MTA into the Emissions Controller
+        // Transfer ZENO into the Emissions Controller
         await rewardToken.transfer(emissionsController.address, totalRewards)
 
         await staking1.setGovernanceHook(emissionsController.address)
@@ -271,7 +271,7 @@ describe("EmissionsController", async () => {
             expect(startEpoch, "start epoch").to.eq(nextEpoch)
             expect(lastEpoch, "last epoch").to.eq(nextEpoch)
         })
-        it("transfer MTA on initialization", async () => {
+        it("transfer ZENO on initialization", async () => {
             expect(await rewardToken.balanceOf(emissionsController.address), "ec rewards bal").to.eq(totalRewards)
         })
         it("Staking contracts set on initialization", async () => {

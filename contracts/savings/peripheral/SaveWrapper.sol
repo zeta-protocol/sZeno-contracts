@@ -181,7 +181,7 @@ contract SaveWrapper is ImmutableModule {
      * @param _uniswap        Uniswap router address
      * @param _amountOutMin   Min uniswap output in bAsset units
      * @param _path           Sell path on Uniswap (e.g. [WETH, DAI])
-     * @param _minOutMStable  Min amount of mAsset to receive
+     * @param _minOutXZeno  Min amount of mAsset to receive
      * @param _stake          Add the imAsset to the Savings Vault?
      */
     function saveViaUniswapETH(
@@ -191,7 +191,7 @@ contract SaveWrapper is ImmutableModule {
         address _uniswap,
         uint256 _amountOutMin,
         address[] calldata _path,
-        uint256 _minOutMStable,
+        uint256 _minOutXZeno,
         bool _stake
     ) external payable {
         _saveViaUniswapETH(
@@ -201,7 +201,7 @@ contract SaveWrapper is ImmutableModule {
             _uniswap,
             _amountOutMin,
             _path,
-            _minOutMStable,
+            _minOutXZeno,
             _stake,
             address(0)
         );
@@ -216,7 +216,7 @@ contract SaveWrapper is ImmutableModule {
      * @param _uniswap        Uniswap router address
      * @param _amountOutMin   Min uniswap output in bAsset units
      * @param _path           Sell path on Uniswap (e.g. [WETH, DAI])
-     * @param _minOutMStable  Min amount of mAsset to receive
+     * @param _minOutXZeno  Min amount of mAsset to receive
      * @param _stake          Add the imAsset to the Savings Vault?
      * @param _referrer       Referrer address for this deposit.
      */
@@ -227,7 +227,7 @@ contract SaveWrapper is ImmutableModule {
         address _uniswap,
         uint256 _amountOutMin,
         address[] calldata _path,
-        uint256 _minOutMStable,
+        uint256 _minOutXZeno,
         bool _stake,
         address _referrer
     ) external payable {
@@ -238,7 +238,7 @@ contract SaveWrapper is ImmutableModule {
             _uniswap,
             _amountOutMin,
             _path,
-            _minOutMStable,
+            _minOutXZeno,
             _stake,
             _referrer
         );
@@ -412,7 +412,7 @@ contract SaveWrapper is ImmutableModule {
      * @param _uniswap        Uniswap router address
      * @param _amountOutMin   Min uniswap output in bAsset units
      * @param _path           Sell path on Uniswap (e.g. [WETH, DAI])
-     * @param _minOutMStable  Min amount of mAsset to receive
+     * @param _minOutXZeno  Min amount of mAsset to receive
      * @param _stake          Add the imAsset to the Savings Vault?
      * @param _referrer       Referrer address for this deposit.
      */
@@ -423,7 +423,7 @@ contract SaveWrapper is ImmutableModule {
         address _uniswap,
         uint256 _amountOutMin,
         address[] calldata _path,
-        uint256 _minOutMStable,
+        uint256 _minOutXZeno,
         bool _stake,
         address _referrer
     ) internal {
@@ -441,7 +441,7 @@ contract SaveWrapper is ImmutableModule {
         uint256 massetsMinted = IMasset(_mAsset).mint(
             _path[_path.length - 1],
             amounts[amounts.length - 1],
-            _minOutMStable,
+            _minOutXZeno,
             address(this)
         );
 

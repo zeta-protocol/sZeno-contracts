@@ -47,7 +47,7 @@ contract StakedTokenBPT is StakedToken {
 
     event BalRecipientChanged(address newRecipient);
     event PriceCoefficientUpdated(uint256 newPriceCoeff);
-    event FeesConverted(uint256 bpt, uint256 mta);
+    event FeesConverted(uint256 bpt, uint256 zeno);
 
     /***************************************
                     INIT
@@ -55,9 +55,9 @@ contract StakedTokenBPT is StakedToken {
 
     /**
      * @param _nexus System nexus
-     * @param _rewardsToken Token that is being distributed as a reward. eg Meta (MTA)
+     * @param _rewardsToken Token that is being distributed as a reward. eg Meta (ZENO)
      * @param _questManager Centralised manager of quests
-     * @param _stakedToken Core token that is staked and tracked e.g. mStable MTA/WETH Staking BPT (mBPT)
+     * @param _stakedToken Core token that is staked and tracked e.g. xZeno ZENO/WETH Staking BPT (mBPT)
      * @param _cooldownSeconds Seconds a user must wait after she initiates her cooldown before withdrawal is possible
      * @param _bal Balancer addresses, [0] = $BAL addr, [1] = BAL vault
      * @param _poolId Balancer Pool identifier
@@ -91,7 +91,7 @@ contract StakedTokenBPT is StakedToken {
     /**
      * @param _nameArg Token name
      * @param _symbolArg Token symbol
-     * @param _rewardsDistributorArg mStable Rewards Distributor
+     * @param _rewardsDistributorArg xZeno Rewards Distributor
      * @param _priceCoefficient Initial pricing coefficient
      */
     function initialize(
@@ -133,7 +133,7 @@ contract StakedTokenBPT is StakedToken {
     ****************************************/
 
     /**
-     * @dev Converts redemption fees accrued in mBPT into MTA, before depositing to the rewards contract.
+     * @dev Converts redemption fees accrued in mBPT into ZENO, before depositing to the rewards contract.
      */
     function convertFees() external nonReentrant {
         uint256 pendingBPT = pendingBPTFees;
@@ -142,10 +142,10 @@ contract StakedTokenBPT is StakedToken {
 
         // 1. Sell the mBPT
         uint256 stakingBalBefore = balancerGauge.balanceOf(address(this));
-        uint256 mtaBalBefore = REWARDS_TOKEN.balanceOf(address(this));
+        uint256 zenoBalBefore = REWARDS_TOKEN.balanceOf(address(this));
 
         (address[] memory tokens, , ) = balancerVault.getPoolTokens(poolId);
-        require(tokens[0] == address(REWARDS_TOKEN), "not MTA");
+        require(tokens[0] == address(REWARDS_TOKEN), "not ZENO");
 
         // 1.1. Calculate minimum output amount
         uint256[] memory minOut = new uint256[](2);
@@ -158,8 +158,8 @@ contract StakedTokenBPT is StakedToken {
         // 1.2 Withdraw pending mBPT fees from the mBPT Gauge back to this mBPT staking contract
         balancerGauge.withdraw(pendingBPT - 1);
 
-        // 1.3. Exits rewards (MTA) to this staking contract for mBPT from this staking contract.
-        // Assumes rewards token (MTA) is in position 0
+        // 1.3. Exits rewards (ZENO) to this staking contract for mBPT from this staking contract.
+        // Assumes rewards token (ZENO) is in position 0
         balancerVault.exitPool(
             poolId,
             address(this),
@@ -174,9 +174,9 @@ contract StakedTokenBPT is StakedToken {
             "< min BPT"
         );
 
-        // 3. Inform HeadlessRewards about the new MTA rewards
-        uint256 received = REWARDS_TOKEN.balanceOf(address(this)) - mtaBalBefore;
-        require(received >= minOut[0], "< min MTA");
+        // 3. Inform HeadlessRewards about the new ZENO rewards
+        uint256 received = REWARDS_TOKEN.balanceOf(address(this)) - zenoBalBefore;
+        require(received >= minOut[0], "< min ZENO");
         super._notifyAdditionalReward(received);
 
         emit FeesConverted(pendingBPT, received);
@@ -220,18 +220,18 @@ contract StakedTokenBPT is StakedToken {
 
     /**
      * @dev Fetches most recent priceCoeff from the balancer pool.
-     * PriceCoeff = units of MTA per BPT, scaled to 1:1 = 10000
+     * PriceCoeff = units of ZENO per BPT, scaled to 1:1 = 10000
      * Assuming an 80/20 BPT, it is possible to calculate
-     * PriceCoeff (p) = balanceOfMTA in pool (b) / bpt supply (s) / 0.8
+     * PriceCoeff (p) = balanceOfZENO in pool (b) / bpt supply (s) / 0.8
      * p = b * 1.25 / s
      */
     function getProspectivePriceCoefficient() public view returns (uint256 newPriceCoeff) {
         (address[] memory tokens, uint256[] memory balances, ) = balancerVault.getPoolTokens(
             poolId
         );
-        require(tokens[0] == address(REWARDS_TOKEN), "not MTA");
+        require(tokens[0] == address(REWARDS_TOKEN), "not ZENO");
 
-        // Calculate units of MTA per BPT
+        // Calculate units of ZENO per BPT
         // e.g. 800e18 * 125e16 / 1000e18 = 1e18
         // e.g. 1280e18 * 125e16 / 1000e18 = 16e17
         uint256 unitsPerToken = (balances[0] * 125e16) / STAKED_TOKEN.totalSupply();

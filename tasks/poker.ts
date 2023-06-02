@@ -11,25 +11,25 @@ import { BoostedVault__factory, Poker, Poker__factory } from "types/generated"
 import { getSigner } from "./utils/signerFactory"
 import { deployContract, logTxDetails } from "./utils/deploy-utils"
 import { getChain, getChainAddress } from "./utils/networkAddressFactory"
-import { mBTC, mUSD, GUSD, BUSD, HBTC, TBTC, alUSD, TBTCv2, RAI, FEI } from "./utils/tokens"
+import { mBTC, zUSD, GUSD, BUSD, HBTC, TBTC, alUSD, TBTCv2, RAI, FEI } from "./utils/tokens"
 
-const maxVMTA = simpleToExactAmount(600000, 18)
+const maxVZENO = simpleToExactAmount(600000, 18)
 const maxBoost = simpleToExactAmount(3, 18)
 const minBoost = simpleToExactAmount(1, 18)
 const floor = simpleToExactAmount(98, 16)
 const coeff = BN.from(9)
 
-const calcBoost = (raw: BN, vMTA: BN, priceCoefficient: BN, decimals = 18): BN => {
-    // min(m, max(d, (d * 0.95) + c * min(vMTA, f) / USD^b))
+const calcBoost = (raw: BN, vZENO: BN, priceCoefficient: BN, decimals = 18): BN => {
+    // min(m, max(d, (d * 0.95) + c * min(vZENO, f) / USD^b))
     const scaledBalance = raw.mul(priceCoefficient).div(simpleToExactAmount(1, 18))
 
     if (scaledBalance.lt(simpleToExactAmount(1, decimals))) return minBoost
 
     let denom = parseFloat(formatUnits(scaledBalance))
     denom **= 0.75
-    const scaledMTA = vMTA.div(12)
-    const flooredMTA = scaledMTA.gt(maxVMTA) ? maxVMTA : scaledMTA
-    let rhs = floor.add(flooredMTA.mul(coeff).div(10).mul(fullScale).div(simpleToExactAmount(denom)))
+    const scaledZENO = vZENO.div(12)
+    const flooredZENO = scaledZENO.gt(maxVZENO) ? maxVZENO : scaledZENO
+    let rhs = floor.add(flooredZENO.mul(coeff).div(10).mul(fullScale).div(simpleToExactAmount(denom)))
     rhs = rhs.gt(minBoost) ? rhs : minBoost
     return rhs.gt(maxBoost) ? maxBoost : rhs
 }
@@ -56,22 +56,22 @@ const getAccountBalanceMap = async (accounts: string[], tokenAddress: string, si
 task("over-boost", "Pokes accounts that are over boosted")
     .addFlag("update", "Will send a poke transactions to the Poker contract")
     .addOptionalParam("account", "Address of account to check or poke", undefined, types.string)
-    .addOptionalParam("minMtaDiff", "Min amount of vMTA over boosted. 300 = 0.3 boost", 300, types.float)
+    .addOptionalParam("minZenoDiff", "Min amount of vZENO over boosted. 300 = 0.3 boost", 300, types.float)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
         const chain = getChain(hre)
         const signer = await getSigner(hre, taskArgs.speed)
-        const stkMTA = await getChainAddress("StakedTokenMTA", chain)
+        const stkZENO = await getChainAddress("StakedTokenZENO", chain)
         const stkMBPT = await getChainAddress("StakedTokenBPT", chain)
 
         let idFilter = ""
         if (taskArgs.account) {
-            const vaults = [mUSD, mBTC, GUSD, BUSD, HBTC, TBTC, TBTCv2, alUSD, RAI, FEI]
+            const vaults = [zUSD, mBTC, GUSD, BUSD, HBTC, TBTC, TBTCv2, alUSD, RAI, FEI]
             const vaultAddresses = vaults.map((v) => v.vault.toLowerCase())
             const vaultAccountIds = vaultAddresses.map((vaultAddress) => `"${vaultAddress}.${taskArgs.account.toLowerCase()}" `)
             idFilter = `id_in: [${vaultAccountIds}] `
         }
-        const gqlClient = new GraphQLClient("https://api.studio.thegraph.com/query/948/mstable-feeder-pools-and-vaults/v0.0.8")
+        const gqlClient = new GraphQLClient("https://api.studio.thegraph.com/query/948/xzeno-feeder-pools-and-vaults/v0.0.8")
         const query = gql`
             {
                 boostedSavingsVaults {
@@ -109,11 +109,11 @@ task("over-boost", "Pokes accounts that are over boosted")
         const accountsWithDuplicates = vaultAccounts.flat()
         const accountsUnique = [...new Set<string>(accountsWithDuplicates)]
 
-        const mtaBalances = await getAccountBalanceMap(accountsUnique, stkMTA, signer)
+        const zenoBalances = await getAccountBalanceMap(accountsUnique, stkZENO, signer)
         const bptBalances = await getAccountBalanceMap(accountsUnique, stkMBPT, signer)
         const accountBalances: AccountBalance = {}
-        Object.keys(mtaBalances).forEach((account) => {
-            accountBalances[account] = mtaBalances[account].add(bptBalances[account])
+        Object.keys(zenoBalances).forEach((account) => {
+            accountBalances[account] = zenoBalances[account].add(bptBalances[account])
         })
 
         const pokeVaultAccounts: {
@@ -121,7 +121,7 @@ task("over-boost", "Pokes accounts that are over boosted")
             accounts: string[]
         }[] = []
         // For each Boosted Vault
-        const vaults = gqlData.boostedSavingsVaults.filter((vault) => vault.id !== mUSD.vault.toLocaleLowerCase())
+        const vaults = gqlData.boostedSavingsVaults.filter((vault) => vault.id !== zUSD.vault.toLocaleLowerCase())
         for (const vault of vaults) {
             const boostVault = BoostedVault__factory.connect(vault.id, signer)
             const priceCoeff = await boostVault.priceCoeff()
@@ -131,7 +131,7 @@ task("over-boost", "Pokes accounts that are over boosted")
             console.log(
                 `\nVault with id ${vault.id} for token ${vault.stakingToken.symbol}, ${vault.accounts.length} accounts, price coeff ${priceCoeff}`,
             )
-            console.log("Account, Raw Balance, Boosted Balance, Boost Balance USD, vMTA balance, Boost Actual, Boost Expected, Boost Diff")
+            console.log("Account, Raw Balance, Boosted Balance, Boost Balance USD, vZENO balance, Boost Actual, Boost Expected, Boost Diff")
             // For each account in the boosted savings vault
             vault.accounts.forEach((account) => {
                 const boostActual = BN.from(account.boostedBalance).mul(1000).div(account.rawBalance).toNumber()
@@ -143,7 +143,7 @@ task("over-boost", "Pokes accounts that are over boosted")
                 // Calculate how much the boost balance is in USD = balance balance * price coefficient / 1e18
                 const boostBalanceUsd = BN.from(account.boostedBalance).mul(priceCoeff).div(simpleToExactAmount(1))
                 // Identify accounts with more than 20% over their boost and boost balance > 50,000 USD
-                if (boostDiff > taskArgs.minMtaDiff && boostBalanceUsd.gt(simpleToExactAmount(50000))) {
+                if (boostDiff > taskArgs.minZenoDiff && boostBalanceUsd.gt(simpleToExactAmount(50000))) {
                     overBoosted.push({
                         ...account,
                         boostActual,

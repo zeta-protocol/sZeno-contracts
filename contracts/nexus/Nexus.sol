@@ -7,9 +7,9 @@ import { DelayedClaimableGovernor } from "../governance/DelayedClaimableGovernor
 
 /**
  * @title   Nexus
- * @author  mStable
+ * @author  xZeno
  * @notice  Address provider and system kernel, also facilitates governance changes
- * @dev     The Nexus is mStable's Kernel, and allows the publishing and propagating
+ * @dev     The Nexus is xZeno's Kernel, and allows the publishing and propagating
  *          of new system Modules. Other Modules will read from the Nexus
  *          VERSION: 3.0
  *          DATE:    2021-04-15

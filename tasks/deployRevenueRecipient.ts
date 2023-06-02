@@ -80,7 +80,7 @@ task("deployRevenueRecipient", "Deploys an instance of revenue recipient contrac
         config.bFactory,
         {
             poolTokenSymbol: "mBPT1",
-            poolTokenName: "mStable BPT 1",
+            poolTokenName: "xZeno BPT 1",
             constituentTokens: config.tokens,
             tokenBalances: config.amounts,
             tokenWeights: config.weights,

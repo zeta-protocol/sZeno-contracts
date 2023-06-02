@@ -2,10 +2,10 @@
 pragma solidity 0.8.6;
 
 /**
- * @notice  Is only used in the upgrade of mUSD from V2.0 to V3.0.
+ * @notice  Is only used in the upgrade of zUSD from V2.0 to V3.0.
             This contract preserves the V2.0 storage positions in
             the new V3.0 Masset contract.
- * @author  mStable
+ * @author  xZeno
  * @dev     VERSION: 3.0
  *          DATE:    2021-02-23
  */
@@ -15,7 +15,7 @@ contract InitializableModuleKeysV1 {
     bytes32 private KEY_STAKING_DEPRICATED; // 1.2
     bytes32 private KEY_PROXY_ADMIN_DEPRICATED; // 1.0
 
-    // mStable
+    // xZeno
     bytes32 private KEY_ORACLE_HUB_DEPRICATED; // 1.2
     bytes32 private KEY_MANAGER_DEPRICATED; // 1.2
     bytes32 private KEY_RECOLLATERALISER_DEPRICATED; // 2.x

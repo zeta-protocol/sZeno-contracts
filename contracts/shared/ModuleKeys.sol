@@ -3,7 +3,7 @@ pragma solidity 0.8.6;
 
 /**
  * @title  ModuleKeys
- * @author mStable
+ * @author xZeno
  * @notice Provides system wide access to the byte32 represntations of system modules
  *         This allows each system module to be able to reference and update one another in a
  *         friendly way
@@ -22,7 +22,7 @@ contract ModuleKeys {
     bytes32 internal constant KEY_PROXY_ADMIN =
         0x96ed0203eb7e975a4cbcaa23951943fa35c5d8288117d50c12b3d48b0fab48d1;
 
-    // mStable
+    // xZeno
     // =======
     // keccak256("OracleHub");
     bytes32 internal constant KEY_ORACLE_HUB =

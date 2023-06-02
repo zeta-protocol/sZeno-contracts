@@ -17,7 +17,7 @@ import {
 } from "types/generated"
 import { assertBNSlightlyGTPercent, assertBNClose } from "@utils/assertions"
 import { keccak256, toUtf8Bytes } from "ethers/lib/utils"
-import { BassetStatus } from "@utils/mstable-objects"
+import { BassetStatus } from "@utils/xzeno-objects"
 import { getTimestamp, increaseTime } from "@utils/time"
 
 describe("Masset Admin", () => {

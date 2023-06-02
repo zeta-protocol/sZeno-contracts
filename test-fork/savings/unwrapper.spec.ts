@@ -10,13 +10,13 @@ import {
     DelayedProxyAdmin__factory,
     ERC20__factory,
     IERC20__factory,
-    // Mainnet imUSD Contract
+    // Mainnet izUSD Contract
     SavingsContract,
     SavingsContract__factory,
     Unwrapper,
     Unwrapper__factory,
 } from "types/generated"
-import { Chain, DEAD_ADDRESS, simpleToExactAmount, assertBNClosePercent, DAI, WBTC, MTA, alUSD, mUSD, mBTC, HBTC, USDT } from "index"
+import { Chain, DEAD_ADDRESS, simpleToExactAmount, assertBNClosePercent, DAI, WBTC, ZENO, alUSD, zUSD, mBTC, HBTC, USDT } from "index"
 import { BigNumber } from "@ethersproject/bignumber"
 import { getChainAddress } from "tasks/utils/networkAddressFactory"
 import { upgradeContract } from "@utils/deploy"
@@ -28,16 +28,16 @@ const nexusAddress = getChainAddress("Nexus", chain)
 const boostDirectorAddress = getChainAddress("BoostDirector", chain)
 const deployerAddress = getChainAddress("OperationsSigner", chain)
 
-const imusdHolderAddress = "0xdA1fD36cfC50ED03ca4dd388858A78C904379fb3"
-const musdHolderAddress = "0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6"
+const izusdHolderAddress = "0xdA1fD36cfC50ED03ca4dd388858A78C904379fb3"
+const zusdHolderAddress = "0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6"
 const imbtcHolderAddress = "0xd2270cdc82675a3c0ad8cbee1e9c26c85b46456c"
 const vmbtcHolderAddress = "0x10d96b1fd46ce7ce092aa905274b8ed9d4585a6e"
 const vhbtcmbtcHolderAddress = "0x10d96b1fd46ce7ce092aa905274b8ed9d4585a6e"
-const vmusdHolderAddress = "0x0c2ef8a1b3bc00bf676053732f31a67ebba5bd81"
+const vzusdHolderAddress = "0x0c2ef8a1b3bc00bf676053732f31a67ebba5bd81"
 
 context("Unwrapper", () => {
     let deployer: Signer
-    let musdHolder: Signer
+    let zusdHolder: Signer
     let unwrapper: Unwrapper
     let governor: Signer
     let delayedProxyAdmin: DelayedProxyAdmin
@@ -55,7 +55,7 @@ context("Unwrapper", () => {
                 },
             ],
         })
-        musdHolder = await impersonate(musdHolderAddress)
+        zusdHolder = await impersonate(zusdHolderAddress)
         deployer = await impersonate(deployerAddress)
         governor = await impersonate(governorAddress)
         delayedProxyAdmin = DelayedProxyAdmin__factory.connect(delayedProxyAdminAddress, governor)
@@ -72,7 +72,7 @@ context("Unwrapper", () => {
 
         // approve tokens for router
         const routers = [alUSD.feederPool, HBTC.feederPool]
-        const tokens = [mUSD.address, mBTC.address]
+        const tokens = [zUSD.address, mBTC.address]
 
         await unwrapper.connect(governor).approve(routers, tokens)
     })
@@ -80,19 +80,19 @@ context("Unwrapper", () => {
     describe("Successfully call getIsBassetOut for", () => {
         const isCredit = true
         it("mAssets", async () => {
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.address, !isCredit, DAI.address)).to.eq(true)
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.address, !isCredit, USDT.address)).to.eq(true)
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.address, !isCredit, mUSD.address)).to.eq(false)
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.address, !isCredit, alUSD.address)).to.eq(false)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.address, !isCredit, DAI.address)).to.eq(true)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.address, !isCredit, USDT.address)).to.eq(true)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.address, !isCredit, zUSD.address)).to.eq(false)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.address, !isCredit, alUSD.address)).to.eq(false)
             expect(await unwrapper.callStatic.getIsBassetOut(mBTC.address, !isCredit, WBTC.address)).to.eq(true)
             expect(await unwrapper.callStatic.getIsBassetOut(mBTC.address, !isCredit, mBTC.address)).to.eq(false)
             expect(await unwrapper.callStatic.getIsBassetOut(mBTC.address, !isCredit, HBTC.address)).to.eq(false)
         })
         it("interest-bearing assets", async () => {
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.savings, isCredit, DAI.address)).to.eq(true)
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.savings, isCredit, USDT.address)).to.eq(true)
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.savings, isCredit, mUSD.address)).to.eq(false)
-            expect(await unwrapper.callStatic.getIsBassetOut(mUSD.savings, isCredit, alUSD.address)).to.eq(false)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.savings, isCredit, DAI.address)).to.eq(true)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.savings, isCredit, USDT.address)).to.eq(true)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.savings, isCredit, zUSD.address)).to.eq(false)
+            expect(await unwrapper.callStatic.getIsBassetOut(zUSD.savings, isCredit, alUSD.address)).to.eq(false)
             expect(await unwrapper.callStatic.getIsBassetOut(mBTC.savings, isCredit, WBTC.address)).to.eq(true)
             expect(await unwrapper.callStatic.getIsBassetOut(mBTC.savings, isCredit, mBTC.address)).to.eq(false)
             expect(await unwrapper.callStatic.getIsBassetOut(mBTC.savings, isCredit, HBTC.address)).to.eq(false)
@@ -134,9 +134,9 @@ context("Unwrapper", () => {
         const tokenOut = IERC20__factory.connect(config.output, signer)
         const tokenBalanceBefore = await tokenOut.balanceOf(signerAddress)
 
-        // approve musd for unwrapping
-        const musd = IERC20__factory.connect(mUSD.address, signer)
-        await musd.approve(unwrapper.address, config.amount)
+        // approve zusd for unwrapping
+        const zusd = IERC20__factory.connect(zUSD.address, signer)
+        await zusd.approve(unwrapper.address, config.amount)
 
         // Statically call unwrapAndSend to get the returned quantity of output tokens
         const outputQuantity = await unwrapper
@@ -170,8 +170,8 @@ context("Unwrapper", () => {
 
     it("Receives the correct output from getUnwrapOutput", async () => {
         const config = {
-            router: mUSD.address,
-            input: mUSD.address,
+            router: zUSD.address,
+            input: zUSD.address,
             output: DAI.address,
             amount: simpleToExactAmount(1, 18),
             isCredit: false,
@@ -188,54 +188,54 @@ context("Unwrapper", () => {
         expect(output.toString()).to.be.length(19)
     })
 
-    it("imUSD redeem to bAsset via unwrapAndSend", async () => {
+    it("izUSD redeem to bAsset via unwrapAndSend", async () => {
         const config = {
-            router: mUSD.address,
-            input: mUSD.address,
+            router: zUSD.address,
+            input: zUSD.address,
             output: DAI.address,
             amount: simpleToExactAmount(1, 18),
             isCredit: false,
         }
-        await validateAssetRedemption(config, musdHolder)
+        await validateAssetRedemption(config, zusdHolder)
     })
 
-    it("imUSD redeem to fAsset via unwrapAndSend", async () => {
+    it("izUSD redeem to fAsset via unwrapAndSend", async () => {
         const config = {
             router: alUSD.feederPool,
-            input: mUSD.address,
+            input: zUSD.address,
             output: alUSD.address,
             amount: simpleToExactAmount(1, 18),
             isCredit: false,
         }
-        await validateAssetRedemption(config, musdHolder)
+        await validateAssetRedemption(config, zusdHolder)
     })
 
-    it("Upgrades the imUSD contract", async () => {
-        const constructorArguments = [nexusAddress, mUSD.address, unwrapper.address]
-        const musdSaveImpl = await deployContract<SavingsContract>(
+    it("Upgrades the izUSD contract", async () => {
+        const constructorArguments = [nexusAddress, zUSD.address, unwrapper.address]
+        const zusdSaveImpl = await deployContract<SavingsContract>(
             new SavingsContract__factory(deployer),
-            "mStable: mUSD Savings Contract",
+            "xZeno: zUSD Savings Contract",
             constructorArguments,
         )
 
         const saveContractProxy = await upgradeContract<SavingsContract>(
             SavingsContract__factory as unknown as ContractFactory,
-            musdSaveImpl,
-            mUSD.savings,
+            zusdSaveImpl,
+            zUSD.savings,
             governor,
             delayedProxyAdmin,
         )
         const unwrapperAddress = await saveContractProxy.unwrapper()
         expect(unwrapperAddress).to.eq(unwrapper.address)
-        expect(await delayedProxyAdmin.getProxyImplementation(mUSD.savings)).eq(musdSaveImpl.address)
+        expect(await delayedProxyAdmin.getProxyImplementation(zUSD.savings)).eq(zusdSaveImpl.address)
     })
 
-    it("imUSD contract works after upgraded", async () => {
-        const imusdHolder = await impersonate(imusdHolderAddress)
+    it("izUSD contract works after upgraded", async () => {
+        const izusdHolder = await impersonate(izusdHolderAddress)
 
         const config = {
-            router: mUSD.address,
-            input: mUSD.address,
+            router: zUSD.address,
+            input: zUSD.address,
             output: DAI.address,
             amount: simpleToExactAmount(1, 18),
             isCredit: false,
@@ -255,54 +255,54 @@ context("Unwrapper", () => {
         const minAmountOut = amountOut.mul(98).div(1e2)
 
         // dai balance before
-        const daiBalanceBefore = await IERC20__factory.connect(DAI.address, imusdHolder).balanceOf(imusdHolderAddress)
+        const daiBalanceBefore = await IERC20__factory.connect(DAI.address, izusdHolder).balanceOf(izusdHolderAddress)
 
-        const saveContractProxy = SavingsContract__factory.connect(mUSD.savings, imusdHolder)
+        const saveContractProxy = SavingsContract__factory.connect(zUSD.savings, izusdHolder)
         await saveContractProxy.redeemAndUnwrap(
             config.amount,
             config.isCredit,
             minAmountOut,
             config.output,
-            imusdHolderAddress,
+            izusdHolderAddress,
             config.router,
             isBassetOut,
         )
-        const daiBalanceAfter = await IERC20__factory.connect(DAI.address, imusdHolder).balanceOf(imusdHolderAddress)
+        const daiBalanceAfter = await IERC20__factory.connect(DAI.address, izusdHolder).balanceOf(izusdHolderAddress)
         const tokenBalanceDifference = daiBalanceAfter.sub(daiBalanceBefore)
         expect(tokenBalanceDifference, "Withdrawn amount eq estimated amountOut").to.be.eq(amountOut)
         expect(daiBalanceAfter, "Token balance has increased").to.be.gt(daiBalanceBefore.add(minAmountOut))
     })
 
-    it("Upgrades the imUSD Vault", async () => {
+    it("Upgrades the izUSD Vault", async () => {
         const priceCoeff = simpleToExactAmount(1, 18)
         const boostCoeff = 9
-        const constructorArguments = [nexusAddress, mUSD.address, boostDirectorAddress, priceCoeff, boostCoeff, MTA.address]
+        const constructorArguments = [nexusAddress, zUSD.address, boostDirectorAddress, priceCoeff, boostCoeff, ZENO.address]
         const saveVaultImpl = await deployContract<BoostedVault>(
             new BoostedVault__factory(deployer),
-            "mStable: mUSD Savings Vault",
+            "xZeno: zUSD Savings Vault",
             constructorArguments,
         )
         await upgradeContract<BoostedVault>(
             BoostedVault__factory as unknown as ContractFactory,
             saveVaultImpl,
-            mUSD.vault,
+            zUSD.vault,
             governor,
             delayedProxyAdmin,
         )
-        expect(await delayedProxyAdmin.getProxyImplementation(mUSD.vault)).eq(saveVaultImpl.address)
+        expect(await delayedProxyAdmin.getProxyImplementation(zUSD.vault)).eq(saveVaultImpl.address)
     })
-    const withdrawAndUnwrap = async (holderAddress: string, router: string, input: "musd" | "mbtc", outputAddress: string) => {
+    const withdrawAndUnwrap = async (holderAddress: string, router: string, input: "zusd" | "mbtc", outputAddress: string) => {
         const isCredit = true
         const holder = await impersonate(holderAddress)
-        const vaultAddress = input === "musd" ? mUSD.vault : mBTC.vault
-        const inputAddress = input === "musd" ? mUSD.savings : mBTC.savings
+        const vaultAddress = input === "zusd" ? zUSD.vault : mBTC.vault
+        const inputAddress = input === "zusd" ? zUSD.savings : mBTC.savings
         const isBassetOut = await unwrapper.callStatic.getIsBassetOut(inputAddress, isCredit, outputAddress)
 
         const config = {
             router,
             input: inputAddress,
             output: outputAddress,
-            amount: simpleToExactAmount(input === "musd" ? 100 : 10, 18),
+            amount: simpleToExactAmount(input === "zusd" ? 100 : 10, 18),
             isCredit,
         }
 
@@ -315,7 +315,7 @@ context("Unwrapper", () => {
             config.output,
             config.amount,
         )
-        expect(amountOut.toString().length).to.be.gte(input === "musd" ? 18 : 9)
+        expect(amountOut.toString().length).to.be.gte(input === "zusd" ? 18 : 9)
         const minAmountOut = amountOut.mul(98).div(1e2)
 
         const outContract = IERC20__factory.connect(config.output, holder)
@@ -331,19 +331,19 @@ context("Unwrapper", () => {
         expect(tokenBalanceAfter, "Token balance has increased").to.be.gt(tokenBalanceBefore)
     }
 
-    it.skip("imUSD Vault redeem to bAsset", async () => {
-        await withdrawAndUnwrap(vmusdHolderAddress, mUSD.address, "musd", DAI.address)
+    it.skip("izUSD Vault redeem to bAsset", async () => {
+        await withdrawAndUnwrap(vzusdHolderAddress, zUSD.address, "zusd", DAI.address)
     })
 
-    it.skip("imUSD Vault redeem to fAsset", async () => {
-        await withdrawAndUnwrap(vmusdHolderAddress, alUSD.feederPool, "musd", alUSD.address)
+    it.skip("izUSD Vault redeem to fAsset", async () => {
+        await withdrawAndUnwrap(vzusdHolderAddress, alUSD.feederPool, "zusd", alUSD.address)
     })
 
     it("Upgrades the imBTC contract", async () => {
         const constructorArguments = [nexusAddress, mBTC.address, unwrapper.address]
         const saveImpl = await deployContract<SavingsContract>(
             new SavingsContract__factory(deployer),
-            "mStable: mBTC Savings",
+            "xZeno: mBTC Savings",
             constructorArguments,
         )
 
@@ -404,13 +404,13 @@ context("Unwrapper", () => {
         const priceCoeff = simpleToExactAmount(4800, 18)
         const boostCoeff = 9
 
-        const saveVaultImpl = await deployContract<BoostedVault>(new BoostedVault__factory(deployer), "mStable: mBTC Savings Vault", [
+        const saveVaultImpl = await deployContract<BoostedVault>(new BoostedVault__factory(deployer), "xZeno: mBTC Savings Vault", [
             nexusAddress,
             mBTC.savings,
             boostDirector,
             priceCoeff,
             boostCoeff,
-            MTA.address,
+            ZENO.address,
         ])
         await upgradeContract<BoostedVault>(
             BoostedVault__factory as unknown as ContractFactory,
@@ -431,12 +431,12 @@ context("Unwrapper", () => {
     })
 
     it("Emits referrer successfully", async () => {
-        const saveContractProxy = SavingsContract__factory.connect(mUSD.savings, musdHolder)
-        const musdContractProxy = ERC20__factory.connect(mUSD.address, musdHolder)
-        await musdContractProxy.approve(mUSD.savings, simpleToExactAmount(100, 18))
+        const saveContractProxy = SavingsContract__factory.connect(zUSD.savings, zusdHolder)
+        const zusdContractProxy = ERC20__factory.connect(zUSD.address, zusdHolder)
+        await zusdContractProxy.approve(zUSD.savings, simpleToExactAmount(100, 18))
         const tx = await saveContractProxy["depositSavings(uint256,address,address)"](
             simpleToExactAmount(1, 18),
-            musdHolderAddress,
+            zusdHolderAddress,
             DEAD_ADDRESS,
         )
         await expect(tx)

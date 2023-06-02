@@ -13,7 +13,7 @@ const defaultConfig = {
     },
 }
 
-task("deployMV3", "Deploys the mUSD V3 implementation").setAction(async (_, hre) => {
+task("deployMV3", "Deploys the zUSD V3 implementation").setAction(async (_, hre) => {
     const { ethers, network } = hre
 
     const nexus = network.name === "mainnet" ? "0xafce80b19a8ce13dec0739a1aab7a028d6845eb3" : DEAD_ADDRESS

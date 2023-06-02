@@ -9,7 +9,7 @@ import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/trans
  * @dev    Extending on OpenZeppelin's InitializableAdminUpgradabilityProxy
  * means that the proxy is upgradable through a ProxyAdmin. AssetProxy upgrades
  * are implemented by a DelayedProxyAdmin, which enforces a 1 week opt-out period.
- * All upgrades are governed through the current mStable governance.
+ * All upgrades are governed through the current xZeno governance.
  */
 contract AssetProxy is TransparentUpgradeableProxy {
     constructor(
@@ -24,7 +24,7 @@ contract AssetProxy is TransparentUpgradeableProxy {
  * @dev    Extending on OpenZeppelin's InitializableAdminUpgradabilityProxy
  * means that the proxy is upgradable through a ProxyAdmin. BasketManagerProxy upgrades
  * are implemented by a DelayedProxyAdmin, which enforces a 1 week opt-out period.
- * All upgrades are governed through the current mStable governance.
+ * All upgrades are governed through the current xZeno governance.
  */
 contract BasketManagerProxy is TransparentUpgradeableProxy {
     constructor(
@@ -39,7 +39,7 @@ contract BasketManagerProxy is TransparentUpgradeableProxy {
  * @dev    Extending on OpenZeppelin's InitializableAdminUpgradabilityProxy
  * means that the proxy is upgradable through a ProxyAdmin. VaultProxy upgrades
  * are implemented by a DelayedProxyAdmin, which enforces a 1 week opt-out period.
- * All upgrades are governed through the current mStable governance.
+ * All upgrades are governed through the current xZeno governance.
  */
 contract VaultProxy is TransparentUpgradeableProxy {
     constructor(
@@ -54,7 +54,7 @@ contract VaultProxy is TransparentUpgradeableProxy {
  * @dev    Extending on OpenZeppelin's InitializableAdminUpgradabilityProxy
  * means that the proxy is upgradable through a ProxyAdmin. LiquidatorProxy upgrades
  * are implemented by a DelayedProxyAdmin, which enforces a 1 week opt-out period.
- * All upgrades are governed through the current mStable governance.
+ * All upgrades are governed through the current xZeno governance.
  */
 contract LiquidatorProxy is TransparentUpgradeableProxy {
     constructor(

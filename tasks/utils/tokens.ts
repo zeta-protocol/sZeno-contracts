@@ -25,9 +25,9 @@ export interface Token {
     feederPool?: string
     vault?: string
     savings?: string // interest-bearing savings contracts
-    platformTokenVendor?: string // hold WMATIC on Polygon's v-imUSD vault
-    bridgeForwarder?: string // Mainnet contract that forwards MTA rewards from the Emissions Controller to the L2 Bridge
-    bridgeRecipient?: string // L2 contract that receives bridge MTA rewards from the L2 Bridge
+    platformTokenVendor?: string // hold WMATIC on Polygon's v-izUSD vault
+    bridgeForwarder?: string // Mainnet contract that forwards ZENO rewards from the Emissions Controller to the L2 Bridge
+    bridgeRecipient?: string // L2 contract that receives bridge ZENO rewards from the L2 Bridge
     priceGetter?: string // Contract for price of asset, used for NonPeggedFeederPool
     gauge?: string // Curve or Balancer gauge for rewards
 }
@@ -51,9 +51,9 @@ export const assetAddressTypes = [
 ] as const
 export type AssetAddressTypes = typeof assetAddressTypes[number]
 
-// mStable on mainnet
-export const mUSD: Token = {
-    symbol: "mUSD",
+// xZeno on mainnet
+export const zUSD: Token = {
+    symbol: "zUSD",
     address: "0xe2f2a5C287993345a840Db3B0845fbC70f5935a5",
     chain: Chain.mainnet,
     decimals: 18,
@@ -71,9 +71,9 @@ export const mBTC: Token = {
     vault: "0xF38522f63f40f9Dd81aBAfD2B8EFc2EC958a3016",
 }
 
-// mStable on Polygon mainnet
-export const PmUSD: Token = {
-    symbol: "mUSD",
+// xZeno on Polygon mainnet
+export const PzUSD: Token = {
+    symbol: "zUSD",
     address: "0xE840B73E5287865EEc17d250bFb1536704B43B21",
     integrator: "0xeab7831c96876433dB9B8953B4e7e8f66c3125c3",
     chain: Chain.polygon,
@@ -85,8 +85,8 @@ export const PmUSD: Token = {
     bridgeForwarder: "0x7206A7eB2fe1B8a66D4d35db98d68Cadc890FAca",
     bridgeRecipient: "0xd3778a18Ee00a6368A0e5D545cB3412886e5a04c",
 }
-export const MmUSD: Token = {
-    symbol: "mUSD",
+export const MzUSD: Token = {
+    symbol: "zUSD",
     address: "0x0f7a5734f208A356AB2e5Cf3d02129c17028F3cf",
     chain: Chain.mumbai,
     decimals: 18,
@@ -95,8 +95,8 @@ export const MmUSD: Token = {
     bridgeRecipient: DEAD_ADDRESS,
 }
 // Ropsten
-export const RmUSD: Token = {
-    symbol: "mUSD",
+export const RzUSD: Token = {
+    symbol: "zUSD",
     address: "0x4E1000616990D83e56f4b5fC6CC8602DcfD20459",
     chain: Chain.ropsten,
     decimals: 18,
@@ -124,7 +124,7 @@ export const sUSD: Token = {
     liquidityProvider: "0x35f6B052C598d933D69A4EEC4D04c73A191fE6c2", // aSUSD
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 export const USDC: Token = {
     symbol: "USDC",
@@ -135,7 +135,7 @@ export const USDC: Token = {
     liquidityProvider: "0x39aa39c021dfbae8fac545936693ac917d5e7563", // cUSDC
     decimals: 6,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 export const USDT: Token = {
     symbol: "USDT",
@@ -146,7 +146,7 @@ export const USDT: Token = {
     liquidityProvider: "0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811", // aUSDT
     decimals: 6,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 export const DAI: Token = {
     symbol: "DAI",
@@ -157,7 +157,7 @@ export const DAI: Token = {
     liquidityProvider: "0x028171bCA77440897B824Ca71D1c56caC55b68A3", // aDAI
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 
 // USD Main Pool Assets on Polygon
@@ -169,7 +169,7 @@ export const PUSDC: Token = {
     integrator: "0xeab7831c96876433dB9B8953B4e7e8f66c3125c3",
     decimals: 6,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 
 export const PUSDT: Token = {
@@ -180,7 +180,7 @@ export const PUSDT: Token = {
     integrator: "0xeab7831c96876433dB9B8953B4e7e8f66c3125c3",
     decimals: 6,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 export const PDAI: Token = {
     symbol: "DAI",
@@ -190,7 +190,7 @@ export const PDAI: Token = {
     integrator: "0xeab7831c96876433dB9B8953B4e7e8f66c3125c3",
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 
 // USD Feeder Pool Assets on Mainnet
@@ -203,7 +203,7 @@ export const GUSD: Token = {
     liquidityProvider: "0xD37EE7e4f452C6638c96536e68090De8cBcdb583", // aGUSD
     decimals: 2,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
     feederPool: "0x4fB30C5A3aC8e85bC32785518633303C4590752d",
     vault: "0xAdeeDD3e5768F7882572Ad91065f93BA88343C99",
 }
@@ -216,7 +216,7 @@ export const BUSD: Token = {
     liquidityProvider: "0xA361718326c15715591c299427c62086F69923D9", // aBUSD
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
     feederPool: "0xfE842e95f8911dcc21c943a1dAA4bd641a1381c6",
     vault: "0xD124B55f70D374F58455c8AEdf308E52Cf2A6207",
 }
@@ -231,7 +231,7 @@ export const RAI: Token = {
     liquidityProvider: "0xc9BC48c72154ef3e5425641a3c747242112a46AF", // aRAI,
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
     feederPool: "0x36F944B7312EAc89381BD78326Df9C84691D8A5B",
     vault: "0xF93e0ddE0F7C48108abbD880DB7697A86169f13b",
     priceGetter: "0x07210B8871073228626AB79c296d9b22238f63cE",
@@ -256,7 +256,7 @@ export const FEI: Token = {
     liquidityProvider: "0x683923dB55Fead99A79Fa01A27EeC3cB19679cC3", // aFEI
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
     feederPool: "0x2F1423D27f9B20058d9D1843E342726fDF985Eb4",
     vault: "0xD24099Eb4CD604198071958655E4f2D263a5539B",
 }
@@ -277,7 +277,7 @@ export const FRAX: Token = {
     chain: Chain.mainnet,
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 // USD Feeder Pool Assets on Polygon
 export const PFRAX: Token = {
@@ -286,7 +286,7 @@ export const PFRAX: Token = {
     chain: Chain.polygon,
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
     feederPool: "0xB30a907084AC8a0d25dDDAB4E364827406Fd09f0",
     bridgeForwarder: "0x38dD64B51C1808b04493324f334350eBB3AE8d11",
     bridgeRecipient: "0xc425Fd9Ed3C892d849C9E1a971516da1C1B29696",
@@ -297,7 +297,7 @@ export const MFRAX: Token = {
     chain: Chain.mumbai,
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 
 // Alchemix
@@ -310,7 +310,7 @@ export const alUSD: Token = {
     chain: Chain.mainnet,
     decimals: 18,
     quantityFormatter: "USD",
-    parent: "mUSD",
+    parent: "zUSD",
 }
 export const ALCX: Token = {
     symbol: "ALCX",
@@ -382,25 +382,25 @@ export const TBTCv2: Token = {
     vault: "0x97E2a2F97A2E9a4cFB462a49Ab7c8D205aBB9ed9",
 }
 
-export const MTA: Token = {
-    symbol: "MTA",
+export const ZENO: Token = {
+    symbol: "ZENO",
     address: "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
     chain: Chain.mainnet,
     decimals: 18,
     quantityFormatter: "USD",
-    vault: "0x8f2326316eC696F6d023E37A9931c2b2C177a3D7", // MTA Staking V2
+    vault: "0x8f2326316eC696F6d023E37A9931c2b2C177a3D7", // ZENO Staking V2
 }
 
-export const PMTA: Token = {
-    symbol: "MTA",
+export const PZENO: Token = {
+    symbol: "ZENO",
     address: "0xF501dd45a1198C2E1b5aEF5314A68B9006D842E0",
     chain: Chain.polygon,
     decimals: 18,
     quantityFormatter: "USD",
 }
 
-export const RMTA: Token = {
-    symbol: "MTA",
+export const RZENO: Token = {
+    symbol: "ZENO",
     address: "0x273bc479E5C21CAA15aA8538DecBF310981d14C0",
     chain: Chain.ropsten,
     decimals: 18,
@@ -408,10 +408,10 @@ export const RMTA: Token = {
     vault: "0x4d8E465ba7FACa907E8A5F39649e056bB14802D1",
 }
 
-// Old MTA staking contract
-// Was previously vault on MTA but that is now the MTA Staking V2 contract
-export const vMTA: Token = {
-    symbol: "vMTA",
+// Old ZENO staking contract
+// Was previously vault on ZENO but that is now the ZENO Staking V2 contract
+export const vZENO: Token = {
+    symbol: "vZENO",
     address: "0xaE8bC96DA4F9A9613c323478BE181FDb2Aa0E1BF",
     chain: Chain.mainnet,
     decimals: 18,
@@ -458,8 +458,8 @@ export const CREAM: Token = {
     quantityFormatter: "USD",
 }
 
-export const cyMUSD: Token = {
-    symbol: "cyMUSD",
+export const cyZUSD: Token = {
+    symbol: "cyZUSD",
     address: "0xbe86e8918dfc7d3cb10d295fc220f941a1470c5c",
     chain: Chain.mainnet,
     decimals: 8,
@@ -515,11 +515,11 @@ export const tokens = [
     AAVE,
     stkAAVE,
     COMP,
-    MTA,
-    PMTA,
-    RMTA,
-    vMTA,
-    mUSD,
+    ZENO,
+    PZENO,
+    RZENO,
+    vZENO,
+    zUSD,
     mBTC,
     sUSD,
     USDC,
@@ -540,14 +540,14 @@ export const tokens = [
     alUSD,
     ALCX,
     PFRAX,
-    PmUSD,
+    PzUSD,
     PUSDC,
     PUSDT,
     PDAI,
     PWMATIC,
-    RmUSD,
+    RzUSD,
     RmBTC,
-    MmUSD,
+    MzUSD,
     MFRAX,
     mBPT,
     RmBPT,

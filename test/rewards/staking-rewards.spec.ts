@@ -52,7 +52,7 @@ describe("StakingRewards", async () => {
     const redeployRewards = async (nexusAddress = nexus.address, rewardDecimals = 18, stakingDecimals = 18): Promise<StakingRewards> => {
         const deployer = sa.default.signer
         rewardToken = await new MockERC20__factory(deployer).deploy("Reward", "RWD", rewardDecimals, rewardsDistributor.address, 1000000)
-        const mAsset = await new MockERC20__factory(sa.default.signer).deploy("mUSD", "mUSD", stakingDecimals, sa.default.address, 1000000)
+        const mAsset = await new MockERC20__factory(sa.default.signer).deploy("zUSD", "zUSD", stakingDecimals, sa.default.address, 1000000)
         // stakingToken = await new MockERC20__factory(deployer).deploy("Staking", "ST8k", stakingDecimals, sa.default.address, 1000000)
         stakingToken = await new MockSavingsContract__factory(sa.default.signer).deploy(
             "Staking",

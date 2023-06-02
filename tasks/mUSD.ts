@@ -7,10 +7,10 @@ import { Signer } from "ethers"
 
 import { Masset, MassetManager__factory, Masset__factory, SavingsManager__factory } from "types/generated"
 import { BN } from "@utils/math"
-import { MusdEth__factory } from "types/generated/factories/MusdEth__factory"
-import { MusdLegacy__factory } from "types/generated/factories/MusdLegacy__factory"
-import { MusdLegacy } from "types/generated/MusdLegacy"
-import { MusdEth } from "types/generated/MusdEth"
+import { ZusdEth__factory } from "types/generated/factories/ZusdEth__factory"
+import { ZusdLegacy__factory } from "types/generated/factories/ZusdLegacy__factory"
+import { ZusdLegacy } from "types/generated/ZusdLegacy"
+import { ZusdEth } from "types/generated/ZusdEth"
 import { dumpBassetStorage, dumpConfigStorage, dumpTokenStorage } from "./utils/storage-utils"
 import {
     getMultiRedemptions,
@@ -27,36 +27,36 @@ import {
     snapSave,
     getCollectedInterest,
 } from "./utils/snap-utils"
-import { Token, sUSD, USDC, DAI, USDT, PUSDT, PUSDC, PDAI, mUSD, PmUSD, MmUSD, RmUSD, Chain } from "./utils/tokens"
+import { Token, sUSD, USDC, DAI, USDT, PUSDT, PUSDC, PDAI, zUSD, PzUSD, MzUSD, RzUSD, Chain } from "./utils/tokens"
 import { usdFormatter } from "./utils/quantity-formatters"
 import { getSwapRates } from "./utils/rates-utils"
 import { getSigner } from "./utils"
 import { getChain, getChainAddress } from "./utils/networkAddressFactory"
 
-const mUsdBassets: Token[] = [sUSD, USDC, DAI, USDT]
-const mUsdPolygonBassets: Token[] = [PUSDC, PDAI, PUSDT]
+const ZusdBassets: Token[] = [sUSD, USDC, DAI, USDT]
+const ZusdPolygonBassets: Token[] = [PUSDC, PDAI, PUSDT]
 
-// major mUSD upgrade to MusdV3 that changes the ABI
-export const musdUpgradeBlock = 12094376
+// major zUSD upgrade to ZusdV3 that changes the ABI
+export const zusdUpgradeBlock = 12094376
 
-const getMasset = (signer: Signer, networkName: string, block: number): Masset | MusdEth | MusdLegacy => {
+const getMasset = (signer: Signer, networkName: string, block: number): Masset | ZusdEth | ZusdLegacy => {
     if (networkName === "polygon_mainnet") {
-        return Masset__factory.connect(PmUSD.address, signer)
+        return Masset__factory.connect(PzUSD.address, signer)
     }
     if (networkName === "polygon_testnet") {
-        return Masset__factory.connect(MmUSD.address, signer)
+        return Masset__factory.connect(MzUSD.address, signer)
     }
     if (networkName === "ropsten") {
-        return MusdEth__factory.connect(RmUSD.address, signer)
+        return ZusdEth__factory.connect(RzUSD.address, signer)
     }
-    // The block mUSD was upgraded to the latest Masset with contract name (Musdv3)
-    if (block < musdUpgradeBlock) {
-        return MusdLegacy__factory.connect(mUSD.address, signer)
+    // The block zUSD was upgraded to the latest Masset with contract name (Zusdv3)
+    if (block < zusdUpgradeBlock) {
+        return ZusdLegacy__factory.connect(zUSD.address, signer)
     }
-    return MusdEth__factory.connect(mUSD.address, signer)
+    return ZusdEth__factory.connect(zUSD.address, signer)
 }
 
-task("mUSD-storage", "Dumps mUSD's storage data")
+task("zUSD-storage", "Dumps zUSD's storage data")
     .addOptionalParam("block", "Block number to get storage from. (default: current block)", 0, types.int)
     .addOptionalParam("type", "Type of storage to report. token, basset, config or all.", "all", types.string)
     .setAction(async (taskArgs, hre) => {
@@ -72,7 +72,7 @@ task("mUSD-storage", "Dumps mUSD's storage data")
         if (["config", "all"].includes(taskArgs.type)) await dumpConfigStorage(mAsset, blockNumber)
     })
 
-task("mUSD-snap", "Snaps mUSD")
+task("zUSD-snap", "Snaps zUSD")
     .addOptionalParam("from", "Block to query transaction events from. (default: deployment block)", 12094461, types.int)
     .addOptionalParam("to", "Block to query transaction events to. (default: current block)", 0, types.int)
     .setAction(async (taskArgs, hre) => {
@@ -101,37 +101,37 @@ task("mUSD-snap", "Snaps mUSD")
         const savingsManagerAddress = getChainAddress("SavingsManager", chain)
         const savingsManager = SavingsManager__factory.connect(savingsManagerAddress, signer)
 
-        const bAssets = network.name.includes("polygon") ? mUsdPolygonBassets : mUsdBassets
+        const bAssets = network.name.includes("polygon") ? ZusdPolygonBassets : ZusdBassets
 
         let accounts = []
         if (chain === Chain.mainnet) {
             accounts = [
                 {
-                    name: "imUSD",
-                    address: mUSD.savings,
+                    name: "izUSD",
+                    address: zUSD.savings,
                 },
                 {
                     name: "Iron Bank",
                     address: "0xbe86e8918dfc7d3cb10d295fc220f941a1470c5c",
                 },
                 {
-                    name: "Curve mUSD",
+                    name: "Curve zUSD",
                     address: "0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6",
                 },
                 {
-                    name: "mStable DAO",
+                    name: "xZeno DAO",
                     address: "0x3dd46846eed8D147841AE162C8425c08BD8E1b41",
                 },
                 {
-                    name: "Balancer ETH/mUSD 50/50 #2",
+                    name: "Balancer ETH/zUSD 50/50 #2",
                     address: "0xe036cce08cf4e23d33bc6b18e53caf532afa8513",
                 },
             ]
         } else if (chain === Chain.polygon) {
             accounts = [
                 {
-                    name: "imUSD",
-                    address: PmUSD.savings,
+                    name: "izUSD",
+                    address: PzUSD.savings,
                 },
             ]
         }
@@ -147,7 +147,7 @@ task("mUSD-snap", "Snaps mUSD")
         await getBasket(
             mAsset,
             bAssets.map((b) => b.symbol),
-            "mUSD",
+            "zUSD",
             usdFormatter,
             toBlock.blockNumber,
             undefined,
@@ -158,7 +158,7 @@ task("mUSD-snap", "Snaps mUSD")
 
         await getCollectedInterest(bAssets, mAsset, savingsManager, fromBlock, toBlock, usdFormatter, balances.save)
 
-        await snapSave("mUSD", signer, chain, toBlock.blockNumber)
+        await snapSave("zUSD", signer, chain, toBlock.blockNumber)
 
         outputFees(
             mintSummary,
@@ -173,7 +173,7 @@ task("mUSD-snap", "Snaps mUSD")
         )
     })
 
-task("mUSD-rates", "mUSD rate comparison to Curve")
+task("zUSD-rates", "zUSD rate comparison to Curve")
     .addOptionalParam("block", "Block number to compare rates at. (default: current block)", 0, types.int)
     .addOptionalParam("swapSize", "Swap size to compare rates with Curve", 10000, types.float)
     .setAction(async (taskArgs, hre) => {
@@ -183,17 +183,17 @@ task("mUSD-rates", "mUSD rate comparison to Curve")
         const block = await getBlock(hre.ethers, taskArgs.block)
         const mAsset = await getMasset(signer, hre.network.name, block.blockNumber)
 
-        console.log(`\nGetting rates for mUSD at block ${block.blockNumber}, ${block.blockTime}`)
+        console.log(`\nGetting rates for zUSD at block ${block.blockNumber}, ${block.blockTime}`)
 
-        const bAssets = chain === Chain.polygon ? mUsdPolygonBassets : mUsdBassets
+        const bAssets = chain === Chain.polygon ? ZusdPolygonBassets : ZusdBassets
 
         console.log("      Qty Input     Output      Qty Out    Rate             Output    Rate   Diff      Arb$")
         await getSwapRates(bAssets, bAssets, mAsset, block.blockNumber, usdFormatter, BN.from(taskArgs.swapSize), chain)
         await snapConfig(mAsset, block.blockNumber)
     })
 
-task("mUSD-BassetAdded", "Lists the BassetAdded events from a mAsset")
-    .addOptionalParam("masset", "Token symbol of mAsset. eg mUSD or mBTC", "mUSD", types.string)
+task("zUSD-BassetAdded", "Lists the BassetAdded events from a mAsset")
+    .addOptionalParam("masset", "Token symbol of mAsset. eg zUSD or mBTC", "zUSD", types.string)
     .addOptionalParam("from", "Block to query transaction events from. (default: deployment block)", 10148031, types.int)
     .addOptionalParam("to", "Block to query transaction events to. (default: current block)", 0, types.int)
     .setAction(async (taskArgs, hre) => {

@@ -9,8 +9,8 @@ import { ImmutableModule } from "../shared/ImmutableModule.sol";
 
 /**
  * @title  BoostDirector
- * @author mStable
- * @notice Supports the directing of vMTA balance from Staking up to X accounts
+ * @author xZeno
+ * @notice Supports the directing of vZENO balance from Staking up to X accounts
  * @dev    Uses a bitmap to store the id's of a given users chosen vaults in a gas efficient manner.
  */
 contract BoostDirector is IBoostDirector, ImmutableModule {
@@ -18,7 +18,7 @@ contract BoostDirector is IBoostDirector, ImmutableModule {
     event RedirectedBoost(address user, address boosted, address replaced);
     event Whitelisted(address vaultAddress, uint8 vaultId);
 
-    // Read the vMTA balance from here
+    // Read the vZENO balance from here
     IIncentivisedVotingLockup public immutable stakingContract;
 
     // Whitelisted vaults set by governance (only these vaults can read balances)

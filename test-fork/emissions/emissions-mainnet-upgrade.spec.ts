@@ -122,9 +122,9 @@ describe("Upgrade test Emissions Controller on mainnet", async () => {
         })
         ops = await impersonate(resolveAddress("OperationsSigner"))
         governor = await impersonate(resolveAddress("Governor"))
-        // 43,700 stkMTA, boosted to 44,461.750008245826445414 voting power
+        // 43,700 stkZENO, boosted to 44,461.750008245826445414 voting power
         voter1 = await impersonateAccount("0x8d0f5678557192e23d1da1c689e40f25c063eaa5")
-        // 27,527.5 stkMTA not boosted
+        // 27,527.5 stkZENO not boosted
         voter2 = await impersonateAccount("0xa22fe318725a3858cf5ea4349802537798f0081a")
 
         emissionsControllerAddress = resolveAddress("EmissionsController")

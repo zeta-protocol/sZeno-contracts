@@ -22,7 +22,7 @@ import {
 } from "types/generated"
 import { BN, minimum, simpleToExactAmount } from "@utils/math"
 import { ratioScale, ZERO_ADDRESS, DEAD_ADDRESS, fullScale } from "@utils/constants"
-import { Basset } from "@utils/mstable-objects"
+import { Basset } from "@utils/xzeno-objects"
 import { StandardAccounts } from "./standardAccounts"
 import { ActionDetails, BasketComposition } from "../../types/machines"
 import { MassetMachine, MassetDetails } from "./mAssetMachine"
@@ -132,7 +132,7 @@ export class FeederMachine {
             )
         }
         const data = impl.interface.encodeFunctionData("initialize", [
-            "mStable mBTC/bBTC Feeder",
+            "xZeno mBTC/bBTC Feeder",
             "bBTC fPool",
             {
                 addr: mAssetDetails.mAsset.address,
@@ -230,7 +230,7 @@ export class FeederMachine {
     ): Promise<Basset & { isMpAsset: boolean; feederPoolOrMassetContract: MockERC20 }> {
         let asset
         let isMpAsset = false
-        // If a feeder asset or mStable asset
+        // If a feeder asset or xZeno asset
         if (assetAddress === feederDetails.fAsset.address || assetAddress === feederDetails.mAsset.address) {
             asset = await feederDetails.pool.getBasset(assetAddress)
             // If a main pool asset

@@ -8,7 +8,7 @@ import { SafeERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/utils/Saf
 
 /**
  * @title  L2EmissionsController
- * @author mStable
+ * @author xZeno
  * @notice Deployed on Polygon (or other L2's), this contract distributes the bridged rewards from the
  *         child recipients to the end recipients (vaults).
  * @dev    VERSION: 1.0
@@ -31,9 +31,9 @@ contract L2EmissionsController is Initializable, ImmutableModule {
     ****************************************/
 
     /**
-     * @notice Recipient is a module, governed by mStable governance system.
+     * @notice Recipient is a module, governed by xZeno governance system.
      * @param _nexus            System nexus that resolves module addresses
-     * @param _childRewardToken Bridged rewards token on the Polygon chain that is distributed. eg MTA
+     * @param _childRewardToken Bridged rewards token on the Polygon chain that is distributed. eg ZENO
      */
     constructor(address _nexus, address _childRewardToken) ImmutableModule(_nexus) {
         require(_childRewardToken != address(0), "Reward token address is zero");

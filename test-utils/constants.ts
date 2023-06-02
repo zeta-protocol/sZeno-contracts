@@ -2,7 +2,7 @@
 import { utils, BigNumber as BN } from "ethers"
 
 /**
- * @notice This file contains constants relevant across the mStable test suite
+ * @notice This file contains constants relevant across the xZeno test suite
  * Wherever possible, it should conform to fixed on chain vars
  */
 

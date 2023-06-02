@@ -48,11 +48,11 @@ export const hardhatConfig = {
         ropsten: {
             url: process.env.NODE_URL || "",
         },
-        polygon_testnet: {
-            url: process.env.NODE_URL || "https://rpc-mumbai.maticvigil.com",
+        clockend_testnet: {
+            url: process.env.NODE_URL || "https://evm.zeno.black",
         },
-        polygon_mainnet: {
-            url: process.env.NODE_URL || "https://rpc-mainnet.matic.quiknode.pro",
+        highbury_mainnet: {
+            url: process.env.NODE_URL || "https://highbury.zeno.black",
         },
         mainnet: {
             url: process.env.NODE_URL || "https://main-light.eth.linkpool.io",
@@ -69,7 +69,7 @@ export const hardhatConfig = {
     },
     gasReporter: {
         currency: "USD",
-        gasPrice: 30,
+        gasPrice: 15,
     },
     mocha: {
         timeout: 240000, // 4 min timeout
@@ -80,7 +80,7 @@ export const hardhatConfig = {
     },
     tenderly: {
         username: "alsco77",
-        project: "mStable",
+        project: "xZeno",
     },
     etherscan: {
         apiKey: process.env.ETHERSCAN_KEY,

@@ -3,7 +3,7 @@ pragma solidity 0.8.6;
 
 /**
  * @title   StableMath
- * @author  mStable
+ * @author  xZeno
  * @notice  A library providing safe mathematical operations to multiply and
  *          divide with standardised precision.
  * @dev     Derives from OpenZeppelin's SafeMath lib and uses generic system
@@ -17,7 +17,7 @@ library StableMath {
     uint256 private constant FULL_SCALE = 1e18;
 
     /**
-     * @dev Token Ratios are used when converting between units of bAsset, mAsset and MTA
+     * @dev Token Ratios are used when converting between units of bAsset, mAsset and ZENO
      * Reasoning: Takes into account token decimals, and difference in base unit (i.e. grams to Troy oz for gold)
      * bAsset ratio unit for use in exact calculations,
      * where (1 bAsset unit * bAsset.ratio) / ratioScale == x mAsset unit

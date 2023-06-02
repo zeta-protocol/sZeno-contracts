@@ -21,18 +21,18 @@ import { getChain, resolveAddress } from "./utils/networkAddressFactory"
 import { deployContract } from "./utils/deploy-utils"
 import { Chain } from "./utils/tokens"
 
-task("deploy-emissions-polly", "Deploys L2EmissionsController and L2 Bridge Recipients for Polygon mUSD Vault and FRAX Farm")
+task("deploy-emissions-polly", "Deploys L2EmissionsController and L2 Bridge Recipients for Polygon zUSD Vault and FRAX Farm")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed)
         const chain = getChain(hre)
-        const streamerAddress = resolveAddress("BpMTAStreamer", chain)
+        const streamerAddress = resolveAddress("BpZENOStreamer", chain)
 
         const l2EmissionsController = await deployL2EmissionsController(signer, hre)
         console.log(`Set EmissionsController contract name in networkAddressFactory to ${l2EmissionsController.address}`)
 
-        const pmUSDbridgeRecipient = await deployL2BridgeRecipients(signer, hre, l2EmissionsController.address)
-        console.log(`Set PmUSD bridgeRecipient to ${pmUSDbridgeRecipient.address}`)
+        const pzUSDbridgeRecipient = await deployL2BridgeRecipients(signer, hre, l2EmissionsController.address)
+        console.log(`Set PzUSD bridgeRecipient to ${pzUSDbridgeRecipient.address}`)
 
         const pBALridgeRecipient = await deployL2BridgeRecipients(signer, hre, l2EmissionsController.address)
         console.log(`Set PBAL bridgeRecipient to ${pBALridgeRecipient.address}`)
@@ -55,7 +55,7 @@ task("deploy-emissions")
 task("deploy-bridge-forwarder", "Deploys a BridgeForwarder contract on mainnet for Polygon dials.")
     .addParam(
         "token",
-        "Token on the Polygon network that is configured with `bridgeRecipient`. eg mUSD, FRAX, BAL.",
+        "Token on the Polygon network that is configured with `bridgeRecipient`. eg zUSD, FRAX, BAL.",
         undefined,
         types.string,
     )
@@ -71,7 +71,7 @@ task("deploy-bridge-forwarder", "Deploys a BridgeForwarder contract on mainnet f
     })
 
 task("deploy-basic-forwarder", "Deploys a basic rewards forwarder from the emissions controller.")
-    .addParam("recipient", "Contract or EOA that will receive the MTA rewards.", undefined, types.string)
+    .addParam("recipient", "Contract or EOA that will receive the ZENO rewards.", undefined, types.string)
     .addOptionalParam("owner", "Contract owner to transfer ownership to after deployment.", undefined, types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {
@@ -98,8 +98,8 @@ task("deploy-revenue-buy-back")
 
         const revenueRecipient = await deployRevenueBuyBack(signer, hre)
 
-        console.log(`Governor call SavingsManager.setRevenueRecipient to ${revenueRecipient.address} for mUSD and mBTC`)
-        console.log(`Governor call setMassetConfig for mUSD and mBTC`)
+        console.log(`Governor call SavingsManager.setRevenueRecipient to ${revenueRecipient.address} for zUSD and mBTC`)
+        console.log(`Governor call setMassetConfig for zUSD and mBTC`)
     })
 
 task("deploy-split-revenue-buy-back")
@@ -112,8 +112,8 @@ task("deploy-split-revenue-buy-back")
 
         const revenueRecipient = await deploySplitRevenueBuyBack(signer, hre, treasuryFee)
 
-        console.log(`Governor call RevenueSplitBuyBack.mapBasset for mUSD and mBTC`)
-        console.log(`Governor call SavingsManager.setRevenueRecipient to ${revenueRecipient.address} for mUSD and mBTC`)
+        console.log(`Governor call RevenueSplitBuyBack.mapBasset for zUSD and mBTC`)
+        console.log(`Governor call SavingsManager.setRevenueRecipient to ${revenueRecipient.address} for zUSD and mBTC`)
     })
 
 task("deploy-mock-root-chain-manager", "Deploys a mocked Polygon PoS Bridge")
@@ -125,7 +125,7 @@ task("deploy-mock-root-chain-manager", "Deploys a mocked Polygon PoS Bridge")
     })
 
 task("deploy-bal-reward-forwarder", "Deploys a basic rewards forwarder from the emissions controller.")
-    .addParam("recipient", "Contract or EOA that will receive the MTA rewards.", undefined, types.string)
+    .addParam("recipient", "Contract or EOA that will receive the ZENO rewards.", undefined, types.string)
     .addOptionalParam("owner", "Contract owner to transfer ownership to after deployment.", undefined, types.string)
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
     .setAction(async (taskArgs, hre) => {

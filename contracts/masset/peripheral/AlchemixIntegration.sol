@@ -12,7 +12,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 /**
  * @title   AlchemixIntegration
- * @author  mStable
+ * @author  xZeno
  * @notice  A simple connection to farm ALCX rewards with the Alchemix alUSD pool
  * @dev     VERSION: 1.0
  *          DATE:    2021-07-02
@@ -35,7 +35,7 @@ contract AlchemixIntegration is
     );
     event RewardsClaimed();
 
-    /// @notice mAsset or Feeder Pool using the integration. eg fPmUSD/alUSD
+    /// @notice mAsset or Feeder Pool using the integration. eg fPzUSD/alUSD
     /// @dev LP has write access
     address public immutable lpAddress;
     /// @notice token the staking rewards are accrued and claimed in.
@@ -87,7 +87,7 @@ contract AlchemixIntegration is
 
     /**
      * @dev Approve the spending of the bAsset by Alchemix's StakingPools contract,
-     *      and the spending of the reward token by mStable's Liquidator contract
+     *      and the spending of the reward token by xZeno's Liquidator contract
      */
     function initialize() public initializer {
         _approveContracts();
@@ -99,7 +99,7 @@ contract AlchemixIntegration is
 
     /**
      * @dev Re-approve the spending of the bAsset by Alchemix's StakingPools contract,
-     *      and the spending of the reward token by mStable's Liquidator contract
+     *      and the spending of the reward token by xZeno's Liquidator contract
      *      if for some reason is it necessary. Only callable through Governance.
      */
     function reapproveContracts() external onlyGovernor {

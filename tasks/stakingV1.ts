@@ -5,7 +5,7 @@ import { getSigner } from "./utils/signerFactory"
 import { logTxDetails } from "./utils/deploy-utils"
 import { getChain, getChainAddress, resolveAddress } from "./utils/networkAddressFactory"
 
-task("eject-stakers", "Ejects expired stakers from Meta staking contract (vMTA)")
+task("eject-stakers", "Ejects expired stakers from Meta staking contract (vZENO)")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed)
@@ -18,7 +18,7 @@ task("eject-stakers", "Ejects expired stakers from Meta staking contract (vMTA)"
         // Check it's been more than 7 days since the last eject has been run
 
         // get stakers from API
-        const response = await axios.get("https://api-dot-mstable.appspot.com/stakers")
+        const response = await axios.get("https://api-dot-xzeno.appspot.com/stakers")
         const stakers = response.data.ejected
 
         if (stakers.length === 0) {
@@ -30,62 +30,62 @@ task("eject-stakers", "Ejects expired stakers from Meta staking contract (vMTA)"
         await logTxDetails(tx, "ejectMany")
     })
 
-subtask("vmta-expire", "Expire old staking V1 contract")
+subtask("vzeno-expire", "Expire old staking V1 contract")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed)
         const chain = getChain(hre)
 
-        const vmtaAddress = resolveAddress("vMTA", chain)
-        const vmta = IncentivisedVotingLockup__factory.connect(vmtaAddress, signer)
-        const tx = await vmta.expireContract()
-        await logTxDetails(tx, "Expire old V1 MTA staking contract")
+        const vzenoAddress = resolveAddress("vZENO", chain)
+        const vzeno = IncentivisedVotingLockup__factory.connect(vzenoAddress, signer)
+        const tx = await vzeno.expireContract()
+        await logTxDetails(tx, "Expire old V1 ZENO staking contract")
     })
-task("vmta-expire").setAction(async (_, __, runSuper) => {
+task("vzeno-expire").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("vmta-withdraw", "Withdraw MTA from old Staking V1 contract")
+subtask("vzeno-withdraw", "Withdraw ZENO from old Staking V1 contract")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
         const chain = getChain(hre)
 
-        const vmtaAddress = resolveAddress("vMTA", chain)
-        const vmta = IncentivisedVotingLockup__factory.connect(vmtaAddress, signer)
-        const tx = await vmta.withdraw()
-        await logTxDetails(tx, "Withdraw MTA from Staking V1 contract")
+        const vzenoAddress = resolveAddress("vZENO", chain)
+        const vzeno = IncentivisedVotingLockup__factory.connect(vzenoAddress, signer)
+        const tx = await vzeno.withdraw()
+        await logTxDetails(tx, "Withdraw ZENO from Staking V1 contract")
     })
-task("vmta-withdraw").setAction(async (_, __, runSuper) => {
+task("vzeno-withdraw").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("vmta-claim", "Claim MTA from old Staking V1 contract")
+subtask("vzeno-claim", "Claim ZENO from old Staking V1 contract")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
         const chain = getChain(hre)
 
-        const vmtaAddress = resolveAddress("vMTA", chain)
-        const vmta = IncentivisedVotingLockup__factory.connect(vmtaAddress, signer)
-        const tx = await vmta.claimReward()
-        await logTxDetails(tx, "Claim MTA from old Staking V2 contract")
+        const vzenoAddress = resolveAddress("vZENO", chain)
+        const vzeno = IncentivisedVotingLockup__factory.connect(vzenoAddress, signer)
+        const tx = await vzeno.claimReward()
+        await logTxDetails(tx, "Claim ZENO from old Staking V2 contract")
     })
-task("vmta-claim").setAction(async (_, __, runSuper) => {
+task("vzeno-claim").setAction(async (_, __, runSuper) => {
     await runSuper()
 })
 
-subtask("vmta-exit", "Withdraw and claim MTA from old Staking V1 contract")
+subtask("vzeno-exit", "Withdraw and claim ZENO from old Staking V1 contract")
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "average", types.string)
     .setAction(async (taskArgs, hre) => {
         const signer = await getSigner(hre, taskArgs.speed, false)
         const chain = getChain(hre)
 
-        const vmtaAddress = resolveAddress("vMTA", chain)
-        const vmta = IncentivisedVotingLockup__factory.connect(vmtaAddress, signer)
-        const tx = await vmta.exit()
-        await logTxDetails(tx, "Withdraw and claim MTA from old Staking V2 contract")
+        const vzenoAddress = resolveAddress("vZENO", chain)
+        const vzeno = IncentivisedVotingLockup__factory.connect(vzenoAddress, signer)
+        const tx = await vzeno.exit()
+        await logTxDetails(tx, "Withdraw and claim ZENO from old Staking V2 contract")
     })
-task("vmta-exit").setAction(async (_, __, runSuper) => {
+task("vzeno-exit").setAction(async (_, __, runSuper) => {
     await runSuper()
 })

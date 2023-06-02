@@ -12,7 +12,7 @@ export const config = {
 export const startingCap = simpleToExactAmount(9, 18) // 9 (9 BTC = 405,000)
 export const capFactor = simpleToExactAmount(20, 18) // 20 (20 BTC = 900,000)
 
-export const mBtcName = "mStable BTC"
+export const mBtcName = "xZeno BTC"
 export const mBtcSymbol = "mBTC"
 
 export interface Bassets {

@@ -18,7 +18,7 @@ import { YieldValidator } from "../shared/YieldValidator.sol";
 
 /**
  * @title   SavingsManager
- * @author  mStable
+ * @author  xZeno
  * @notice  Savings Manager collects interest from mAssets and sends them to the
  *          corresponding Savings Contract, performing some validation in the process.
  * @dev     VERSION: 1.4
@@ -202,7 +202,7 @@ contract SavingsManager is ISavingsManager, PausableModule {
         // Collect existing interest to ensure everything is up to date
         _collectAndDistributeInterest(_mAsset);
 
-        // transfer liquidated mUSD to here
+        // transfer liquidated zUSD to here
         IERC20(_mAsset).safeTransferFrom(_liquidator(), address(this), _liquidated);
 
         uint256 leftover = _unstreamedRewards(_mAsset, StreamType.liquidator);
@@ -357,7 +357,7 @@ contract SavingsManager is ISavingsManager, PausableModule {
         if (interestCollected > 0 || newReward > 0) {
             require(
                 IERC20(_mAsset).balanceOf(address(this)) >= interestCollected + newReward,
-                "Must receive mUSD"
+                "Must receive zUSD"
             );
 
             uint256 extrapolatedAPY = YieldValidator.validateCollection(

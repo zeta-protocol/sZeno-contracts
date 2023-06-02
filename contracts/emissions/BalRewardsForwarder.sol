@@ -11,7 +11,7 @@ import { BasicRewardsForwarder } from "./BasicRewardsForwarder.sol";
 
 /**
  * @title  BalRewardsForwarder
- * @author mStable
+ * @author xZeno
  * @notice Transfers any received reward tokens to another contract and notifies it.
  * @dev    VERSION: 1.0
  *         DATE:    2022-06-16
@@ -20,8 +20,8 @@ contract BalRewardsForwarder is BasicRewardsForwarder {
     using SafeERC20 for IERC20;
 
     /**
-     * @param _nexus        mStable system Nexus address
-     * @param _rewardsToken Token that is being distributed as a reward. eg MTA
+     * @param _nexus        xZeno system Nexus address
+     * @param _rewardsToken Token that is being distributed as a reward. eg ZENO
      */
     constructor(address _nexus, address _rewardsToken)
         BasicRewardsForwarder(_nexus, _rewardsToken)
@@ -29,7 +29,7 @@ contract BalRewardsForwarder is BasicRewardsForwarder {
 
     /**
      * @notice Called by the Emissions Controller to trigger the processing of the weekly BAL rewards.
-     * @dev    The Emissions Controller has already transferred the MTA to this contract.
+     * @dev    The Emissions Controller has already transferred the ZENO to this contract.
      * @param _rewards Units of reward tokens that were distributed to this contract
      */
     function notifyRewardAmount(uint256 _rewards)

@@ -38,7 +38,7 @@ describe("Liquidator", () => {
     let liquidator: Liquidator
     let bAsset: MockERC20
     let bAsset2: MockERC20
-    let mUSD: MockMasset
+    let zUSD: MockMasset
     let compIntegration: MockRewardToken
     let aaveIntegration: MockRewardToken
     let compToken: MockERC20
@@ -77,8 +77,8 @@ describe("Liquidator", () => {
     // - Add to modules
     // - Upgrade COMP
     const redeployLiquidator = async () => {
-        // Fake mUSD
-        mUSD = await new MockMasset__factory(sa.default.signer).deploy("mStable USD", "mUSD", 18, sa.fundManager.address, 100000000)
+        // Fake zUSD
+        zUSD = await new MockMasset__factory(sa.default.signer).deploy("xZeno USD", "zUSD", 18, sa.fundManager.address, 100000000)
         // Set up Comp Integration
         bAsset = await new MockERC20__factory(sa.default.signer).deploy("Mock1", "MK1", 18, sa.fundManager.address, 100000000)
         bAsset2 = await new MockERC20__factory(sa.default.signer).deploy("Mock2", "MK2", 18, sa.fundManager.address, 100000000)
@@ -127,11 +127,11 @@ describe("Liquidator", () => {
         const unwrapperFactory = await new Unwrapper__factory(sa.default.signer)
         const unwrapperContract = await unwrapperFactory.deploy(nexus.address)
 
-        const save = await new SavingsContract__factory(sa.default.signer).deploy(nexus.address, mUSD.address, unwrapperContract.address)
-        await save.initialize(sa.default.address, "Savings Credit", "imUSD")
+        const save = await new SavingsContract__factory(sa.default.signer).deploy(nexus.address, zUSD.address, unwrapperContract.address)
+        await save.initialize(sa.default.address, "Savings Credit", "izUSD")
         savings = await new SavingsManager__factory(sa.default.signer).deploy(
             nexus.address,
-            [mUSD.address],
+            [zUSD.address],
             [save.address],
             [ZERO_ADDRESS],
             simpleToExactAmount(1, 18),
@@ -145,7 +145,7 @@ describe("Liquidator", () => {
         const liquidation = await liquidator.liquidations(liquidator.address)
         const sellBalIntegration = await compToken.balanceOf(compIntegration.address)
         const sellBalLiquidator = await compToken.balanceOf(liquidator.address)
-        const savingsManagerBal = await mUSD.balanceOf(savings.address)
+        const savingsManagerBal = await zUSD.balanceOf(savings.address)
         return {
             sellTokenBalance: {
                 integration: sellBalIntegration,
@@ -208,7 +208,7 @@ describe("Liquidator", () => {
                         uniswapCompBassetPaths.encodedReversed,
                         simpleToExactAmount(1000, 18),
                         simpleToExactAmount(70, 18),
-                        mUSD.address,
+                        zUSD.address,
                         false,
                     )
                 const liquidation = await liquidator.liquidations(compIntegration.address)
@@ -217,16 +217,16 @@ describe("Liquidator", () => {
                 expect(liquidation.lastTriggered, "lastTriggered").eq(BN.from(0))
                 expect(liquidation.trancheAmount, "trancheAmount").eq(simpleToExactAmount(1000, 18))
                 expect(liquidation.minReturn, "minReturn").eq(simpleToExactAmount(70, 18))
-                expect(liquidation.mAsset, "mAsset").eq(mUSD.address)
+                expect(liquidation.mAsset, "mAsset").eq(zUSD.address)
                 expect(liquidation.aaveBalance, "aaveBalance").eq(0)
             })
         })
         describe("triggering a liquidation", () => {
             it("should sell COMP for bAsset and deposit to SavingsManager", async () => {
-                const savingsManagerBalBefore = await mUSD.balanceOf(savings.address)
+                const savingsManagerBalBefore = await zUSD.balanceOf(savings.address)
                 await compIntegration.connect(sa.governor.signer).approveRewardToken()
                 await liquidator.triggerLiquidation(compIntegration.address)
-                expect(await mUSD.balanceOf(savings.address), "Savings Manager mUSD bal increased").gt(savingsManagerBalBefore)
+                expect(await zUSD.balanceOf(savings.address), "Savings Manager zUSD bal increased").gt(savingsManagerBalBefore)
             })
         })
     })
@@ -316,7 +316,7 @@ describe("Liquidator", () => {
                         uniswapCompBassetPaths.encodedReversed,
                         simpleToExactAmount(1, 18),
                         simpleToExactAmount(70, 18),
-                        mUSD.address,
+                        zUSD.address,
                         false,
                     ),
             ).to.be.revertedWith("Invalid inputs")
@@ -334,7 +334,7 @@ describe("Liquidator", () => {
                         invalidPath.encodedReversed,
                         simpleToExactAmount(1, 18),
                         simpleToExactAmount(70, 18),
-                        mUSD.address,
+                        zUSD.address,
                         false,
                     ),
             ).to.be.revertedWith("Invalid uniswap path")
@@ -350,7 +350,7 @@ describe("Liquidator", () => {
                         invalidPath.encodedReversed,
                         simpleToExactAmount(1, 18),
                         simpleToExactAmount(70, 18),
-                        mUSD.address,
+                        zUSD.address,
                         false,
                     ),
             ).to.be.revertedWith("Invalid uniswap path")
@@ -368,7 +368,7 @@ describe("Liquidator", () => {
                         invalidPath.encodedReversed,
                         simpleToExactAmount(1, 18),
                         simpleToExactAmount(70, 18),
-                        mUSD.address,
+                        zUSD.address,
                         false,
                     ),
             ).to.be.revertedWith("Invalid uniswap path reversed")
@@ -384,7 +384,7 @@ describe("Liquidator", () => {
                         invalidPath.encodedReversed,
                         simpleToExactAmount(1, 18),
                         simpleToExactAmount(70, 18),
-                        mUSD.address,
+                        zUSD.address,
                         false,
                     ),
             ).to.be.revertedWith("Invalid uniswap path reversed")
@@ -400,7 +400,7 @@ describe("Liquidator", () => {
                     uniswapCompBassetPaths.encodedReversed,
                     simpleToExactAmount(1000, 18),
                     simpleToExactAmount(70, 18),
-                    mUSD.address,
+                    zUSD.address,
                     false,
                 )
             const liquidation = await liquidator.liquidations(compIntegration.address)
@@ -420,7 +420,7 @@ describe("Liquidator", () => {
                         uniswapCompBassetPaths.encodedReversed,
                         simpleToExactAmount(1000, 18),
                         simpleToExactAmount(70, 18),
-                        mUSD.address,
+                        zUSD.address,
                         false,
                     ),
             ).to.be.revertedWith("Liquidation already exists")
@@ -439,7 +439,7 @@ describe("Liquidator", () => {
                     uniswapCompBassetPaths.encodedReversed,
                     simpleToExactAmount(1000, 18),
                     simpleToExactAmount(70, 18),
-                    mUSD.address,
+                    zUSD.address,
                     false,
                 )
         })
@@ -554,7 +554,7 @@ describe("Liquidator", () => {
                     uniswapCompBassetPaths.encodedReversed,
                     simpleToExactAmount(1000, 18),
                     simpleToExactAmount(70, 18),
-                    mUSD.address,
+                    zUSD.address,
                     false,
                 )
             await compIntegration.connect(sa.governor.signer).approveRewardToken()
@@ -585,10 +585,10 @@ describe("Liquidator", () => {
 
             // 10 COMP liquidated at 440 COMP/USD with 0.3% fee
             // Swap bAsset output = 10 * 440 * (100 - 0.3) / 100 = 4,386.8
-            // 4,386.8 bAsset is then minted for mUSD which costs 2%
-            // mUSD in Savings = 4,386.8 * (100 - 2) / 100 = 4,299.064
+            // 4,386.8 bAsset is then minted for zUSD which costs 2%
+            // zUSD in Savings = 4,386.8 * (100 - 2) / 100 = 4,299.064
             const mAssetsExpected = simpleToExactAmount(4299064, 15)
-            await expect(tx).to.emit(liquidator, "Liquidated").withArgs(compToken.address, mUSD.address, mAssetsExpected, bAsset.address)
+            await expect(tx).to.emit(liquidator, "Liquidated").withArgs(compToken.address, zUSD.address, mAssetsExpected, bAsset.address)
 
             const s1 = await snapshotData()
             expect(s1.sellTokenBalance.integration, "integration COMP bal after").to.eq(0)
@@ -647,7 +647,7 @@ describe("Liquidator", () => {
 
                 // 10 COMP liquidated at 440 COMP/USD with 0.3% fee
                 // Swap bAsset output = 10 * 440 * (100 - 0.3) / 100 = 4,386.8
-                // 4,386.8 bAsset is then minted for mUSD which costs 2%
+                // 4,386.8 bAsset is then minted for zUSD which costs 2%
                 const purchasedBassetsExpected = simpleToExactAmount(43868, 17)
 
                 await expect(tx)
@@ -715,7 +715,7 @@ describe("Liquidator", () => {
                     uniswapAaveBassetPaths.encodedReversed,
                     simpleToExactAmount(1000, 18),
                     simpleToExactAmount(50, 18),
-                    mUSD.address,
+                    zUSD.address,
                     true,
                 )
             await aaveIntegration.connect(sa.governor.signer).approveRewardToken()
@@ -791,7 +791,7 @@ describe("Liquidator", () => {
                     uniswapAaveBassetPaths.encodedReversed,
                     simpleToExactAmount(1000, 18),
                     simpleToExactAmount(50, 18),
-                    mUSD.address,
+                    zUSD.address,
                     true,
                 )
             await aaveIntegration.connect(sa.governor.signer).approveRewardToken()

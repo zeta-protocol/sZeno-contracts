@@ -121,7 +121,7 @@ describe("Cross swap - One basket many tests", () => {
 
         feederPool = (await FeederFactory.deploy(mAssetDetails.nexus.address, bAssets[0].address)) as ExposedFeederPool
         await feederPool.initialize(
-            "mStable mBTC/bBTC Feeder",
+            "xZeno mBTC/bBTC Feeder",
             "bBTC fPool",
             {
                 addr: bAssets[0].address,

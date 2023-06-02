@@ -22,11 +22,11 @@ task("getBytecode-BoostedDualVault").setAction(async () => {
 })
 
 task("BoostDirector.deploy", "Deploys a new BoostDirector")
-    .addOptionalParam("stakingToken", "Symbol of the staking token", "MTA", types.string)
+    .addOptionalParam("stakingToken", "Symbol of the staking token", "ZENO", types.string)
     .addOptionalParam(
         "vaults",
-        "Comma separated list of vault underlying token symbols, eg mUSD,mBTC",
-        "mUSD,mBTC,GUSD,BUSD,alUSD,HBTC,TBTC",
+        "Comma separated list of vault underlying token symbols, eg zUSD,mBTC",
+        "zUSD,mBTC,GUSD,BUSD,alUSD,HBTC,TBTC",
         types.string,
     )
     .addOptionalParam("speed", "Defender Relayer speed param: 'safeLow' | 'average' | 'fast' | 'fastest'", "fast", types.string)
@@ -53,9 +53,9 @@ task("Vault.deploy", "Deploys a vault contract")
     .addParam("boosted", "True if a mainnet boosted vault", true, types.boolean)
     .addParam("vaultName", "Vault name", undefined, types.string, false)
     .addParam("vaultSymbol", "Vault symbol", undefined, types.string, false)
-    .addOptionalParam("stakingToken", "Symbol of staking token. eg MTA, BAL or mUSD", "MTA", types.string)
+    .addOptionalParam("stakingToken", "Symbol of staking token. eg ZENO, BAL or zUSD", "ZENO", types.string)
     .addOptionalParam("stakingType", "'address' or 'feederPool'", "feederPool", types.string)
-    .addOptionalParam("rewardsToken", "Symbol of rewards token. eg MTA", "MTA", types.string)
+    .addOptionalParam("rewardsToken", "Symbol of rewards token. eg ZENO", "ZENO", types.string)
     .addOptionalParam("dualRewardsToken", "Symbol of dual rewards token. eg WMATIC", undefined, types.string)
     .addOptionalParam("priceCoeff", "Price coefficient without 18 decimal places. eg 1 or 4800", 1, types.int)
     .addOptionalParam("boostCoeff", "Boost coefficient", 9, types.int)
@@ -78,11 +78,11 @@ task("Vault.deploy", "Deploys a vault contract")
     })
 
 task("StakedToken.deploy", "Deploys a Staked Token behind a proxy")
-    .addOptionalParam("rewardsToken", "Symbol of rewards token. eg MTA", "MTA", types.string)
-    .addOptionalParam("stakedToken", "Symbol of staked token. eg MTA or mBPT", "MTA", types.string)
+    .addOptionalParam("rewardsToken", "Symbol of rewards token. eg ZENO", "ZENO", types.string)
+    .addOptionalParam("stakedToken", "Symbol of staked token. eg ZENO or mBPT", "ZENO", types.string)
     .addOptionalParam("balToken", "Symbol of balancer token. eg BAL", "BAL", types.string)
-    .addOptionalParam("name", "Staked Token name", "Staked MTA", types.string)
-    .addOptionalParam("symbol", "Staked Token symbol", "stkMTA", types.string)
+    .addOptionalParam("name", "Staked Token name", "Staked ZENO", types.string)
+    .addOptionalParam("symbol", "Staked Token symbol", "stkZENO", types.string)
     .addOptionalParam("cooldown", "Number of seconds for the cooldown period", ONE_WEEK.mul(3).toNumber(), types.int)
     .addOptionalParam("proxy", "Deploys a proxy contract", false, types.boolean)
     .setAction(async (taskArgs, hre) => {

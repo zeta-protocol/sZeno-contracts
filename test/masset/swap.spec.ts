@@ -7,7 +7,7 @@ import { MassetDetails, MassetMachine, StandardAccounts } from "@utils/machines"
 import { Masset, MockERC20 } from "types/generated"
 import { fullScale, ratioScale, ZERO_ADDRESS } from "@utils/constants"
 import { assertBNSlightlyGTPercent, assertBasketIsHealthy } from "@utils/assertions"
-import { BassetStatus } from "@utils/mstable-objects"
+import { BassetStatus } from "@utils/xzeno-objects"
 import { Account } from "types"
 
 // (AS) - test cases to add:

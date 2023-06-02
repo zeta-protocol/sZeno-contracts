@@ -6,12 +6,12 @@ import { IConnector } from "../../../savings/peripheral/IConnector.sol";
 
 contract MockConnector is IConnector {
     address save;
-    address mUSD;
+    address zUSD;
     uint256 deposited;
 
-    constructor(address _save, address _mUSD) {
+    constructor(address _save, address _zUSD) {
         save = _save;
-        mUSD = _mUSD;
+        zUSD = _zUSD;
     }
 
     modifier onlySave() {
@@ -20,17 +20,17 @@ contract MockConnector is IConnector {
     }
 
     function deposit(uint256 _amount) external override onlySave {
-        IERC20(mUSD).transferFrom(save, address(this), _amount);
+        IERC20(zUSD).transferFrom(save, address(this), _amount);
         deposited += _amount;
     }
 
     function withdraw(uint256 _amount) external override onlySave {
-        IERC20(mUSD).transfer(save, _amount);
+        IERC20(zUSD).transfer(save, _amount);
         deposited -= _amount;
     }
 
     function withdrawAll() external override onlySave {
-        IERC20(mUSD).transfer(save, deposited);
+        IERC20(zUSD).transfer(save, deposited);
         deposited = 0;
     }
 

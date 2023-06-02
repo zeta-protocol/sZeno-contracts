@@ -67,7 +67,7 @@ interface Reward {
 interface StakingData {
     boostBalance: StakingBalance
     tokenBalance: TokenBalance
-    vMTABalance: BN
+    vZENOBalance: BN
     userData: UserData
     userRewards: Reward[]
     contractData: ContractData
@@ -101,7 +101,7 @@ describe("BoostedVault", async () => {
     let stakingContract: MockStakingContract
     let boostDirector: BoostDirector
 
-    const maxVMTA = simpleToExactAmount(600000, 18)
+    const maxVZENO = simpleToExactAmount(600000, 18)
     const maxBoost = simpleToExactAmount(3, 18)
     const minBoost = simpleToExactAmount(1, 18)
     const floor = simpleToExactAmount(98, 16)
@@ -111,16 +111,16 @@ describe("BoostedVault", async () => {
 
     const boost = (raw: BN, boostAmt: BN): BN => raw.mul(boostAmt).div(fullScale)
 
-    const calcBoost = (raw: BN, vMTA: BN, priceCoefficient = priceCoeff): BN => {
-        // min(m, max(d, (d * 0.95) + c * min(vMTA, f) / USD^b))
+    const calcBoost = (raw: BN, vZENO: BN, priceCoefficient = priceCoeff): BN => {
+        // min(m, max(d, (d * 0.95) + c * min(vZENO, f) / USD^b))
         const scaledBalance = raw.mul(priceCoefficient).div(simpleToExactAmount(1, 18))
 
         if (scaledBalance.lt(simpleToExactAmount(1, 18))) return minBoost
 
         let denom = parseFloat(utils.formatUnits(scaledBalance))
         denom **= 0.75
-        const flooredMTA = vMTA.gt(maxVMTA) ? maxVMTA : vMTA
-        let rhs = floor.add(flooredMTA.mul(coeff).div(10).mul(fullScale).div(simpleToExactAmount(denom)))
+        const flooredZENO = vZENO.gt(maxVZENO) ? maxVZENO : vZENO
+        let rhs = floor.add(flooredZENO.mul(coeff).div(10).mul(fullScale).div(simpleToExactAmount(denom)))
         rhs = rhs.gt(minBoost) ? rhs : minBoost
         return rhs.gt(maxBoost) ? maxBoost : rhs
     }
@@ -132,10 +132,10 @@ describe("BoostedVault", async () => {
     const redeployRewards = async (priceCoefficient = priceCoeff): Promise<BoostedVault> => {
         nexus = await new MockNexus__factory(sa.default.signer).deploy(sa.governor.address, DEAD_ADDRESS, DEAD_ADDRESS)
         rewardToken = await new MockERC20__factory(sa.default.signer).deploy("Reward", "RWD", 18, rewardsDistributor.address, 10000000)
-        const mAsset = await new MockERC20__factory(sa.default.signer).deploy("mUSD", "mUSD", 18, sa.default.address, 1000000)
+        const mAsset = await new MockERC20__factory(sa.default.signer).deploy("zUSD", "zUSD", 18, sa.default.address, 1000000)
         imAsset = await new MockSavingsContract__factory(sa.default.signer).deploy(
-            "Interest bearing mUSD",
-            "imUSD",
+            "Interest bearing zUSD",
+            "izUSD",
             18,
             sa.default.address,
             1000000,
@@ -177,7 +177,7 @@ describe("BoostedVault", async () => {
                 sender: await imAsset.balanceOf(sender.address),
                 contract: await imAsset.balanceOf(savingsVault.address),
             },
-            vMTABalance: await stakingContract.balanceOf(beneficiary.address),
+            vZENOBalance: await stakingContract.balanceOf(beneficiary.address),
             userData: {
                 rewardPerTokenPaid,
                 rewards,
@@ -334,7 +334,7 @@ describe("BoostedVault", async () => {
 
         // 3. Ensure rewards are accrued to the beneficiary
         const afterData = await snapshotStakingData(sender, beneficiary)
-        const expectedBoost = boost(afterData.boostBalance.raw, calcBoost(afterData.boostBalance.raw, afterData.vMTABalance))
+        const expectedBoost = boost(afterData.boostBalance.raw, calcBoost(afterData.boostBalance.raw, afterData.vZENOBalance))
         await assertRewardsAssigned(beforeData, afterData, isExistingStaker)
 
         // 4. Expect token transfer
@@ -560,8 +560,8 @@ describe("BoostedVault", async () => {
             beforeEach(async () => {
                 savingsVault = await redeployRewards(priceCoeffOverride)
             })
-            // 10k imUSD = 1k $ = 0.33 imBTC
-            it("should calculate boost for 10k imUSD stake and 250 vMTA", async () => {
+            // 10k izUSD = 1k $ = 0.33 imBTC
+            it("should calculate boost for 10k izUSD stake and 250 vZENO", async () => {
                 const deposit = simpleToExactAmount(3333, 14)
                 const stake = simpleToExactAmount(250, 18)
                 const expectedBoost = simpleToExactAmount(7483, 14)
@@ -577,8 +577,8 @@ describe("BoostedVault", async () => {
                 const ratio = await savingsVault.getBoost(sa.default.address)
                 assertBNClosePercent(ratio, simpleToExactAmount(2.2453))
             })
-            // 10k imUSD = 1k $ = 0.33 imBTC
-            it("should calculate boost for 10k imUSD stake and 50 vMTA", async () => {
+            // 10k izUSD = 1k $ = 0.33 imBTC
+            it("should calculate boost for 10k izUSD stake and 50 vZENO", async () => {
                 const deposit = simpleToExactAmount(3333, 14)
                 const stake = simpleToExactAmount(50, 18)
                 const expectedBoost = simpleToExactAmount(4110, 14)
@@ -594,8 +594,8 @@ describe("BoostedVault", async () => {
                 const ratio = await savingsVault.getBoost(sa.default.address)
                 assertBNClosePercent(ratio, simpleToExactAmount(1.2331), "0.1")
             })
-            // 100k imUSD = 10k $ = 3.33 imBTC
-            it("should calculate boost for 100k imUSD stake and 500 vMTA", async () => {
+            // 100k izUSD = 10k $ = 3.33 imBTC
+            it("should calculate boost for 100k izUSD stake and 500 vZENO", async () => {
                 const deposit = simpleToExactAmount(3333, 15)
                 const stake = simpleToExactAmount(500, 18)
                 const expectedBoost = simpleToExactAmount("4766.19", 15)
@@ -618,7 +618,7 @@ describe("BoostedVault", async () => {
                 savingsVault = await redeployRewards()
             })
             describe("when saving and with staking balance", () => {
-                it("should calculate boost for 10k imUSD stake and 250 vMTA", async () => {
+                it("should calculate boost for 10k izUSD stake and 250 vZENO", async () => {
                     const deposit = simpleToExactAmount(10000)
                     const stake = simpleToExactAmount(250, 18)
                     const expectedBoost = simpleToExactAmount(22453)
@@ -633,7 +633,7 @@ describe("BoostedVault", async () => {
                     const ratio = await savingsVault.getBoost(sa.default.address)
                     assertBNClosePercent(ratio, simpleToExactAmount(2.2453))
                 })
-                it("should calculate boost for 10k imUSD stake and 50 vMTA", async () => {
+                it("should calculate boost for 10k izUSD stake and 50 vZENO", async () => {
                     const deposit = simpleToExactAmount(10000, 18)
                     const stake = simpleToExactAmount(50, 18)
                     const expectedBoost = simpleToExactAmount(12331, 18)
@@ -648,7 +648,7 @@ describe("BoostedVault", async () => {
                     const ratio = await savingsVault.getBoost(sa.default.address)
                     assertBNClosePercent(ratio, simpleToExactAmount(1.2331), "0.1")
                 })
-                it("should calculate boost for 100k imUSD stake and 500 vMTA", async () => {
+                it("should calculate boost for 100k izUSD stake and 500 vZENO", async () => {
                     const deposit = simpleToExactAmount(100000, 18)
                     const stake = simpleToExactAmount(500, 18)
                     const expectedBoost = simpleToExactAmount(143000, 18)
@@ -665,7 +665,7 @@ describe("BoostedVault", async () => {
                     assertBNClosePercent(ratio, simpleToExactAmount(1.43, 18), "0.1")
                 })
             })
-            describe("when saving with low staking balance and high vMTA", () => {
+            describe("when saving with low staking balance and high vZENO", () => {
                 it("should give no boost due to below min threshold", async () => {
                     const deposit = simpleToExactAmount(5, 17)
                     const stake = simpleToExactAmount(800, 18)
@@ -718,13 +718,13 @@ describe("BoostedVault", async () => {
                     expect(supply).to.be.eq(BN.from(0))
                 })
             })
-            describe("when staking and then updating vMTA balance", () => {
+            describe("when staking and then updating vZENO balance", () => {
                 it("should start accruing more rewards", async () => {
                     // Alice vs Bob
                     // 1. Pools are funded
-                    // 2. Alice and Bob both deposit 100 and have no MTA
+                    // 2. Alice and Bob both deposit 100 and have no ZENO
                     // 3. wait half a week
-                    // 4. Alice increases MTA stake to get max boost
+                    // 4. Alice increases ZENO stake to get max boost
                     // 5. Both users are poked
                     // 6. Wait half a week
                     // 7. Both users are poked
@@ -945,8 +945,8 @@ describe("BoostedVault", async () => {
         before(async () => {
             rewardToken = await new MockERC20__factory(sa.default.signer).deploy("Reward", "RWD", 12, rewardsDistributor.address, 10000000)
             imAsset = await new MockERC20__factory(sa.default.signer).deploy(
-                "Interest bearing mUSD",
-                "imUSD",
+                "Interest bearing zUSD",
+                "izUSD",
                 16,
                 sa.default.address,
                 1000000,

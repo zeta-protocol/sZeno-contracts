@@ -26,7 +26,7 @@ const deployerAddress = resolveAddress("OperationsSigner")
 const stakedTokenBptAddress = resolveAddress("StakedTokenBPT")
 const mbptGaugeAddress = resolveAddress("mBPT", Chain.mainnet, "gauge")
 const ethWhaleAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
-const mtaWhaleAddress = "0x24167305A3667023Ea565f971D72509ef758Ac78"
+const zenoWhaleAddress = "0x24167305A3667023Ea565f971D72509ef758Ac78"
 const mbptWhaleAddress = "0xe4b8b2Ff4E66E73A7BBc77B308a6b97AFA5aA566"
 
 const staker1 = "0xE76Be9C1e10910d6Bc6b63D8031729747910c2f6"
@@ -36,11 +36,11 @@ context("StakedToken deployments and vault upgrades", () => {
     let deployer: Account
     let governor: Account
     let ethWhale: Account
-    let mtaWhale: Account
+    let zenoWhale: Account
     let mbptWhale: Account
     let stkBPT: StakedTokenBPT
     let mBPT: IERC20
-    let MTA: IERC20
+    let ZENO: IERC20
     let BAL: IERC20
     let gauge: IBalancerGauge
 
@@ -138,7 +138,7 @@ context("StakedToken deployments and vault upgrades", () => {
     const upgradeStkMbpt = async () => {
         const stakedBptAddresses = await deployStakingToken(
             {
-                rewardsTokenSymbol: "MTA",
+                rewardsTokenSymbol: "ZENO",
                 stakedTokenSymbol: "mBPT",
                 balTokenSymbol: "BAL",
                 cooldown: ONE_WEEK.mul(3).toNumber(),
@@ -172,11 +172,11 @@ context("StakedToken deployments and vault upgrades", () => {
         deployer = await impersonateAccount(deployerAddress)
         governor = await impersonateAccount(governorAddress)
         ethWhale = await impersonateAccount(ethWhaleAddress)
-        mtaWhale = await impersonateAccount(mtaWhaleAddress)
+        zenoWhale = await impersonateAccount(zenoWhaleAddress)
         mbptWhale = await impersonateAccount(mbptWhaleAddress)
 
         mBPT = IERC20__factory.connect(resolveAddress("mBPT"), deployer.signer)
-        MTA = IERC20__factory.connect(resolveAddress("MTA"), mtaWhale.signer)
+        ZENO = IERC20__factory.connect(resolveAddress("ZENO"), zenoWhale.signer)
         BAL = IERC20__factory.connect(resolveAddress("BAL"), deployer.signer)
         stkBPT = StakedTokenBPT__factory.connect(stakedTokenBptAddress, deployer.signer)
         gauge = IBalancerGauge__factory.connect(mbptGaugeAddress, deployer.signer)
@@ -204,7 +204,7 @@ context("StakedToken deployments and vault upgrades", () => {
             // Deploy StakedTokenBPT
             stakedBptAddresses = await deployStakingToken(
                 {
-                    rewardsTokenSymbol: "MTA",
+                    rewardsTokenSymbol: "ZENO",
                     stakedTokenSymbol: "mBPT",
                     balTokenSymbol: "BAL",
                     cooldown: ONE_WEEK.mul(3).toNumber(),
@@ -245,7 +245,7 @@ context("StakedToken deployments and vault upgrades", () => {
                 expect(configAfter.rewardsDistributor, "rewardsDistributor").eq(resolveAddress("RewardsDistributor"))
                 expect(configAfter.nexus, "nexus").eq(resolveAddress("Nexus"))
                 expect(configAfter.stakingToken, "staking token symbol").eq(resolveAddress("mBPT"))
-                expect(configAfter.rewardToken, "reward token symbol").eq(resolveAddress("MTA"))
+                expect(configAfter.rewardToken, "reward token symbol").eq(resolveAddress("ZENO"))
                 expect(configAfter.cooldown, "cooldown").eq(ONE_WEEK.mul(3))
                 expect(configAfter.unstake, "unstake").eq(ONE_WEEK.mul(2))
                 expect(configAfter.questManager, "questManager").eq(resolveAddress("QuestManager"))
@@ -346,14 +346,14 @@ context("StakedToken deployments and vault upgrades", () => {
             expect(await mBPT.balanceOf(stakedTokenBptAddress), "stkBPT's mBPT bal after").to.eq(0)
             expect(await mBPT.balanceOf(mbptWhale.address), "staker's mBPT bal after").to.eq(withdrawAmount)
         })
-        it("convert fees to MTA", async () => {
-            const mtaBalBefore = await MTA.balanceOf(stkBPT.address)
-            expect(mtaBalBefore, "stkBPT's MTA bal before").to.gt(0)
+        it("convert fees to ZENO", async () => {
+            const zenoBalBefore = await ZENO.balanceOf(stkBPT.address)
+            expect(zenoBalBefore, "stkBPT's ZENO bal before").to.gt(0)
             const tx = await stkBPT.connect(deployer.signer).convertFees()
 
             await expect(tx).to.emit(stkBPT, "FeesConverted")
 
-            expect(await MTA.balanceOf(stkBPT.address), "stkBPT's MTA bal after").to.gt(mtaBalBefore)
+            expect(await ZENO.balanceOf(stkBPT.address), "stkBPT's ZENO bal after").to.gt(zenoBalBefore)
         })
         it("fetch latest price coefficient", async () => {
             const priceCoefficientBefore = await stkBPT.priceCoefficient()

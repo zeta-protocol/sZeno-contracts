@@ -15,7 +15,7 @@ import {
     QuestManager__factory,
     SignatureVerifier__factory,
     StakedTokenBPT__factory,
-    StakedTokenMTA__factory,
+    StakedTokenZENO__factory,
 } from "types/generated"
 import { deployContract } from "./deploy-utils"
 import { verifyEtherscan } from "./etherscan"
@@ -126,8 +126,8 @@ export const deployStakingToken = async (
         constructorArguments = [nexusAddress, rewardsTokenAddress, questManagerAddress, rewardsTokenAddress, stakedTokenData.cooldown]
 
         stakedTokenImpl = await deployContract(
-            new StakedTokenMTA__factory(stakedTokenLibraryAddresses, deployer.signer),
-            "StakedTokenMTA",
+            new StakedTokenZENO__factory(stakedTokenLibraryAddresses, deployer.signer),
+            "StakedTokenZENO",
             constructorArguments,
         )
         data = stakedTokenImpl.interface.encodeFunctionData("initialize", [
@@ -186,7 +186,7 @@ export const deployStakingToken = async (
             data,
         ])
     } else if (rewardsTokenAddress === stakedTokenAddress) {
-        proxy = stakedTokenImpl.attach(resolveAddress("StokedTokenMTA", chain))
+        proxy = stakedTokenImpl.attach(resolveAddress("StokedTokenZENO", chain))
     } else {
         proxy = stakedTokenImpl.attach(resolveAddress("StakedTokenBPT", chain))
     }

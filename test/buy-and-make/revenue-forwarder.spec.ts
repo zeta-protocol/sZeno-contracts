@@ -25,12 +25,12 @@ describe("RevenueForwarder", () => {
 
     /*
         Test Data
-        mAssets: mUSD and mBTC with 18 decimals
+        mAssets: zUSD and mBTC with 18 decimals
      */
     const setup = async (): Promise<void> => {
         mAsset = await new MockMasset__factory(sa.default.signer).deploy(
             "meta USD",
-            "mUSD",
+            "zUSD",
             18,
             sa.default.address,
             simpleToExactAmount(1000000),

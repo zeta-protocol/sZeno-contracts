@@ -18,7 +18,7 @@ import { MassetManager } from "../MassetManager.sol";
 
 /**
  * @title   Masset
- * @author  mStable
+ * @author  xZeno
  * @notice  An incentivised constant sum market maker with hard limits at max region. This supports
  *          low slippage swaps and applies penalties towards min and max regions. AMM produces a
  *          stablecoin (mAsset) and redirects lending market interest and swap fees to the savings
@@ -85,7 +85,7 @@ contract MV2 is
     // Release 1.0 VARS
     address public deprecated_forgeValidator;
     bool private deprecated_forgeValidatorLocked;
-    // Deprecated - maintain for storage layout in mUSD
+    // Deprecated - maintain for storage layout in zUSD
     address private deprecated_basketManager;
 
     // Basic redemption fee information

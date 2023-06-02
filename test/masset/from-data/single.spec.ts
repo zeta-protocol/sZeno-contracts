@@ -271,7 +271,7 @@ describe("Feeder Logic - One basket one test @skip-on-coverage", () => {
                 beforeEach(async () => {
                     mAsset = (await massetFactory.deploy(DEAD_ADDRESS, simpleToExactAmount(5, 13))) as Masset
                     await mAsset.initialize(
-                        "mStable Asset",
+                        "xZeno Asset",
                         "mAsset",
                         bAssets.map((b) => ({
                             addr: b.address,

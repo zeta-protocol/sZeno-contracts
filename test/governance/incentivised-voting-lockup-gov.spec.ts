@@ -21,7 +21,7 @@ import { Account } from "types"
 let sa: StandardAccounts
 let mAssetMachine: MassetMachine
 let votingLockup: IncentivisedVotingLockup
-let mta: MintableToken
+let zeno: MintableToken
 let nexus: Nexus
 
 describe("IncentivisedVotingLockup", () => {
@@ -34,7 +34,7 @@ describe("IncentivisedVotingLockup", () => {
     const isCoverage = network.name === "coverage"
 
     const fundVotingLockup = async (funding = simpleToExactAmount(100, DEFAULT_DECIMALS)) => {
-        await mta.connect(sa.fundManager.signer).transfer(votingLockup.address, funding)
+        await zeno.connect(sa.fundManager.signer).transfer(votingLockup.address, funding)
         await votingLockup.connect(sa.fundManager.signer).notifyRewardAmount(funding)
     }
 
@@ -52,19 +52,19 @@ describe("IncentivisedVotingLockup", () => {
 
     const deployFresh = async (initialRewardFunding = BN.from(0)) => {
         nexus = await new Nexus__factory(sa.default.signer).deploy(sa.governor.address)
-        mta = await new MintableToken__factory(sa.default.signer).deploy(nexus.address, sa.fundManager.address)
-        await mta.connect(sa.fundManager.signer).transfer(sa.default.address, simpleToExactAmount(1000, DEFAULT_DECIMALS))
-        await mta.connect(sa.fundManager.signer).transfer(sa.other.address, simpleToExactAmount(1000, DEFAULT_DECIMALS))
+        zeno = await new MintableToken__factory(sa.default.signer).deploy(nexus.address, sa.fundManager.address)
+        await zeno.connect(sa.fundManager.signer).transfer(sa.default.address, simpleToExactAmount(1000, DEFAULT_DECIMALS))
+        await zeno.connect(sa.fundManager.signer).transfer(sa.other.address, simpleToExactAmount(1000, DEFAULT_DECIMALS))
         votingLockup = await new IncentivisedVotingLockup__factory(sa.default.signer).deploy(
-            mta.address,
-            "Voting MTA",
-            "vMTA",
+            zeno.address,
+            "Voting ZENO",
+            "vZENO",
             nexus.address,
             sa.fundManager.address,
         )
-        await mta.approve(votingLockup.address, simpleToExactAmount(100, DEFAULT_DECIMALS))
-        await mta.connect(sa.other.signer).approve(votingLockup.address, simpleToExactAmount(100, DEFAULT_DECIMALS))
-        await mta.connect(sa.fundManager.signer).approve(votingLockup.address, simpleToExactAmount(10000, DEFAULT_DECIMALS))
+        await zeno.approve(votingLockup.address, simpleToExactAmount(100, DEFAULT_DECIMALS))
+        await zeno.connect(sa.other.signer).approve(votingLockup.address, simpleToExactAmount(100, DEFAULT_DECIMALS))
+        await zeno.connect(sa.fundManager.signer).approve(votingLockup.address, simpleToExactAmount(10000, DEFAULT_DECIMALS))
         if (initialRewardFunding.gt(0)) {
             fundVotingLockup(initialRewardFunding)
         }
@@ -166,8 +166,8 @@ describe("IncentivisedVotingLockup", () => {
                 blk: lastPoint[3],
             },
             userRewardPerTokenPaid: await votingLockup.userRewardPerTokenPaid(sender.address),
-            senderStakingTokenBalance: await mta.balanceOf(sender.address),
-            contractStakingTokenBalance: await mta.balanceOf(votingLockup.address),
+            senderStakingTokenBalance: await zeno.balanceOf(sender.address),
+            contractStakingTokenBalance: await zeno.balanceOf(votingLockup.address),
             beneficiaryRewardsEarned: await votingLockup.rewards(sender.address),
             rewardPerTokenStored: await votingLockup.rewardPerTokenStored(),
             rewardRate: await votingLockup.rewardRate(),
@@ -209,16 +209,16 @@ describe("IncentivisedVotingLockup", () => {
             start = await getTimestamp()
             await deployFresh(simpleToExactAmount(100, DEFAULT_DECIMALS))
             maxTime = await votingLockup.MAXTIME()
-            await mta.connect(sa.fundManager.signer).transfer(alice.address, simpleToExactAmount(1, 22))
-            await mta.connect(sa.fundManager.signer).transfer(bob.address, simpleToExactAmount(1, 22))
-            await mta.connect(sa.fundManager.signer).transfer(charlie.address, simpleToExactAmount(1, 22))
-            await mta.connect(sa.fundManager.signer).transfer(david.address, simpleToExactAmount(1, 22))
-            await mta.connect(sa.fundManager.signer).transfer(eve.address, simpleToExactAmount(1, 22))
-            await mta.connect(alice.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
-            await mta.connect(bob.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
-            await mta.connect(charlie.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
-            await mta.connect(david.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
-            await mta.connect(eve.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
+            await zeno.connect(sa.fundManager.signer).transfer(alice.address, simpleToExactAmount(1, 22))
+            await zeno.connect(sa.fundManager.signer).transfer(bob.address, simpleToExactAmount(1, 22))
+            await zeno.connect(sa.fundManager.signer).transfer(charlie.address, simpleToExactAmount(1, 22))
+            await zeno.connect(sa.fundManager.signer).transfer(david.address, simpleToExactAmount(1, 22))
+            await zeno.connect(sa.fundManager.signer).transfer(eve.address, simpleToExactAmount(1, 22))
+            await zeno.connect(alice.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
+            await zeno.connect(bob.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
+            await zeno.connect(charlie.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
+            await zeno.connect(david.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
+            await zeno.connect(eve.signer).approve(votingLockup.address, simpleToExactAmount(100, 21))
         })
         describe("checking initial settings", () => {
             it("should set END date one year in advance", async () => {
@@ -234,8 +234,8 @@ describe("IncentivisedVotingLockup", () => {
                 const symbol = await votingLockup.symbol()
                 const decimals = await votingLockup.decimals()
                 const supply = await votingLockup.totalSupply()
-                expect(name).eq("Voting MTA")
-                expect(symbol).eq("vMTA")
+                expect(name).eq("Voting ZENO")
+                expect(symbol).eq("vZENO")
                 expect(decimals).eq(BN.from(DEFAULT_DECIMALS))
                 expect(supply).eq(BN.from(0))
             })
@@ -542,12 +542,12 @@ describe("IncentivisedVotingLockup", () => {
             const alice = sa.dummy1
             const bob = sa.dummy2
             const amount = simpleToExactAmount(1000, DEFAULT_DECIMALS)
-            await mta.connect(sa.fundManager.signer).transfer(alice.address, amount.mul(5))
-            await mta.connect(sa.fundManager.signer).transfer(bob.address, amount.mul(5))
+            await zeno.connect(sa.fundManager.signer).transfer(alice.address, amount.mul(5))
+            await zeno.connect(sa.fundManager.signer).transfer(bob.address, amount.mul(5))
             const stages = {}
 
-            await mta.connect(alice.signer).approve(votingLockup.address, amount.mul(5))
-            await mta.connect(bob.signer).approve(votingLockup.address, amount.mul(5))
+            await zeno.connect(alice.signer).approve(votingLockup.address, amount.mul(5))
+            await zeno.connect(bob.signer).approve(votingLockup.address, amount.mul(5))
 
             expect(await votingLockup.totalSupply()).eq(BN.from(0))
             expect(await votingLockup.balanceOf(alice.address)).eq(BN.from(0))
@@ -761,8 +761,8 @@ describe("IncentivisedVotingLockup", () => {
             expect(await votingLockup.balanceOf(bob.address)).eq(BN.from(0))
 
             const aliceRewardsEarned1 = await votingLockup.rewardsPaid(alice.address)
-            const aliceBalBefore = await mta.balanceOf(alice.address)
-            const bobBalBefore = await mta.balanceOf(bob.address)
+            const aliceBalBefore = await zeno.balanceOf(alice.address)
+            const bobBalBefore = await zeno.balanceOf(bob.address)
             await votingLockup.connect(alice.signer).claimReward()
             await votingLockup.connect(bob.signer).claimReward()
             const aliceRewardsEarned2 = await votingLockup.rewardsPaid(alice.address)
@@ -773,8 +773,8 @@ describe("IncentivisedVotingLockup", () => {
             assertBNClosePercent(bobRewardsEarned, simpleToExactAmount("414.212", DEFAULT_DECIMALS), "0.01")
             assertBNClosePercent(aliceRewardsEarned2.add(bobRewardsEarned), amount.mul(2), "0.0005")
 
-            expect(await mta.balanceOf(alice.address)).eq(aliceBalBefore.add(aliceRewardsEarned2.sub(aliceRewardsEarned1)))
-            expect(await mta.balanceOf(bob.address)).eq(bobBalBefore.add(bobRewardsEarned))
+            expect(await zeno.balanceOf(alice.address)).eq(aliceBalBefore.add(aliceRewardsEarned2.sub(aliceRewardsEarned1)))
+            expect(await zeno.balanceOf(bob.address)).eq(bobBalBefore.add(bobRewardsEarned))
 
             /**
              * END OF INTERACTION
